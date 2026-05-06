@@ -1,0 +1,107 @@
+name: ✨ Feature request
+description: Proposer une nouvelle fonctionnalité ou amélioration
+title: 'feat: '
+labels: ['type:feature', 'status:needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de proposer une nouvelle fonctionnalité ! Avant de coder quoi que ce soit, **attends la validation d'un mainteneur**.
+
+        Cela évite que tu travailles plusieurs heures sur quelque chose qui ne correspond pas à la direction du projet.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Quel problème cette fonctionnalité résout-elle ?
+      description: Décris le besoin ou la frustration. Concentre-toi sur le problème, pas la solution.
+      placeholder: En tant que [utilisateur], je voudrais [objectif] pour [bénéfice].
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution proposée
+      description: Comment imagines-tu cette fonctionnalité ?
+      placeholder: Ajouter un bouton X qui permet de Y...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considérées
+      description: Quelles autres approches as-tu envisagées ? Pourquoi celle-ci est meilleure ?
+    validations:
+      required: false
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Maquettes ou inspirations
+      description: Si tu as des maquettes, des liens vers d'autres sites ou des références visuelles.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Domaine concerné
+      multiple: true
+      options:
+        - Articles
+        - Événements
+        - Podcast
+        - Ressources
+        - Sponsors
+        - Authentification
+        - Espace membre
+        - UI / UX
+        - Performance
+        - SEO
+        - Accessibilité
+        - Documentation
+        - Autre
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité (selon toi)
+      options:
+        - 🔥 Critique — bloque un cas d'usage majeur
+        - 🟠 Haute — apporte une valeur significative
+        - 🟡 Moyenne — amélioration utile
+        - 🟢 Basse — confort, nice-to-have
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: Je suis prêt à coder cette fonctionnalité moi-même si elle est validée
+          required: false
+        - label: J'ai besoin d'aide pour la concevoir avant de coder
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Contexte additionnel
+      description: Tout autre élément utile.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code de conduite
+      options:
+        - label: J'accepte le [code de conduite](https://github.com/laravel-sn/laravel.sn/blob/main/.github/CODE_OF_CONDUCT.md)
+          required: true
+        - label: J'ai cherché dans les issues existantes et je n'ai pas trouvé de doublon
+          required: true

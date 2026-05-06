@@ -1,0 +1,71 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - duplicate
+      - invalid
+      - wontfix
+    authors:
+      - dependabot
+      - dependabot[bot]
+  categories:
+    - title: 💥 Breaking Changes
+      labels:
+        - 'breaking-change'
+        - 'breaking'
+
+    - title: 🚀 Nouvelles fonctionnalités
+      labels:
+        - 'type:feature'
+        - 'enhancement'
+        - 'feature'
+
+    - title: 🐛 Corrections
+      labels:
+        - 'type:bug'
+        - 'bug'
+        - 'fix'
+
+    - title: ⚡ Performance
+      labels:
+        - 'performance'
+        - 'perf'
+
+    - title: 🎨 UI / Design
+      labels:
+        - 'ui'
+        - 'design'
+        - 'ux'
+
+    - title: 📚 Documentation
+      labels:
+        - 'type:docs'
+        - 'documentation'
+        - 'docs'
+
+    - title: ♻️ Refactoring
+      labels:
+        - 'refactor'
+
+    - title: 🧪 Tests
+      labels:
+        - 'tests'
+
+    - title: 🔒 Sécurité
+      labels:
+        - 'security'
+
+    - title: 🏗 Maintenance
+      labels:
+        - 'type:chore'
+        - 'dependencies'
+        - 'chore'
+        - 'ci'
+
+    - title: 🌍 Internationalisation
+      labels:
+        - 'i18n'
+
+    - title: 🔧 Autres changements
+      labels:
+        - '*'

@@ -1,0 +1,126 @@
+name: 🐛 Bug report
+description: Signaler un comportement incorrect ou inattendu
+title: 'bug: '
+labels: ['type:bug', 'status:needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de signaler ce bug ! Pour qu'on puisse t'aider efficacement, remplis ce formulaire au mieux.
+
+        Avant de continuer, vérifie qu'il n'existe pas déjà une issue similaire dans la liste des issues ouvertes ou fermées.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description du bug
+      description: Décris clairement ce qui ne va pas.
+      placeholder: Quand je clique sur X, il se passe Y au lieu de Z...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      description: Liste numérotée des étapes pour reproduire le bug.
+      placeholder: |
+        1. Aller sur la page /articles
+        2. Cliquer sur "Filtrer par tag"
+        3. Sélectionner "Eloquent"
+        4. Voir l'erreur
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Que devrait-il se passer normalement ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement observé
+      description: Que se passe-t-il réellement ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Captures d'écran ou vidéo
+      description: Si applicable, ajoute des captures pour illustrer le problème.
+    validations:
+      required: false
+
+  - type: input
+    id: url
+    attributes:
+      label: URL où le bug se produit
+      placeholder: https://laravel-senegal.com/articles?tag=eloquent
+    validations:
+      required: false
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Navigateur
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Brave
+        - Autre
+    validations:
+      required: false
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Appareil
+      options:
+        - Desktop
+        - Mobile
+        - Tablette
+    validations:
+      required: false
+
+  - type: input
+    id: os
+    attributes:
+      label: Système d'exploitation
+      placeholder: macOS 14, Windows 11, Ubuntu 24.04, iOS 17, Android 14...
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou erreurs console
+      description: Colle les erreurs JS de la console ou les logs PHP pertinents.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Contexte additionnel
+      description: Tout autre élément qui pourrait être utile.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code de conduite
+      description: En soumettant cette issue, j'accepte de respecter le code de conduite du projet.
+      options:
+        - label: J'accepte le [code de conduite](https://github.com/laravel-sn/laravel.sn/blob/main/.github/CODE_OF_CONDUCT.md)
+          required: true
+        - label: J'ai cherché dans les issues existantes et je n'ai pas trouvé de doublon
+          required: true
