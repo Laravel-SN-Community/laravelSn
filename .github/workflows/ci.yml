@@ -53,6 +53,18 @@ jobs:
       - name: Run PHPStan (static analysis)
         run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=512M
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+            node-version: '22'
+            cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
       - name: Run Pest tests
         run: ./vendor/bin/pest --parallel
         env:
