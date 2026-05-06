@@ -1,6 +1,17 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(php artisan *)",
+      "Read(//tmp/laravel-sn/project/**)",
+      "Read(//tmp/laravel-sn/**)",
+      "Read(//tmp/**)",
+      "Bash(xxd)"
+    ]
+  },
+  "includeCoAuthoredBy": false,
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "laravel-boost"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
