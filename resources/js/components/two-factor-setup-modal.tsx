@@ -196,9 +196,12 @@ function TwoFactorVerificationStep({
                                 </InputOTPGroup>
                             </InputOTP>
                             <InputError
-                                message={
-                                    errors?.confirmTwoFactorAuthentication?.code
-                                }
+                                {...(errors?.confirmTwoFactorAuthentication
+                                    ?.code !== undefined && {
+                                    message:
+                                        errors.confirmTwoFactorAuthentication
+                                            .code,
+                                })}
                             />
                         </div>
 
