@@ -85,12 +85,20 @@ export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
     }, [submit]);
 
     const fetchSetupData = useCallback(async (): Promise<void> => {
-        try {
-            setErrors([]);
-            await Promise.all([fetchQrCode(), fetchSetupKey()]);
-        } catch {
-            setQrCodeSvg(null);
-            setManualSetupKey(null);
+        for (let attempt = 0; attempt <= 2; attempt++) {
+            try {
+                setErrors([]);
+                await Promise.all([fetchQrCode(), fetchSetupKey()]);
+
+                return;
+            } catch {
+                if (attempt < 2) {
+                    await new Promise((r) => setTimeout(r, 800));
+                } else {
+                    setQrCodeSvg(null);
+                    setManualSetupKey(null);
+                }
+            }
         }
     }, [fetchQrCode, fetchSetupKey]);
 

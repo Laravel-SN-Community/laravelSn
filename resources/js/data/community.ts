@@ -38,6 +38,17 @@ export interface Event {
     speakers: string[];
 }
 
+export interface Resource {
+    slug: string;
+    type: string;
+    title: string;
+    desc: string;
+    meta: string;
+    level: string;
+    author: string;
+    date: string;
+}
+
 export interface Member {
     slug: string;
     name: string;
@@ -684,6 +695,19 @@ export const FORUM_TAG_COLORS: Record<string, { color: string }> = {
     eloquent: { color: '#06b6d4' },
     divers: { color: '#94a3b8' },
 };
+
+export const RESOURCES: Resource[] = [
+    { slug: 'deploy-vps', type: 'guide', title: 'Déployer Laravel sur un VPS africain', desc: 'OVH, Scaleway, Contabo : configuration, HTTPS, déploiement zéro downtime avec Deployer.', meta: '12 chapitres', level: 'intermédiaire', author: 'Omar Sy', date: '2026' },
+    { slug: 'eloquent-cheat', type: 'cheatsheet', title: 'Eloquent — antisèche relations', desc: 'hasOne, hasMany, polymorphic, through. Toutes les relations avec exemples et pièges classiques.', meta: '2 pages PDF', level: 'débutant', author: 'Aïssatou Diop', date: '2026' },
+    { slug: 'saas-starter', type: 'template', title: 'Starter kit SaaS fr_SN', desc: 'Laravel 13 + Inertia + Tailwind, facturation FCFA, TVA sénégalaise, Wave Payment intégré.', meta: 'Starter repo', level: 'avancé', author: 'Ibrahima Ba', date: '2026' },
+    { slug: 'pest-masterclass', type: 'vidéo', title: 'Masterclass : tester son code', desc: "2h30 de Pest, factories, mocking — du test unitaire au test de charge avec K6.", meta: '2h30 vidéo', level: 'intermédiaire', author: 'Khady Ndiaye', date: '2026' },
+    { slug: 'queues-guide', type: 'guide', title: 'Guide des queues Laravel', desc: 'Redis, database, SQS : quel driver pour quel usage. Supervisor, Horizon, retry strategies.', meta: '8 chapitres', level: 'intermédiaire', author: 'Cheikh Kane', date: '2026' },
+    { slug: 'api-rest', type: 'cheatsheet', title: 'API REST — bonnes pratiques', desc: 'Versioning, pagination, filtrage, erreurs normalisées (RFC 7807). Checklist de 30 points.', meta: '1 page PDF', level: 'débutant', author: 'Ndeye Diouf', date: '2026' },
+    { slug: 'livewire-course', type: 'vidéo', title: 'Livewire 3 — cours complet', desc: "4h de vidéo, 18 chapitres, de zéro à la mise en prod.", meta: '4h vidéo', level: 'intermédiaire', author: 'Abdoulaye Ba', date: '2026' },
+    { slug: 'filament-template', type: 'template', title: 'Template admin Filament bilingue', desc: 'Filament pré-configuré fr / en / wo, rôles & permissions, audit log, export CSV.', meta: 'Starter repo', level: 'avancé', author: 'Ibrahima Ba', date: '2026' },
+    { slug: 'ndank-book', type: 'guide', title: 'Ndank ndank — livre Laravel en français', desc: 'Notre livre collectif, 18 chapitres, 320 pages. Gratuit, libre, écrit par la communauté.', meta: '320 pages PDF', level: 'débutant', author: 'Collectif', date: '2026' },
+    { slug: 'security-audit', type: 'cheatsheet', title: 'Audit sécurité Laravel — checklist', desc: "45 points à vérifier avant prod : sessions, CSRF, uploads, headers, secrets.", meta: '3 pages PDF', level: 'avancé', author: 'Fatou Sow', date: '2026' },
+];
 
 export const FORUM_CHANNELS = [
     { slug: 'tous', label: 'Tous les sujets', icon: 'list' },
