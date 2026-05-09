@@ -16,12 +16,42 @@ interface AuthUser {
 }
 
 const SECTIONS = [
-    { id: 'overview', label: "Vue d'ensemble", Icon: LayoutDashboard, href: '/dashboard' },
-    { id: 'profile', label: 'Mon profil', Icon: UserCircle, href: '/dashboard/profile' },
-    { id: 'articles', label: 'Mes articles', Icon: FileText, href: '/dashboard/articles' },
-    { id: 'events', label: 'Mes inscriptions', Icon: CalendarDays, href: '/dashboard/events' },
-    { id: 'notifications', label: 'Notifications', Icon: Bell, href: '/dashboard/notifications' },
-    { id: 'settings', label: 'Paramètres', Icon: Settings, href: '/dashboard/settings' },
+    {
+        id: 'overview',
+        label: "Vue d'ensemble",
+        Icon: LayoutDashboard,
+        href: '/dashboard',
+    },
+    {
+        id: 'profile',
+        label: 'Mon profil',
+        Icon: UserCircle,
+        href: '/dashboard/profile',
+    },
+    {
+        id: 'articles',
+        label: 'Mes articles',
+        Icon: FileText,
+        href: '/dashboard/articles',
+    },
+    {
+        id: 'events',
+        label: 'Mes inscriptions',
+        Icon: CalendarDays,
+        href: '/dashboard/events',
+    },
+    {
+        id: 'notifications',
+        label: 'Notifications',
+        Icon: Bell,
+        href: '/dashboard/notifications',
+    },
+    {
+        id: 'settings',
+        label: 'Paramètres',
+        Icon: Settings,
+        href: '/dashboard/settings',
+    },
 ] as const;
 
 type SectionId = (typeof SECTIONS)[number]['id'];
@@ -105,14 +135,21 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                             href={s.href}
                             className="flex items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
                             style={{
-                                background: active ? 'var(--sn-surface-2)' : 'transparent',
-                                color: active ? 'var(--sn-fg)' : 'var(--sn-muted)',
+                                background: active
+                                    ? 'var(--sn-surface-2)'
+                                    : 'transparent',
+                                color: active
+                                    ? 'var(--sn-fg)'
+                                    : 'var(--sn-muted)',
                             }}
                         >
                             <s.Icon
                                 size={15}
                                 strokeWidth={active ? 2 : 1.5}
-                                style={{ color: active ? 'var(--sn-600)' : 'inherit', flexShrink: 0 }}
+                                style={{
+                                    color: active ? 'var(--sn-600)' : 'inherit',
+                                    flexShrink: 0,
+                                }}
                             />
                             {s.label}
                         </Link>
@@ -125,11 +162,11 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                 className="mt-3 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
                 style={{ color: 'var(--destructive)' }}
                 onMouseEnter={(e) => {
- e.currentTarget.style.opacity = '0.8'; 
-}}
+                    e.currentTarget.style.opacity = '0.8';
+                }}
                 onMouseLeave={(e) => {
- e.currentTarget.style.opacity = '1'; 
-}}
+                    e.currentTarget.style.opacity = '1';
+                }}
             >
                 <LogOut size={15} strokeWidth={1.5} style={{ flexShrink: 0 }} />
                 Se déconnecter

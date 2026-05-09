@@ -98,7 +98,10 @@ export default function Profile({
                             Mon profil
                         </h1>
 
-                        <DashCard eyebrow="// infos publiques" title="Informations">
+                        <DashCard
+                            eyebrow="// infos publiques"
+                            title="Informations"
+                        >
                             <Form
                                 {...ProfileController.update.form()}
                                 options={{ preserveScroll: true }}
@@ -108,10 +111,14 @@ export default function Profile({
                                     <>
                                         <div className="grid gap-4 sm:grid-cols-2">
                                             <div>
-                                                <FieldLabel>Nom complet</FieldLabel>
+                                                <FieldLabel>
+                                                    Nom complet
+                                                </FieldLabel>
                                                 <FieldInput
                                                     name="name"
-                                                    defaultValue={auth.user.name}
+                                                    defaultValue={
+                                                        auth.user.name
+                                                    }
                                                     required
                                                     autoComplete="name"
                                                     placeholder="Aïssatou Diop"
@@ -123,12 +130,17 @@ export default function Profile({
                                             </div>
 
                                             <div>
-                                                <FieldLabel>Nom d'utilisateur</FieldLabel>
+                                                <FieldLabel>
+                                                    Nom d'utilisateur
+                                                </FieldLabel>
                                                 <FieldInput
                                                     name="username"
                                                     defaultValue={
-                                                        (auth.user as { username?: string })
-                                                            .username ?? ''
+                                                        (
+                                                            auth.user as {
+                                                                username?: string;
+                                                            }
+                                                        ).username ?? ''
                                                     }
                                                     required
                                                     autoComplete="username"
@@ -141,11 +153,15 @@ export default function Profile({
                                             </div>
 
                                             <div className="sm:col-span-2">
-                                                <FieldLabel>Adresse email</FieldLabel>
+                                                <FieldLabel>
+                                                    Adresse email
+                                                </FieldLabel>
                                                 <FieldInput
                                                     type="email"
                                                     name="email"
-                                                    defaultValue={auth.user.email}
+                                                    defaultValue={
+                                                        auth.user.email
+                                                    }
                                                     required
                                                     autoComplete="email"
                                                     placeholder="aissatou@wave.com"
@@ -158,21 +174,39 @@ export default function Profile({
                                         </div>
 
                                         {mustVerifyEmail &&
-                                            auth.user.email_verified_at === null && (
-                                                <div className="mt-3 rounded-md px-3 py-2 font-mono text-[12px]"
-                                                     style={{ background: 'var(--sn-surface-2)', color: 'var(--sn-muted)' }}>
-                                                    Ton adresse email n'est pas vérifiée.{' '}
+                                            auth.user.email_verified_at ===
+                                                null && (
+                                                <div
+                                                    className="mt-3 rounded-md px-3 py-2 font-mono text-[12px]"
+                                                    style={{
+                                                        background:
+                                                            'var(--sn-surface-2)',
+                                                        color: 'var(--sn-muted)',
+                                                    }}
+                                                >
+                                                    Ton adresse email n'est pas
+                                                    vérifiée.{' '}
                                                     <Link
                                                         href={send()}
                                                         as="button"
                                                         className="underline"
-                                                        style={{ color: 'var(--sn-fg)' }}
+                                                        style={{
+                                                            color: 'var(--sn-fg)',
+                                                        }}
                                                     >
-                                                        Renvoyer l'email de vérification.
+                                                        Renvoyer l'email de
+                                                        vérification.
                                                     </Link>
-                                                    {status === 'verification-link-sent' && (
-                                                        <div className="mt-1" style={{ color: 'var(--sn-600)' }}>
-                                                            Un nouveau lien a été envoyé.
+                                                    {status ===
+                                                        'verification-link-sent' && (
+                                                        <div
+                                                            className="mt-1"
+                                                            style={{
+                                                                color: 'var(--sn-600)',
+                                                            }}
+                                                        >
+                                                            Un nouveau lien a
+                                                            été envoyé.
                                                         </div>
                                                     )}
                                                 </div>
@@ -192,7 +226,6 @@ export default function Profile({
                                 )}
                             </Form>
                         </DashCard>
-
                     </main>
                 </div>
             </div>

@@ -50,7 +50,8 @@ export default function Membres() {
                     className="mt-3 text-[16px] leading-relaxed lg:text-[17px]"
                     style={{ color: 'var(--sn-muted)' }}
                 >
-                    Les développeur·ses Laravel du Sénégal. De Wave à Volkeno, de la junior à la CTO.
+                    Les développeur·ses Laravel du Sénégal. De Wave à Volkeno,
+                    de la junior à la CTO.
                 </p>
             </section>
 
@@ -71,7 +72,10 @@ export default function Membres() {
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="2"
-                                style={{ color: 'var(--sn-muted)', flexShrink: 0 }}
+                                style={{
+                                    color: 'var(--sn-muted)',
+                                    flexShrink: 0,
+                                }}
                             >
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.35-4.35" />
@@ -93,8 +97,15 @@ export default function Membres() {
                                 className="rounded-md px-2.5 py-1 transition-colors"
                                 style={
                                     city === c
-                                        ? { background: 'var(--sn-accent)', color: 'var(--sn-accent-fg)' }
-                                        : { background: 'var(--sn-surface-2)', color: 'var(--sn-muted)', border: '1px solid var(--sn-border)' }
+                                        ? {
+                                              background: 'var(--sn-accent)',
+                                              color: 'var(--sn-accent-fg)',
+                                          }
+                                        : {
+                                              background: 'var(--sn-surface-2)',
+                                              color: 'var(--sn-muted)',
+                                              border: '1px solid var(--sn-border)',
+                                          }
                                 }
                             >
                                 {c}
@@ -113,7 +124,10 @@ export default function Membres() {
                         >
                             // aucun résultat
                         </div>
-                        <p className="text-[15px]" style={{ color: 'var(--sn-muted)' }}>
+                        <p
+                            className="text-[15px]"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
                             Essaie de modifier ta recherche.
                         </p>
                     </div>
@@ -132,7 +146,10 @@ export default function Membres() {
                                 <div className="flex items-center gap-3">
                                     <div
                                         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-mono text-[14px] font-semibold"
-                                        style={{ background: m.tint, color: '#fff' }}
+                                        style={{
+                                            background: m.tint,
+                                            color: '#fff',
+                                        }}
                                     >
                                         {m.init}
                                     </div>
@@ -165,7 +182,8 @@ export default function Membres() {
                                             key={tag}
                                             className="rounded px-1.5 py-0.5 font-mono text-[10.5px]"
                                             style={{
-                                                background: 'var(--sn-surface-2)',
+                                                background:
+                                                    'var(--sn-surface-2)',
                                                 color: 'var(--sn-muted)',
                                                 border: '1px solid var(--sn-border)',
                                             }}

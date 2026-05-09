@@ -83,7 +83,10 @@ export default function Ressources() {
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="2"
-                                style={{ color: 'var(--sn-muted)', flexShrink: 0 }}
+                                style={{
+                                    color: 'var(--sn-muted)',
+                                    flexShrink: 0,
+                                }}
                             >
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.35-4.35" />
@@ -112,8 +115,15 @@ export default function Ressources() {
                                 className="rounded-md px-2.5 py-1 transition-colors"
                                 style={
                                     typeFilter === t
-                                        ? { background: 'var(--sn-accent)', color: 'var(--sn-accent-fg)' }
-                                        : { background: 'var(--sn-surface-2)', color: 'var(--sn-muted)', border: '1px solid var(--sn-border)' }
+                                        ? {
+                                              background: 'var(--sn-accent)',
+                                              color: 'var(--sn-accent-fg)',
+                                          }
+                                        : {
+                                              background: 'var(--sn-surface-2)',
+                                              color: 'var(--sn-muted)',
+                                              border: '1px solid var(--sn-border)',
+                                          }
                                 }
                             >
                                 {t}
@@ -135,8 +145,15 @@ export default function Ressources() {
                                 className="rounded-md px-2.5 py-1 transition-colors"
                                 style={
                                     levelFilter === l
-                                        ? { background: 'var(--sn-fg)', color: 'var(--sn-bg)' }
-                                        : { background: 'var(--sn-surface-2)', color: 'var(--sn-muted)', border: '1px solid var(--sn-border)' }
+                                        ? {
+                                              background: 'var(--sn-fg)',
+                                              color: 'var(--sn-bg)',
+                                          }
+                                        : {
+                                              background: 'var(--sn-surface-2)',
+                                              color: 'var(--sn-muted)',
+                                              border: '1px solid var(--sn-border)',
+                                          }
                                 }
                             >
                                 {l}
@@ -155,7 +172,10 @@ export default function Ressources() {
                         >
                             // aucun résultat
                         </div>
-                        <p className="text-[15px]" style={{ color: 'var(--sn-muted)' }}>
+                        <p
+                            className="text-[15px]"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
                             Essaie de modifier tes filtres.
                         </p>
                     </div>
@@ -188,7 +208,7 @@ export default function Ressources() {
                                 </div>
 
                                 <div
-                                    className="mt-3 text-[16px] font-semibold tracking-tight pr-16"
+                                    className="mt-3 pr-16 text-[16px] font-semibold tracking-tight"
                                     style={{ color: 'var(--sn-fg)' }}
                                 >
                                     {r.title}

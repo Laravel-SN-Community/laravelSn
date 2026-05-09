@@ -1,5 +1,13 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { ArrowRight, LayoutDashboard, LogOut, Menu, Search, Settings, UserCircle } from 'lucide-react';
+import {
+    ArrowRight,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    Search,
+    Settings,
+    UserCircle,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
     DropdownMenu,
@@ -28,14 +36,19 @@ function getTint(name: string): string {
     let hash = 0;
 
     for (let i = 0; i < name.length; i++) {
-hash = name.charCodeAt(i) + ((hash << 5) - hash);
-}
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
 
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
 function getInitials(name: string): string {
-    return name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+    return name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
 }
 
 export default function SiteNavbar({
@@ -64,7 +77,9 @@ export default function SiteNavbar({
                     ? 'color-mix(in oklch, var(--sn-bg) 78%, transparent)'
                     : 'transparent',
                 backdropFilter: scrolled ? 'blur(14px) saturate(1.2)' : 'none',
-                WebkitBackdropFilter: scrolled ? 'blur(14px) saturate(1.2)' : 'none',
+                WebkitBackdropFilter: scrolled
+                    ? 'blur(14px) saturate(1.2)'
+                    : 'none',
                 borderBottom: `1px solid ${scrolled ? 'var(--sn-border)' : 'transparent'}`,
                 transition: 'background 200ms, border-color 200ms',
             }}
@@ -77,9 +92,15 @@ export default function SiteNavbar({
                         className="flex shrink-0 items-center gap-2 font-semibold tracking-tight"
                         style={{ color: 'var(--sn-fg)' }}
                     >
-                        <img src="/logo.png" alt="Laravel SN" className="h-7 w-7 object-contain" />
+                        <img
+                            src="/logo.png"
+                            alt="Laravel SN"
+                            className="h-7 w-7 object-contain"
+                        />
                         <span>
-                            laravel<span style={{ color: 'var(--sn-accent)' }}>.</span>sn
+                            laravel
+                            <span style={{ color: 'var(--sn-accent)' }}>.</span>
+                            sn
                         </span>
                     </a>
                     <nav className="hidden items-center gap-6 md:flex">
@@ -111,7 +132,10 @@ export default function SiteNavbar({
                         <span className="flex-1 text-left">Recherche…</span>
                         <span
                             className="rounded px-1.5 py-0.5 font-mono text-[10.5px]"
-                            style={{ background: 'var(--sn-surface-2)', color: 'var(--sn-muted)' }}
+                            style={{
+                                background: 'var(--sn-surface-2)',
+                                color: 'var(--sn-muted)',
+                            }}
                         >
                             ⌘K
                         </span>
@@ -121,7 +145,7 @@ export default function SiteNavbar({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ring-2 ring-transparent transition-all hover:ring-[var(--sn-border)] sm:flex focus:outline-none"
+                                    className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ring-2 ring-transparent transition-all hover:ring-[var(--sn-border)] focus:outline-none sm:flex"
                                     style={{
                                         background: auth.user.avatar
                                             ? 'transparent'
@@ -145,28 +169,43 @@ export default function SiteNavbar({
 
                             <DropdownMenuContent align="end" className="w-56">
                                 <div className="px-2 py-1.5">
-                                    <p className="text-[13px] font-medium" style={{ color: 'var(--sn-fg)' }}>
+                                    <p
+                                        className="text-[13px] font-medium"
+                                        style={{ color: 'var(--sn-fg)' }}
+                                    >
                                         {auth.user.name}
                                     </p>
-                                    <p className="truncate text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                    <p
+                                        className="truncate text-[11.5px]"
+                                        style={{ color: 'var(--sn-muted)' }}
+                                    >
                                         {auth.user.email}
                                     </p>
                                 </div>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <Link href="/dashboard" className="flex cursor-pointer items-center gap-2">
+                                    <Link
+                                        href="/dashboard"
+                                        className="flex cursor-pointer items-center gap-2"
+                                    >
                                         <LayoutDashboard size={14} />
                                         Tableau de bord
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/dashboard/profile" className="flex cursor-pointer items-center gap-2">
+                                    <Link
+                                        href="/dashboard/profile"
+                                        className="flex cursor-pointer items-center gap-2"
+                                    >
                                         <UserCircle size={14} />
                                         Mon profil
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/dashboard/settings" className="flex cursor-pointer items-center gap-2">
+                                    <Link
+                                        href="/dashboard/settings"
+                                        className="flex cursor-pointer items-center gap-2"
+                                    >
                                         <Settings size={14} />
                                         Paramètres
                                     </Link>

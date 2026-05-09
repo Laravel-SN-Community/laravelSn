@@ -107,7 +107,9 @@ export default function DashboardNotifications() {
                                         <div className="mt-2 shrink-0">
                                             <div
                                                 className="h-1.5 w-1.5 rounded-full"
-                                                style={{ background: 'var(--sn-600)' }}
+                                                style={{
+                                                    background: 'var(--sn-600)',
+                                                }}
                                             />
                                         </div>
                                     ) : (
@@ -118,7 +120,10 @@ export default function DashboardNotifications() {
 
                                     <div
                                         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-semibold"
-                                        style={{ background: n.fromTint, color: '#fff' }}
+                                        style={{
+                                            background: n.fromTint,
+                                            color: '#fff',
+                                        }}
                                     >
                                         {n.fromInit}
                                     </div>
@@ -128,10 +133,14 @@ export default function DashboardNotifications() {
                                             className="text-[13.5px]"
                                             style={{ color: 'var(--sn-fg)' }}
                                         >
-                                            <span className="font-semibold">{n.from}</span>
+                                            <span className="font-semibold">
+                                                {n.from}
+                                            </span>
                                             {' · '}
                                             {n.action}{' '}
-                                            <span className="font-semibold">"{n.subject}"</span>
+                                            <span className="font-semibold">
+                                                "{n.subject}"
+                                            </span>
                                         </div>
                                         <div
                                             className="mt-0.5 font-mono text-[11.5px]"

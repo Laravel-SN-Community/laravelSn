@@ -1,7 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import ArticlesSection from '@/components/site/articles-section';
-import type { ArticleSummary } from '@/types/article';
 import CommandPalette from '@/components/site/command-palette';
 import CtaSection from '@/components/site/cta-section';
 import EventsSection from '@/components/site/events-section';
@@ -11,6 +10,7 @@ import SiteFooter from '@/components/site/site-footer';
 import SiteHero from '@/components/site/site-hero';
 import SiteNavbar from '@/components/site/site-navbar';
 import SponsorsSection from '@/components/site/sponsors-section';
+import type { ArticleSummary } from '@/types/article';
 
 export default function Welcome() {
     const { auth, latestArticles } = usePage().props as {

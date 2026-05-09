@@ -6,6 +6,7 @@ import SecurityController from '@/actions/App/Http/Controllers/Settings/Security
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import DashSidebar from '@/components/site/dashboard-sidebar';
+import ThemeToggle from '@/components/site/theme-toggle';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import ThemeToggle from '@/components/site/theme-toggle';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import { disable, enable } from '@/routes/two-factor';
 
@@ -71,7 +71,6 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
     );
 }
 
-
 const EMAIL_PREFS = [
     {
         key: 'digest',
@@ -88,7 +87,7 @@ const EMAIL_PREFS = [
     {
         key: 'events',
         title: "Rappels d'évènements",
-        desc: "24h avant un évènement où je suis inscrit·e.",
+        desc: '24h avant un évènement où je suis inscrit·e.',
         defaultOn: false,
     },
 ] as const;
@@ -104,7 +103,6 @@ export default function DashboardSettings({
     requiresConfirmation = false,
     twoFactorEnabled = false,
 }: Props) {
-
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
     const deletePasswordInput = useRef<HTMLInputElement>(null);
@@ -166,10 +164,16 @@ export default function DashboardSettings({
                                         key={row.key}
                                         className="flex cursor-pointer items-start gap-3 py-3"
                                         style={{
-                                            borderTop: i === 0 ? 'none' : '1px solid var(--sn-border)',
+                                            borderTop:
+                                                i === 0
+                                                    ? 'none'
+                                                    : '1px solid var(--sn-border)',
                                         }}
                                         onClick={() =>
-                                            setEmailPrefs((p) => ({ ...p, [row.key]: !p[row.key] }))
+                                            setEmailPrefs((p) => ({
+                                                ...p,
+                                                [row.key]: !p[row.key],
+                                            }))
                                         }
                                     >
                                         <button
@@ -184,7 +188,9 @@ export default function DashboardSettings({
                                             <span
                                                 className="block h-4 w-4 rounded-full bg-white transition-transform"
                                                 style={{
-                                                    transform: emailPrefs[row.key]
+                                                    transform: emailPrefs[
+                                                        row.key
+                                                    ]
                                                         ? 'translateX(16px)'
                                                         : 'translateX(0)',
                                                 }}
@@ -193,13 +199,17 @@ export default function DashboardSettings({
                                         <div className="flex-1">
                                             <div
                                                 className="text-[14px] font-medium"
-                                                style={{ color: 'var(--sn-fg)' }}
+                                                style={{
+                                                    color: 'var(--sn-fg)',
+                                                }}
                                             >
                                                 {row.title}
                                             </div>
                                             <div
                                                 className="mt-0.5 font-mono text-[11.5px]"
-                                                style={{ color: 'var(--sn-muted)' }}
+                                                style={{
+                                                    color: 'var(--sn-muted)',
+                                                }}
                                             >
                                                 {row.desc}
                                             </div>
@@ -210,27 +220,36 @@ export default function DashboardSettings({
                         </DashCard>
 
                         {/* Password */}
-                        <DashCard eyebrow="// mot de passe" title="Changer le mot de passe">
+                        <DashCard
+                            eyebrow="// mot de passe"
+                            title="Changer le mot de passe"
+                        >
                             <Form
                                 {...SecurityController.update.form()}
                                 options={{ preserveScroll: true }}
-                                resetOnError={['password', 'password_confirmation', 'current_password']}
+                                resetOnError={[
+                                    'password',
+                                    'password_confirmation',
+                                    'current_password',
+                                ]}
                                 resetOnSuccess
                                 onError={(errs) => {
                                     if (errs.password) {
-passwordInput.current?.focus();
-}
+                                        passwordInput.current?.focus();
+                                    }
 
                                     if (errs.current_password) {
-currentPasswordInput.current?.focus();
-}
+                                        currentPasswordInput.current?.focus();
+                                    }
                                 }}
                                 className="space-y-4"
                             >
                                 {({ errors, processing }) => (
                                     <>
                                         <div>
-                                            <FieldLabel>Mot de passe actuel</FieldLabel>
+                                            <FieldLabel>
+                                                Mot de passe actuel
+                                            </FieldLabel>
                                             <PasswordInput
                                                 id="current_password"
                                                 ref={currentPasswordInput}
@@ -239,11 +258,17 @@ currentPasswordInput.current?.focus();
                                                 autoComplete="current-password"
                                                 placeholder="••••••••••"
                                             />
-                                            <InputError message={errors.current_password} />
+                                            <InputError
+                                                message={
+                                                    errors.current_password
+                                                }
+                                            />
                                         </div>
 
                                         <div>
-                                            <FieldLabel>Nouveau mot de passe</FieldLabel>
+                                            <FieldLabel>
+                                                Nouveau mot de passe
+                                            </FieldLabel>
                                             <PasswordInput
                                                 id="password"
                                                 ref={passwordInput}
@@ -252,11 +277,15 @@ currentPasswordInput.current?.focus();
                                                 autoComplete="new-password"
                                                 placeholder="••••••••••"
                                             />
-                                            <InputError message={errors.password} />
+                                            <InputError
+                                                message={errors.password}
+                                            />
                                         </div>
 
                                         <div>
-                                            <FieldLabel>Confirmer le mot de passe</FieldLabel>
+                                            <FieldLabel>
+                                                Confirmer le mot de passe
+                                            </FieldLabel>
                                             <PasswordInput
                                                 id="password_confirmation"
                                                 name="password_confirmation"
@@ -264,7 +293,11 @@ currentPasswordInput.current?.focus();
                                                 autoComplete="new-password"
                                                 placeholder="••••••••••"
                                             />
-                                            <InputError message={errors.password_confirmation} />
+                                            <InputError
+                                                message={
+                                                    errors.password_confirmation
+                                                }
+                                            />
                                         </div>
 
                                         <div className="flex justify-end">
@@ -294,7 +327,9 @@ currentPasswordInput.current?.focus();
                                             className="text-[13.5px] leading-relaxed"
                                             style={{ color: 'var(--sn-muted)' }}
                                         >
-                                            La double authentification est activée. Tu seras invité·e à entrer un code lors de la connexion.
+                                            La double authentification est
+                                            activée. Tu seras invité·e à entrer
+                                            un code lors de la connexion.
                                         </p>
                                         <Form {...disable.form()}>
                                             {({ processing }) => (
@@ -308,8 +343,12 @@ currentPasswordInput.current?.focus();
                                             )}
                                         </Form>
                                         <TwoFactorRecoveryCodes
-                                            recoveryCodesList={recoveryCodesList}
-                                            fetchRecoveryCodes={fetchRecoveryCodes}
+                                            recoveryCodesList={
+                                                recoveryCodesList
+                                            }
+                                            fetchRecoveryCodes={
+                                                fetchRecoveryCodes
+                                            }
                                             errors={twoFaErrors}
                                         />
                                     </div>
@@ -319,11 +358,15 @@ currentPasswordInput.current?.focus();
                                             className="text-[13.5px] leading-relaxed"
                                             style={{ color: 'var(--sn-muted)' }}
                                         >
-                                            Ajoute une couche de sécurité supplémentaire. Un code TOTP te sera demandé à chaque connexion.
+                                            Ajoute une couche de sécurité
+                                            supplémentaire. Un code TOTP te sera
+                                            demandé à chaque connexion.
                                         </p>
                                         {hasSetupData ? (
                                             <button
-                                                onClick={() => setShowSetupModal(true)}
+                                                onClick={() =>
+                                                    setShowSetupModal(true)
+                                                }
                                                 className="sn-btn sn-btn-primary"
                                             >
                                                 <ShieldCheck size={14} />
@@ -332,7 +375,9 @@ currentPasswordInput.current?.focus();
                                         ) : (
                                             <Form
                                                 {...enable.form()}
-                                                onSuccess={() => setShowSetupModal(true)}
+                                                onSuccess={() =>
+                                                    setShowSetupModal(true)
+                                                }
                                             >
                                                 {({ processing }) => (
                                                     <button
@@ -363,12 +408,16 @@ currentPasswordInput.current?.focus();
                         )}
 
                         {/* Danger zone */}
-                        <DashCard eyebrow="// zone dangereuse" title="Supprimer mon compte">
+                        <DashCard
+                            eyebrow="// zone dangereuse"
+                            title="Supprimer mon compte"
+                        >
                             <p
                                 className="text-[13.5px]"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                Cette action est irréversible. Tes articles seront anonymisés mais conservés.
+                                Cette action est irréversible. Tes articles
+                                seront anonymisés mais conservés.
                             </p>
 
                             <Dialog>
@@ -386,42 +435,67 @@ currentPasswordInput.current?.focus();
                                     </button>
                                 </DialogTrigger>
                                 <DialogContent>
-                                    <DialogTitle>Supprimer ton compte ?</DialogTitle>
+                                    <DialogTitle>
+                                        Supprimer ton compte ?
+                                    </DialogTitle>
                                     <DialogDescription>
-                                        Cette action est définitive. Toutes tes données seront supprimées. Entre ton mot de passe pour confirmer.
+                                        Cette action est définitive. Toutes tes
+                                        données seront supprimées. Entre ton mot
+                                        de passe pour confirmer.
                                     </DialogDescription>
 
                                     <Form
                                         {...ProfileController.destroy.form()}
                                         options={{ preserveScroll: true }}
-                                        onError={() => deletePasswordInput.current?.focus()}
+                                        onError={() =>
+                                            deletePasswordInput.current?.focus()
+                                        }
                                         resetOnSuccess
                                         className="space-y-4"
                                     >
-                                        {({ resetAndClearErrors, processing, errors }) => (
+                                        {({
+                                            resetAndClearErrors,
+                                            processing,
+                                            errors,
+                                        }) => (
                                             <>
                                                 <div className="grid gap-2">
                                                     <PasswordInput
                                                         id="password"
                                                         name="password"
-                                                        ref={deletePasswordInput}
+                                                        ref={
+                                                            deletePasswordInput
+                                                        }
                                                         placeholder="Mot de passe"
                                                         autoComplete="current-password"
                                                     />
-                                                    <InputError message={errors.password} />
+                                                    <InputError
+                                                        message={
+                                                            errors.password
+                                                        }
+                                                    />
                                                 </div>
 
                                                 <DialogFooter className="gap-2">
                                                     <DialogClose asChild>
                                                         <Button
                                                             variant="secondary"
-                                                            onClick={() => resetAndClearErrors()}
+                                                            onClick={() =>
+                                                                resetAndClearErrors()
+                                                            }
                                                         >
                                                             Annuler
                                                         </Button>
                                                     </DialogClose>
-                                                    <Button variant="destructive" disabled={processing} asChild>
-                                                        <button type="submit" data-test="confirm-delete-user-button">
+                                                    <Button
+                                                        variant="destructive"
+                                                        disabled={processing}
+                                                        asChild
+                                                    >
+                                                        <button
+                                                            type="submit"
+                                                            data-test="confirm-delete-user-button"
+                                                        >
                                                             Supprimer
                                                         </button>
                                                     </Button>

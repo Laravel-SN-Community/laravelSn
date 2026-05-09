@@ -12,7 +12,7 @@ export type UseAppearanceReturn = {
 const listeners = new Set<() => void>();
 let currentAppearance: Appearance =
     typeof window !== 'undefined'
-        ? ((localStorage.getItem('appearance') as Appearance) || 'system')
+        ? (localStorage.getItem('appearance') as Appearance) || 'system'
         : 'system';
 
 const prefersDark = (): boolean => {

@@ -165,7 +165,10 @@ function DashOverview({ user }: { user: AuthUser }) {
 
             {/* Activity + Recommendations */}
             <div className="grid gap-4 md:grid-cols-2">
-                <DashCard eyebrow="// activité récente" title="Derniers évènements">
+                <DashCard
+                    eyebrow="// activité récente"
+                    title="Derniers évènements"
+                >
                     <ul className="space-y-3 text-[13.5px]">
                         {[
                             [

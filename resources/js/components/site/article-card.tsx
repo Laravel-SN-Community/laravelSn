@@ -14,7 +14,11 @@ interface ArticleCardProps {
 function tagTint(slug: string): string {
     const palette = ['var(--sn-500)', 'var(--sn-600)', 'var(--sn-700)'];
     let h = 0;
-    for (const c of slug) h = ((h * 31 + c.charCodeAt(0)) >>> 0);
+
+    for (const c of slug) {
+        h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    }
+
     return palette[h % palette.length];
 }
 
@@ -40,11 +44,16 @@ export default function ArticleCard({
     const tint = firstTag ? tagTint(firstTag.slug) : 'var(--sn-600)';
 
     return (
-        <a href={`/articles/${slug}`} className="sn-card sn-card-hover block overflow-hidden">
+        <a
+            href={`/articles/${slug}`}
+            className="sn-card sn-card-hover block overflow-hidden"
+        >
             {/* Cover */}
             <div
                 className="relative aspect-[16/9]"
-                style={{ background: `linear-gradient(135deg, ${tint}, var(--sn-500))` }}
+                style={{
+                    background: `linear-gradient(135deg, ${tint}, var(--sn-500))`,
+                }}
             >
                 <div className="bg-sn-grid absolute inset-0 opacity-40" />
                 {firstTag && (
@@ -61,11 +70,16 @@ export default function ArticleCard({
             <div className="p-5">
                 <div className="mb-2 flex flex-wrap gap-2">
                     {tags.slice(0, 2).map((tag) => (
-                        <span key={tag.id} className="sn-badge sn-badge-primary">
+                        <span
+                            key={tag.id}
+                            className="sn-badge sn-badge-primary"
+                        >
                             #{tag.name}
                         </span>
                     ))}
-                    <span className="sn-badge sn-badge-neutral">{locale.toUpperCase()}</span>
+                    <span className="sn-badge sn-badge-neutral">
+                        {locale.toUpperCase()}
+                    </span>
                 </div>
 
                 <div
@@ -92,10 +106,13 @@ export default function ArticleCard({
                     className="mt-4 flex items-center gap-2 text-[12px]"
                     style={{ color: 'var(--sn-muted)' }}
                 >
-                    <span className="h-5 w-5 shrink-0 rounded-full" style={{ background: tint }} />
+                    <span
+                        className="h-5 w-5 shrink-0 rounded-full"
+                        style={{ background: tint }}
+                    />
                     {author.name}
-                    {published_at && <> · {fmtDate(published_at)}</>}
-                    {' '}· {reading_time_minutes} min
+                    {published_at && <> · {fmtDate(published_at)}</>} ·{' '}
+                    {reading_time_minutes} min
                 </div>
             </div>
         </a>

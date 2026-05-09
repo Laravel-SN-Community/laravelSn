@@ -28,16 +28,18 @@ function FieldInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
                 color: 'var(--sn-fg)',
             }}
             onFocus={(e) => {
- e.currentTarget.style.borderColor = 'var(--sn-accent)'; 
-}}
+                e.currentTarget.style.borderColor = 'var(--sn-accent)';
+            }}
             onBlur={(e) => {
- e.currentTarget.style.borderColor = 'var(--sn-border)'; 
-}}
+                e.currentTarget.style.borderColor = 'var(--sn-border)';
+            }}
         />
     );
 }
 
-function FieldTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+function FieldTextarea(
+    props: React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+) {
     return (
         <textarea
             {...props}
@@ -49,11 +51,11 @@ function FieldTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>)
                 color: 'var(--sn-fg)',
             }}
             onFocus={(e) => {
- e.currentTarget.style.borderColor = 'var(--sn-accent)'; 
-}}
+                e.currentTarget.style.borderColor = 'var(--sn-accent)';
+            }}
             onBlur={(e) => {
- e.currentTarget.style.borderColor = 'var(--sn-border)'; 
-}}
+                e.currentTarget.style.borderColor = 'var(--sn-border)';
+            }}
         />
     );
 }
@@ -73,7 +75,12 @@ type ExtendedUser = {
 };
 
 function getInitials(name: string): string {
-    return name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+    return name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
 }
 
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
@@ -81,8 +88,8 @@ function getTint(name: string): string {
     let hash = 0;
 
     for (let i = 0; i < name.length; i++) {
-hash = name.charCodeAt(i) + ((hash << 5) - hash);
-}
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
 
     return TINTS[Math.abs(hash) % TINTS.length];
 }
@@ -98,7 +105,9 @@ export default function DashboardProfile({
     const user = auth.user as ExtendedUser;
 
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [avatarPreview, setAvatarPreview] = useState<string | null>(user.avatar ?? null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(
+        user.avatar ?? null,
+    );
     const [hovering, setHovering] = useState(false);
 
     const tint = getTint(user.name);
@@ -135,7 +144,7 @@ export default function DashboardProfile({
                         >
                             {({ processing, errors }) => (
                                 <div
-                                    className="rounded-xl p-6 space-y-6"
+                                    className="space-y-6 rounded-xl p-6"
                                     style={{
                                         background: 'var(--sn-surface)',
                                         border: '1px solid var(--sn-border)',
@@ -146,15 +155,23 @@ export default function DashboardProfile({
                                         <button
                                             type="button"
                                             className="relative shrink-0 rounded-full focus:outline-none"
-                                            onClick={() => fileInputRef.current?.click()}
-                                            onMouseEnter={() => setHovering(true)}
-                                            onMouseLeave={() => setHovering(false)}
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
+                                            onMouseEnter={() =>
+                                                setHovering(true)
+                                            }
+                                            onMouseLeave={() =>
+                                                setHovering(false)
+                                            }
                                             aria-label="Changer la photo de profil"
                                         >
                                             <div
-                                                className="h-20 w-20 rounded-full overflow-hidden flex items-center justify-center text-[22px] font-bold"
+                                                className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full text-[22px] font-bold"
                                                 style={{
-                                                    background: avatarPreview ? 'transparent' : tint,
+                                                    background: avatarPreview
+                                                        ? 'transparent'
+                                                        : tint,
                                                     color: '#fff',
                                                 }}
                                             >
@@ -169,13 +186,18 @@ export default function DashboardProfile({
                                                 )}
                                             </div>
                                             <div
-                                                className="absolute inset-0 rounded-full flex items-center justify-center transition-opacity"
+                                                className="absolute inset-0 flex items-center justify-center rounded-full transition-opacity"
                                                 style={{
-                                                    background: 'rgba(0,0,0,0.45)',
+                                                    background:
+                                                        'rgba(0,0,0,0.45)',
                                                     opacity: hovering ? 1 : 0,
                                                 }}
                                             >
-                                                <Camera size={20} color="#fff" strokeWidth={1.75} />
+                                                <Camera
+                                                    size={20}
+                                                    color="#fff"
+                                                    strokeWidth={1.75}
+                                                />
                                             </div>
                                         </button>
 
@@ -191,46 +213,66 @@ export default function DashboardProfile({
                                         <div>
                                             <div
                                                 className="text-[14px] font-medium"
-                                                style={{ color: 'var(--sn-fg)' }}
+                                                style={{
+                                                    color: 'var(--sn-fg)',
+                                                }}
                                             >
                                                 {user.name}
                                             </div>
                                             <button
                                                 type="button"
-                                                onClick={() => fileInputRef.current?.click()}
+                                                onClick={() =>
+                                                    fileInputRef.current?.click()
+                                                }
                                                 className="mt-1 font-mono text-[11.5px] underline underline-offset-2 transition-colors"
-                                                style={{ color: 'var(--sn-muted)' }}
+                                                style={{
+                                                    color: 'var(--sn-muted)',
+                                                }}
                                                 onMouseEnter={(e) => {
- e.currentTarget.style.color = 'var(--sn-fg)'; 
-}}
+                                                    e.currentTarget.style.color =
+                                                        'var(--sn-fg)';
+                                                }}
                                                 onMouseLeave={(e) => {
- e.currentTarget.style.color = 'var(--sn-muted)'; 
-}}
+                                                    e.currentTarget.style.color =
+                                                        'var(--sn-muted)';
+                                                }}
                                             >
                                                 Changer la photo
                                             </button>
-                                            {avatarPreview && avatarPreview !== user.avatar && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setAvatarPreview(user.avatar ?? null);
+                                            {avatarPreview &&
+                                                avatarPreview !==
+                                                    user.avatar && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setAvatarPreview(
+                                                                user.avatar ??
+                                                                    null,
+                                                            );
 
-                                                        if (fileInputRef.current) {
-fileInputRef.current.value = '';
-}
-                                                    }}
-                                                    className="ml-3 font-mono text-[11.5px] underline underline-offset-2"
-                                                    style={{ color: 'var(--sn-muted)' }}
-                                                >
-                                                    Annuler
-                                                </button>
-                                            )}
+                                                            if (
+                                                                fileInputRef.current
+                                                            ) {
+                                                                fileInputRef.current.value =
+                                                                    '';
+                                                            }
+                                                        }}
+                                                        className="ml-3 font-mono text-[11.5px] underline underline-offset-2"
+                                                        style={{
+                                                            color: 'var(--sn-muted)',
+                                                        }}
+                                                    >
+                                                        Annuler
+                                                    </button>
+                                                )}
                                         </div>
                                     </div>
 
                                     <div
                                         className="border-t"
-                                        style={{ borderColor: 'var(--sn-border)' }}
+                                        style={{
+                                            borderColor: 'var(--sn-border)',
+                                        }}
                                     />
 
                                     {/* Main info */}
@@ -244,19 +286,29 @@ fileInputRef.current.value = '';
                                                 autoComplete="name"
                                                 placeholder="Aïssatou Diop"
                                             />
-                                            <InputError className="mt-1" message={errors.name} />
+                                            <InputError
+                                                className="mt-1"
+                                                message={errors.name}
+                                            />
                                         </div>
 
                                         <div>
-                                            <FieldLabel>Nom d'utilisateur</FieldLabel>
+                                            <FieldLabel>
+                                                Nom d'utilisateur
+                                            </FieldLabel>
                                             <FieldInput
                                                 name="username"
-                                                defaultValue={user.username ?? ''}
+                                                defaultValue={
+                                                    user.username ?? ''
+                                                }
                                                 required
                                                 autoComplete="username"
                                                 placeholder="aissatou_diop"
                                             />
-                                            <InputError className="mt-1" message={errors.username} />
+                                            <InputError
+                                                className="mt-1"
+                                                message={errors.username}
+                                            />
                                         </div>
 
                                         <div className="sm:col-span-2">
@@ -266,17 +318,25 @@ fileInputRef.current.value = '';
                                                 defaultValue={user.bio ?? ''}
                                                 placeholder="Développeur·se passionné·e par le web, basé·e à Dakar..."
                                             />
-                                            <InputError className="mt-1" message={errors.bio} />
+                                            <InputError
+                                                className="mt-1"
+                                                message={errors.bio}
+                                            />
                                         </div>
 
                                         <div>
                                             <FieldLabel>Ville</FieldLabel>
                                             <FieldInput
                                                 name="location"
-                                                defaultValue={user.location ?? ''}
+                                                defaultValue={
+                                                    user.location ?? ''
+                                                }
                                                 placeholder="Dakar"
                                             />
-                                            <InputError className="mt-1" message={errors.location} />
+                                            <InputError
+                                                className="mt-1"
+                                                message={errors.location}
+                                            />
                                         </div>
 
                                         <div>
@@ -289,38 +349,56 @@ fileInputRef.current.value = '';
                                                 autoComplete="email"
                                                 placeholder="aissatou@wave.com"
                                             />
-                                            <InputError className="mt-1" message={errors.email} />
+                                            <InputError
+                                                className="mt-1"
+                                                message={errors.email}
+                                            />
                                         </div>
 
-                                        {mustVerifyEmail && user.email_verified_at === null && (
-                                            <div
-                                                className="sm:col-span-2 rounded-md px-3 py-2 font-mono text-[12px]"
-                                                style={{
-                                                    background: 'var(--sn-surface-2)',
-                                                    color: 'var(--sn-muted)',
-                                                }}
-                                            >
-                                                Ton adresse email n'est pas vérifiée.{' '}
-                                                <Link
-                                                    href={send()}
-                                                    as="button"
-                                                    className="underline"
-                                                    style={{ color: 'var(--sn-fg)' }}
+                                        {mustVerifyEmail &&
+                                            user.email_verified_at === null && (
+                                                <div
+                                                    className="rounded-md px-3 py-2 font-mono text-[12px] sm:col-span-2"
+                                                    style={{
+                                                        background:
+                                                            'var(--sn-surface-2)',
+                                                        color: 'var(--sn-muted)',
+                                                    }}
                                                 >
-                                                    Renvoyer l'email de vérification.
-                                                </Link>
-                                                {status === 'verification-link-sent' && (
-                                                    <div className="mt-1" style={{ color: 'var(--sn-600)' }}>
-                                                        Un nouveau lien a été envoyé.
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
+                                                    Ton adresse email n'est pas
+                                                    vérifiée.{' '}
+                                                    <Link
+                                                        href={send()}
+                                                        as="button"
+                                                        className="underline"
+                                                        style={{
+                                                            color: 'var(--sn-fg)',
+                                                        }}
+                                                    >
+                                                        Renvoyer l'email de
+                                                        vérification.
+                                                    </Link>
+                                                    {status ===
+                                                        'verification-link-sent' && (
+                                                        <div
+                                                            className="mt-1"
+                                                            style={{
+                                                                color: 'var(--sn-600)',
+                                                            }}
+                                                        >
+                                                            Un nouveau lien a
+                                                            été envoyé.
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
                                     </div>
 
                                     <div
                                         className="border-t"
-                                        style={{ borderColor: 'var(--sn-border)' }}
+                                        style={{
+                                            borderColor: 'var(--sn-border)',
+                                        }}
                                     />
 
                                     {/* Social links */}
@@ -336,41 +414,75 @@ fileInputRef.current.value = '';
                                                 <FieldLabel>GitHub</FieldLabel>
                                                 <FieldInput
                                                     name="github_handle"
-                                                    defaultValue={user.github_handle ?? ''}
+                                                    defaultValue={
+                                                        user.github_handle ?? ''
+                                                    }
                                                     placeholder="github_username"
                                                 />
-                                                <InputError className="mt-1" message={errors.github_handle} />
+                                                <InputError
+                                                    className="mt-1"
+                                                    message={
+                                                        errors.github_handle
+                                                    }
+                                                />
                                             </div>
 
                                             <div>
-                                                <FieldLabel>Twitter / X</FieldLabel>
+                                                <FieldLabel>
+                                                    Twitter / X
+                                                </FieldLabel>
                                                 <FieldInput
                                                     name="twitter_handle"
-                                                    defaultValue={user.twitter_handle ?? ''}
+                                                    defaultValue={
+                                                        user.twitter_handle ??
+                                                        ''
+                                                    }
                                                     placeholder="@handle"
                                                 />
-                                                <InputError className="mt-1" message={errors.twitter_handle} />
+                                                <InputError
+                                                    className="mt-1"
+                                                    message={
+                                                        errors.twitter_handle
+                                                    }
+                                                />
                                             </div>
 
                                             <div>
-                                                <FieldLabel>LinkedIn</FieldLabel>
+                                                <FieldLabel>
+                                                    LinkedIn
+                                                </FieldLabel>
                                                 <FieldInput
                                                     name="linkedin_handle"
-                                                    defaultValue={user.linkedin_handle ?? ''}
+                                                    defaultValue={
+                                                        user.linkedin_handle ??
+                                                        ''
+                                                    }
                                                     placeholder="linkedin_username"
                                                 />
-                                                <InputError className="mt-1" message={errors.linkedin_handle} />
+                                                <InputError
+                                                    className="mt-1"
+                                                    message={
+                                                        errors.linkedin_handle
+                                                    }
+                                                />
                                             </div>
 
                                             <div>
-                                                <FieldLabel>Site web</FieldLabel>
+                                                <FieldLabel>
+                                                    Site web
+                                                </FieldLabel>
                                                 <FieldInput
                                                     name="website_url"
                                                     type="url"
-                                                    defaultValue={user.website_url ?? ''}
+                                                    defaultValue={
+                                                        user.website_url ?? ''
+                                                    }
                                                     placeholder="https://monsite.com"
                                                 />
-                                                <InputError className="mt-1" message={errors.website_url} />
+                                                <InputError
+                                                    className="mt-1"
+                                                    message={errors.website_url}
+                                                />
                                             </div>
                                         </div>
                                     </div>

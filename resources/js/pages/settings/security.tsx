@@ -112,7 +112,10 @@ export default function Security({
                             Sécurité
                         </h1>
 
-                        <DashCard eyebrow="// mot de passe" title="Changer le mot de passe">
+                        <DashCard
+                            eyebrow="// mot de passe"
+                            title="Changer le mot de passe"
+                        >
                             <Form
                                 {...SecurityController.update.form()}
                                 options={{ preserveScroll: true }}
@@ -136,7 +139,9 @@ export default function Security({
                                 {({ errors, processing }) => (
                                     <>
                                         <div>
-                                            <FieldLabel>Mot de passe actuel</FieldLabel>
+                                            <FieldLabel>
+                                                Mot de passe actuel
+                                            </FieldLabel>
                                             <PasswordInput
                                                 id="current_password"
                                                 ref={currentPasswordInput}
@@ -145,11 +150,17 @@ export default function Security({
                                                 autoComplete="current-password"
                                                 placeholder="••••••••••"
                                             />
-                                            <InputError message={errors.current_password} />
+                                            <InputError
+                                                message={
+                                                    errors.current_password
+                                                }
+                                            />
                                         </div>
 
                                         <div>
-                                            <FieldLabel>Nouveau mot de passe</FieldLabel>
+                                            <FieldLabel>
+                                                Nouveau mot de passe
+                                            </FieldLabel>
                                             <PasswordInput
                                                 id="password"
                                                 ref={passwordInput}
@@ -158,11 +169,15 @@ export default function Security({
                                                 autoComplete="new-password"
                                                 placeholder="••••••••••"
                                             />
-                                            <InputError message={errors.password} />
+                                            <InputError
+                                                message={errors.password}
+                                            />
                                         </div>
 
                                         <div>
-                                            <FieldLabel>Confirmer le mot de passe</FieldLabel>
+                                            <FieldLabel>
+                                                Confirmer le mot de passe
+                                            </FieldLabel>
                                             <PasswordInput
                                                 id="password_confirmation"
                                                 name="password_confirmation"
@@ -170,7 +185,11 @@ export default function Security({
                                                 autoComplete="new-password"
                                                 placeholder="••••••••••"
                                             />
-                                            <InputError message={errors.password_confirmation} />
+                                            <InputError
+                                                message={
+                                                    errors.password_confirmation
+                                                }
+                                            />
                                         </div>
 
                                         <div className="flex justify-end">
@@ -199,7 +218,9 @@ export default function Security({
                                             className="text-[13.5px] leading-relaxed"
                                             style={{ color: 'var(--sn-muted)' }}
                                         >
-                                            La double authentification est activée. Tu seras invité·e à entrer un code lors de la connexion.
+                                            La double authentification est
+                                            activée. Tu seras invité·e à entrer
+                                            un code lors de la connexion.
                                         </p>
                                         <Form {...disable.form()}>
                                             {({ processing }) => (
@@ -213,8 +234,12 @@ export default function Security({
                                             )}
                                         </Form>
                                         <TwoFactorRecoveryCodes
-                                            recoveryCodesList={recoveryCodesList}
-                                            fetchRecoveryCodes={fetchRecoveryCodes}
+                                            recoveryCodesList={
+                                                recoveryCodesList
+                                            }
+                                            fetchRecoveryCodes={
+                                                fetchRecoveryCodes
+                                            }
                                             errors={errors}
                                         />
                                     </div>
@@ -224,11 +249,15 @@ export default function Security({
                                             className="text-[13.5px] leading-relaxed"
                                             style={{ color: 'var(--sn-muted)' }}
                                         >
-                                            Ajoute une couche de sécurité supplémentaire. Un code TOTP te sera demandé à chaque connexion.
+                                            Ajoute une couche de sécurité
+                                            supplémentaire. Un code TOTP te sera
+                                            demandé à chaque connexion.
                                         </p>
                                         {hasSetupData ? (
                                             <button
-                                                onClick={() => setShowSetupModal(true)}
+                                                onClick={() =>
+                                                    setShowSetupModal(true)
+                                                }
                                                 className="sn-btn sn-btn-primary"
                                             >
                                                 <ShieldCheck size={14} />
@@ -237,7 +266,9 @@ export default function Security({
                                         ) : (
                                             <Form
                                                 {...enable.form()}
-                                                onSuccess={() => setShowSetupModal(true)}
+                                                onSuccess={() =>
+                                                    setShowSetupModal(true)
+                                                }
                                             >
                                                 {({ processing }) => (
                                                     <button

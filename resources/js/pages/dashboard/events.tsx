@@ -47,30 +47,38 @@ export default function DashboardEvents() {
                                     <div
                                         key={e.slug}
                                         className="flex flex-wrap items-center justify-between gap-4 border-b pb-4 last:border-0 last:pb-0"
-                                        style={{ borderColor: 'var(--sn-border)' }}
+                                        style={{
+                                            borderColor: 'var(--sn-border)',
+                                        }}
                                     >
                                         <div className="flex items-center gap-4">
                                             <div
                                                 className="w-[52px] shrink-0 text-center"
-                                                style={{ color: 'var(--sn-700)' }}
+                                                style={{
+                                                    color: 'var(--sn-700)',
+                                                }}
                                             >
                                                 <div className="font-mono text-[10px] tracking-[0.15em] uppercase">
                                                     {e.month}
                                                 </div>
-                                                <div className="text-[28px] font-semibold leading-none tracking-[-0.03em]">
+                                                <div className="text-[28px] leading-none font-semibold tracking-[-0.03em]">
                                                     {e.day}
                                                 </div>
                                             </div>
                                             <div className="min-w-0">
                                                 <div
                                                     className="text-[15px] font-semibold tracking-tight"
-                                                    style={{ color: 'var(--sn-fg)' }}
+                                                    style={{
+                                                        color: 'var(--sn-fg)',
+                                                    }}
                                                 >
                                                     {e.title}
                                                 </div>
                                                 <div
                                                     className="mt-0.5 font-mono text-[11.5px]"
-                                                    style={{ color: 'var(--sn-muted)' }}
+                                                    style={{
+                                                        color: 'var(--sn-muted)',
+                                                    }}
                                                 >
                                                     {e.where} · {e.time}
                                                 </div>
@@ -79,7 +87,9 @@ export default function DashboardEvents() {
                                         <div className="flex items-center gap-3">
                                             <span
                                                 className="font-mono text-[12px]"
-                                                style={{ color: 'var(--sn-600)' }}
+                                                style={{
+                                                    color: 'var(--sn-600)',
+                                                }}
                                             >
                                                 ● confirmé
                                             </span>

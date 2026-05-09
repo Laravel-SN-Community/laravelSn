@@ -14,7 +14,11 @@ type DraftArticle = {
 };
 
 function fmtDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    });
 }
 
 type Props = {
@@ -23,7 +27,11 @@ type Props = {
     draftArticles: DraftArticle[];
 };
 
-export default function DashboardArticles({ tags = [], publishedArticles = [], draftArticles = [] }: Props) {
+export default function DashboardArticles({
+    tags = [],
+    publishedArticles = [],
+    draftArticles = [],
+}: Props) {
     const [sheetOpen, setSheetOpen] = useState(false);
 
     return (
@@ -53,10 +61,18 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                                     className="mt-1 font-mono text-[13px]"
                                     style={{ color: 'var(--sn-muted)' }}
                                 >
-                                    {publishedArticles.length} publié{publishedArticles.length !== 1 ? 's' : ''} · {draftArticles.length} brouillon{draftArticles.length !== 1 ? 's' : ''}
+                                    {publishedArticles.length} publié
+                                    {publishedArticles.length !== 1
+                                        ? 's'
+                                        : ''}{' '}
+                                    · {draftArticles.length} brouillon
+                                    {draftArticles.length !== 1 ? 's' : ''}
                                 </p>
                             </div>
-                            <button onClick={() => setSheetOpen(true)} className="sn-btn sn-btn-primary">
+                            <button
+                                onClick={() => setSheetOpen(true)}
+                                className="sn-btn sn-btn-primary"
+                            >
                                 Nouvel article
                             </button>
                         </div>
@@ -64,7 +80,10 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                         {/* Published */}
                         <div
                             className="rounded-xl p-6"
-                            style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
+                            style={{
+                                background: 'var(--sn-surface)',
+                                border: '1px solid var(--sn-border)',
+                            }}
                         >
                             <div
                                 className="mb-4 font-mono text-[10.5px] tracking-[0.18em] uppercase"
@@ -73,7 +92,10 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                                 // publiés
                             </div>
                             {publishedArticles.length === 0 ? (
-                                <p className="font-mono text-[12.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                <p
+                                    className="font-mono text-[12.5px]"
+                                    style={{ color: 'var(--sn-muted)' }}
+                                >
                                     Aucun article publié pour l'instant.
                                 </p>
                             ) : (
@@ -82,21 +104,44 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                                         <div
                                             key={a.slug}
                                             className="flex flex-wrap items-start justify-between gap-3 border-b pb-4 last:border-0 last:pb-0"
-                                            style={{ borderColor: 'var(--sn-border)' }}
+                                            style={{
+                                                borderColor: 'var(--sn-border)',
+                                            }}
                                         >
                                             <div className="min-w-0">
-                                                <div className="text-[15px] font-semibold tracking-tight" style={{ color: 'var(--sn-fg)' }}>
+                                                <div
+                                                    className="text-[15px] font-semibold tracking-tight"
+                                                    style={{
+                                                        color: 'var(--sn-fg)',
+                                                    }}
+                                                >
                                                     {a.title}
                                                 </div>
-                                                <div className="mt-0.5 font-mono text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
-                                                    {a.published_at ? fmtDate(a.published_at) : '—'} · {a.reading_time_minutes} min · {a.views_count} vues
+                                                <div
+                                                    className="mt-0.5 font-mono text-[11.5px]"
+                                                    style={{
+                                                        color: 'var(--sn-muted)',
+                                                    }}
+                                                >
+                                                    {a.published_at
+                                                        ? fmtDate(
+                                                              a.published_at,
+                                                          )
+                                                        : '—'}{' '}
+                                                    · {a.reading_time_minutes}{' '}
+                                                    min · {a.views_count} vues
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
-                                                <Link href={`/articles/${a.slug}`} className="sn-btn sn-btn-ghost sn-btn-sm">
+                                                <Link
+                                                    href={`/articles/${a.slug}`}
+                                                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                                                >
                                                     Voir
                                                 </Link>
-                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">Stats</button>
+                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">
+                                                    Stats
+                                                </button>
                                             </div>
                                         </div>
                                     ))}
@@ -107,7 +152,10 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                         {/* Drafts */}
                         <div
                             className="rounded-xl p-6"
-                            style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
+                            style={{
+                                background: 'var(--sn-surface)',
+                                border: '1px solid var(--sn-border)',
+                            }}
                         >
                             <div
                                 className="mb-4 font-mono text-[10.5px] tracking-[0.18em] uppercase"
@@ -116,7 +164,10 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                                 // brouillons
                             </div>
                             {draftArticles.length === 0 ? (
-                                <p className="font-mono text-[12.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                <p
+                                    className="font-mono text-[12.5px]"
+                                    style={{ color: 'var(--sn-muted)' }}
+                                >
                                     Aucun brouillon. Commence à écrire !
                                 </p>
                             ) : (
@@ -125,19 +176,36 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                                         <div
                                             key={d.slug}
                                             className="flex flex-wrap items-start justify-between gap-3 border-b pb-4 last:border-0 last:pb-0"
-                                            style={{ borderColor: 'var(--sn-border)' }}
+                                            style={{
+                                                borderColor: 'var(--sn-border)',
+                                            }}
                                         >
                                             <div className="min-w-0">
-                                                <div className="text-[15px] font-semibold tracking-tight" style={{ color: 'var(--sn-fg)' }}>
+                                                <div
+                                                    className="text-[15px] font-semibold tracking-tight"
+                                                    style={{
+                                                        color: 'var(--sn-fg)',
+                                                    }}
+                                                >
                                                     {d.title}
                                                 </div>
-                                                <div className="mt-0.5 font-mono text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
-                                                    Modifié {fmtDate(d.updated_at)}
+                                                <div
+                                                    className="mt-0.5 font-mono text-[11.5px]"
+                                                    style={{
+                                                        color: 'var(--sn-muted)',
+                                                    }}
+                                                >
+                                                    Modifié{' '}
+                                                    {fmtDate(d.updated_at)}
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
-                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">Reprendre</button>
-                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">Publier</button>
+                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">
+                                                    Reprendre
+                                                </button>
+                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">
+                                                    Publier
+                                                </button>
                                             </div>
                                         </div>
                                     ))}
@@ -148,7 +216,11 @@ export default function DashboardArticles({ tags = [], publishedArticles = [], d
                 </div>
             </div>
 
-            <ArticleCreateSheet tags={tags} open={sheetOpen} onOpenChange={setSheetOpen} />
+            <ArticleCreateSheet
+                tags={tags}
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+            />
         </>
     );
 }

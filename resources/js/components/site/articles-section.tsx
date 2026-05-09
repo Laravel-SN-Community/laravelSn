@@ -36,7 +36,10 @@ export default function ArticlesSection({ articles }: Props) {
             ) : (
                 <div
                     className="rounded-xl p-10 text-center font-mono text-[13px]"
-                    style={{ border: '1px solid var(--sn-border)', color: 'var(--sn-muted)' }}
+                    style={{
+                        border: '1px solid var(--sn-border)',
+                        color: 'var(--sn-muted)',
+                    }}
                 >
                     Aucun article publié pour l'instant.
                 </div>
