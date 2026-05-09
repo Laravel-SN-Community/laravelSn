@@ -22,6 +22,12 @@ trait ProfileValidationRules
             'name' => $this->nameRules(),
             'username' => $this->usernameRules($userId),
             'email' => $this->emailRules($userId),
+            'bio' => ['nullable', 'string', 'max:500'],
+            'location' => ['nullable', 'string', 'max:100'],
+            'github_handle' => ['nullable', 'string', 'max:39'],
+            'twitter_handle' => ['nullable', 'string', 'max:50'],
+            'linkedin_handle' => ['nullable', 'string', 'max:100'],
+            'website_url' => ['nullable', 'url', 'max:255'],
         ];
     }
 

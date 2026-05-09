@@ -1,5 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 import { useRef, useState } from 'react';
+import ThemeToggle from '@/components/site/theme-toggle';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -14,7 +15,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { useAppearance } from '@/hooks/use-appearance';
 
 function DashCard({
     eyebrow,
@@ -54,13 +54,6 @@ function DashCard({
     );
 }
 
-const THEMES = [
-    { value: 'light', label: '☀ Clair' },
-    { value: 'dark', label: '☾ Sombre' },
-    { value: 'system', label: '☐ Système' },
-] as const;
-
-type Theme = (typeof THEMES)[number]['value'];
 
 const EMAIL_PREFS = [
     {
@@ -84,7 +77,6 @@ const EMAIL_PREFS = [
 ] as const;
 
 export default function Appearance() {
-    const { appearance, updateAppearance } = useAppearance();
     const passwordInput = useRef<HTMLInputElement>(null);
     const [emailPrefs, setEmailPrefs] = useState<Record<string, boolean>>({
         digest: true,
@@ -109,32 +101,7 @@ export default function Appearance() {
                         </h1>
 
                         <DashCard eyebrow="// apparence" title="Thème">
-                            <div className="flex gap-2 flex-wrap">
-                                {THEMES.map((t) => {
-                                    const active = appearance === t.value;
-
-                                    return (
-                                        <button
-                                            key={t.value}
-                                            onClick={() =>
-                                                updateAppearance(t.value as Theme)
-                                            }
-                                            className="rounded-md px-4 py-2 font-mono text-[12px] capitalize transition-colors"
-                                            style={{
-                                                background: active
-                                                    ? 'var(--sn-fg)'
-                                                    : 'transparent',
-                                                color: active
-                                                    ? 'var(--sn-bg)'
-                                                    : 'var(--sn-fg)',
-                                                border: '1px solid var(--sn-border)',
-                                            }}
-                                        >
-                                            {t.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                            <ThemeToggle />
                         </DashCard>
 
                         <DashCard eyebrow="// notifications" title="Email">

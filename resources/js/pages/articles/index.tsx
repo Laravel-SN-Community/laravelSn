@@ -1,68 +1,34 @@
-import { Head } from '@inertiajs/react';
-import { ArrowRight, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { X } from 'lucide-react';
+import { useRef, useState } from 'react';
 import ArticleCard from '@/components/site/article-card';
-import { ALL_TAGS, ARTICLES } from '@/data/community';
+import type { ArticleTag, PaginatedArticles } from '@/types/article';
 
-const PER_PAGE = 6;
+type Filters = { tag: string | null; locale: string; q: string | null; sort: string };
+type Props = { articles: PaginatedArticles; tags: ArticleTag[]; filters: Filters };
 
-export default function Articles() {
-    const [tag, setTag] = useState('Tous');
-    const [sort, setSort] = useState('recent');
-    const [q, setQ] = useState('');
-    const [page, setPage] = useState(1);
+export default function Articles({ articles, tags, filters }: Props) {
+    const [q, setQ] = useState(filters.q ?? '');
+    const qTimer = useRef<ReturnType<typeof setTimeout>>();
 
-    const filtered = useMemo(() => {
-        let list = [...ARTICLES];
+    function go(overrides: Partial<Filters & { page: number }>) {
+        const params: Record<string, string | number> = {};
+        const merged = { ...filters, q: q || null, ...overrides };
+        if (merged.tag) params.tag = merged.tag;
+        if (merged.q) params.q = merged.q;
+        if (merged.sort && merged.sort !== 'recent') params.sort = merged.sort;
+        if (merged.locale && merged.locale !== 'fr') params.locale = merged.locale;
+        if ('page' in overrides && overrides.page && overrides.page > 1) params.page = overrides.page;
+        router.get('/articles', params, { preserveState: true, replace: true });
+    }
 
-        if (tag !== 'Tous') {
-            list = list.filter((a) => a.tag === tag);
-        }
+    function handleQ(value: string) {
+        setQ(value);
+        clearTimeout(qTimer.current);
+        qTimer.current = setTimeout(() => go({ q: value || null }), 400);
+    }
 
-        if (q.trim()) {
-            const s = q.toLowerCase();
-            list = list.filter(
-                (a) =>
-                    a.title.toLowerCase().includes(s) ||
-                    a.excerpt.toLowerCase().includes(s) ||
-                    a.author.toLowerCase().includes(s),
-            );
-        }
-
-        if (sort === 'recent') {
-            list.sort((a, b) => b.dateISO.localeCompare(a.dateISO));
-        }
-
-        if (sort === 'ancien') {
-            list.sort((a, b) => a.dateISO.localeCompare(b.dateISO));
-        }
-
-        if (sort === 'long') {
-            list.sort((a, b) => b.readMinutes - a.readMinutes);
-        }
-
-        if (sort === 'court') {
-            list.sort((a, b) => a.readMinutes - b.readMinutes);
-        }
-
-        return list;
-    }, [tag, sort, q]);
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-    const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-
-    const handleTagChange = (t: string) => {
-        setTag(t);
-        setPage(1);
-    };
-    const handleSortChange = (s: string) => {
-        setSort(s);
-        setPage(1);
-    };
-    const handleQChange = (v: string) => {
-        setQ(v);
-        setPage(1);
-    };
+    const activeTag = filters.tag ?? null;
 
     return (
         <>
@@ -88,19 +54,27 @@ export default function Articles() {
                             className="mt-4 text-[16px] leading-relaxed lg:text-[17px]"
                             style={{ color: 'var(--sn-muted)' }}
                         >
-                            Retours d'expérience, guides techniques et patterns
-                            éprouvés — en français, ancrés dans notre contexte
-                            ouest-africain.
+                            Retours d'expérience, guides techniques et patterns éprouvés — en français, ancrés dans notre contexte ouest-africain.
                         </p>
                     </div>
-                    <a
-                        href="https://github.com/laravel-sn"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="sn-btn sn-btn-primary"
+                    <div
+                        className="flex gap-0.5 rounded-lg p-0.5"
+                        style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
                     >
-                        Écrire un article <ArrowRight size={13} />
-                    </a>
+                        {(['fr', 'en'] as const).map((loc) => (
+                            <button
+                                key={loc}
+                                onClick={() => go({ locale: loc })}
+                                className="rounded-md px-5 py-2 text-[13px] font-semibold transition-all"
+                                style={{
+                                    background: filters.locale === loc ? 'var(--sn-accent)' : 'transparent',
+                                    color: filters.locale === loc ? 'var(--sn-accent-fg)' : 'var(--sn-muted)',
+                                }}
+                            >
+                                {loc.toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -111,191 +85,136 @@ export default function Articles() {
                         {/* Search */}
                         <div
                             className="flex min-w-[240px] flex-1 items-center gap-2 rounded-md px-3"
-                            style={{
-                                background: 'var(--sn-surface-2)',
-                                border: '1px solid var(--sn-border)',
-                            }}
+                            style={{ background: 'var(--sn-surface-2)', border: '1px solid var(--sn-border)' }}
                         >
-                            <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                style={{
-                                    color: 'var(--sn-muted)',
-                                    flexShrink: 0,
-                                }}
-                            >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--sn-muted)', flexShrink: 0 }}>
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.35-4.35" />
                             </svg>
                             <input
                                 value={q}
-                                onChange={(e) => handleQChange(e.target.value)}
+                                onChange={(e) => handleQ(e.target.value)}
                                 placeholder="Chercher un article…"
                                 className="flex-1 bg-transparent py-2.5 text-[14px] outline-none"
                                 style={{ color: 'var(--sn-fg)' }}
                             />
                             {q && (
-                                <button
-                                    onClick={() => handleQChange('')}
-                                    aria-label="Effacer"
-                                >
-                                    <X
-                                        size={14}
-                                        style={{ color: 'var(--sn-muted)' }}
-                                    />
+                                <button onClick={() => handleQ('')} aria-label="Effacer">
+                                    <X size={14} style={{ color: 'var(--sn-muted)' }} />
                                 </button>
                             )}
                         </div>
 
                         {/* Sort */}
                         <select
-                            value={sort}
-                            onChange={(e) => handleSortChange(e.target.value)}
+                            value={filters.sort}
+                            onChange={(e) => go({ sort: e.target.value })}
                             className="max-w-[180px] rounded-md px-3 py-2 font-mono text-[13px]"
-                            style={{
-                                background: 'var(--sn-surface)',
-                                border: '1px solid var(--sn-border)',
-                                color: 'var(--sn-fg)',
-                            }}
+                            style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)', color: 'var(--sn-fg)' }}
                         >
                             <option value="recent">Plus récents</option>
-                            <option value="ancien">Plus anciens</option>
+                            <option value="popular">Plus populaires</option>
                             <option value="long">Lecture longue</option>
-                            <option value="court">Lecture rapide</option>
+                            <option value="short">Lecture rapide</option>
                         </select>
                     </div>
 
                     {/* Tag chips */}
                     <div className="mt-4 flex flex-wrap gap-2">
-                        {ALL_TAGS.map((t) => (
+                        <button
+                            onClick={() => go({ tag: null })}
+                            className="rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
+                            style={
+                                activeTag === null
+                                    ? { background: 'var(--sn-accent)', color: 'var(--sn-accent-fg)' }
+                                    : { background: 'var(--sn-surface-2)', color: 'var(--sn-muted)', border: '1px solid var(--sn-border)' }
+                            }
+                        >
+                            #Tous
+                        </button>
+                        {tags.map((tag) => (
                             <button
-                                key={t}
-                                onClick={() => handleTagChange(t)}
+                                key={tag.id}
+                                onClick={() => go({ tag: tag.slug })}
                                 className="rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
                                 style={
-                                    tag === t
-                                        ? {
-                                              background: 'var(--sn-accent)',
-                                              color: 'var(--sn-accent-fg)',
-                                          }
-                                        : {
-                                              background: 'var(--sn-surface-2)',
-                                              color: 'var(--sn-muted)',
-                                              border: '1px solid var(--sn-border)',
-                                          }
+                                    activeTag === tag.slug
+                                        ? { background: 'var(--sn-accent)', color: 'var(--sn-accent-fg)' }
+                                        : { background: 'var(--sn-surface-2)', color: 'var(--sn-muted)', border: '1px solid var(--sn-border)' }
                                 }
                             >
-                                #{t}
+                                #{tag.name}
                             </button>
                         ))}
                     </div>
                 </div>
 
-                {/* Count + page */}
+                {/* Count */}
                 <div className="mt-6 mb-4 flex items-center justify-between">
-                    <div
-                        className="flex items-center gap-3 font-mono text-[12px]"
-                        style={{ color: 'var(--sn-muted)' }}
-                    >
-                        <span
-                            className="h-1 w-1 rounded-full"
-                            style={{ background: 'var(--sn-accent)' }}
-                        />
+                    <div className="flex items-center gap-3 font-mono text-[12px]" style={{ color: 'var(--sn-muted)' }}>
+                        <span className="h-1 w-1 rounded-full" style={{ background: 'var(--sn-accent)' }} />
                         <span>
-                            <span style={{ color: 'var(--sn-fg)' }}>
-                                {filtered.length}
-                            </span>{' '}
-                            {filtered.length === 1 ? 'article' : 'articles'}
+                            <span style={{ color: 'var(--sn-fg)' }}>{articles.total}</span>{' '}
+                            {articles.total === 1 ? 'article' : 'articles'}
                         </span>
                     </div>
-                    <div
-                        className="font-mono text-[11.5px]"
-                        style={{ color: 'var(--sn-muted)' }}
-                    >
-                        page {page} / {totalPages}
-                    </div>
+                    {articles.last_page > 1 && (
+                        <div className="font-mono text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
+                            page {articles.current_page} / {articles.last_page}
+                        </div>
+                    )}
                 </div>
             </section>
 
             {/* Grid */}
             <section className="mx-auto max-w-[1400px] px-6 lg:px-10">
-                {paged.length === 0 ? (
+                {articles.data.length === 0 ? (
                     <div className="sn-card p-10 text-center">
-                        <div
-                            className="mb-2 font-mono text-[12px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
+                        <div className="mb-2 font-mono text-[12px]" style={{ color: 'var(--sn-muted)' }}>
                             // aucun résultat
                         </div>
-                        <p
-                            className="text-[15px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            Essaie d'enlever un filtre ou de changer ta
-                            recherche.
+                        <p className="text-[15px]" style={{ color: 'var(--sn-muted)' }}>
+                            Essaie d'enlever un filtre ou de changer ta recherche.
                         </p>
                     </div>
                 ) : (
                     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                        {paged.map((a) => (
-                            <ArticleCard
-                                key={a.slug}
-                                slug={a.slug}
-                                tag={a.tag}
-                                title={a.title}
-                                excerpt={a.excerpt}
-                                author={a.author}
-                                date={a.date}
-                                readMinutes={a.readMinutes}
-                                tint={a.tint}
-                            />
+                        {articles.data.map((a) => (
+                            <ArticleCard key={a.slug} {...a} />
                         ))}
                     </div>
                 )}
 
                 {/* Pagination */}
-                {totalPages > 1 && (
+                {articles.last_page > 1 && (
                     <div className="mt-10 flex items-center justify-center gap-2">
                         <button
-                            onClick={() => setPage((p) => Math.max(1, p - 1))}
-                            disabled={page === 1}
+                            onClick={() => go({ page: articles.current_page - 1 })}
+                            disabled={articles.current_page === 1}
                             className="sn-btn sn-btn-secondary sn-btn-sm"
-                            style={page === 1 ? { opacity: 0.4 } : {}}
+                            style={articles.current_page === 1 ? { opacity: 0.4 } : {}}
                         >
                             ← Préc.
                         </button>
-                        {Array.from({ length: totalPages }).map((_, i) => (
+                        {Array.from({ length: articles.last_page }, (_, i) => i + 1).map((p) => (
                             <button
-                                key={i}
-                                onClick={() => setPage(i + 1)}
+                                key={p}
+                                onClick={() => go({ page: p })}
                                 className="h-9 w-9 rounded-md font-mono text-[13px]"
                                 style={
-                                    page === i + 1
-                                        ? {
-                                              background: 'var(--sn-fg)',
-                                              color: 'var(--sn-bg)',
-                                          }
-                                        : {
-                                              background: 'var(--sn-surface)',
-                                              color: 'var(--sn-fg)',
-                                              border: '1px solid var(--sn-border)',
-                                          }
+                                    p === articles.current_page
+                                        ? { background: 'var(--sn-fg)', color: 'var(--sn-bg)' }
+                                        : { background: 'var(--sn-surface)', color: 'var(--sn-fg)', border: '1px solid var(--sn-border)' }
                                 }
                             >
-                                {i + 1}
+                                {p}
                             </button>
                         ))}
                         <button
-                            onClick={() =>
-                                setPage((p) => Math.min(totalPages, p + 1))
-                            }
-                            disabled={page === totalPages}
+                            onClick={() => go({ page: articles.current_page + 1 })}
+                            disabled={articles.current_page === articles.last_page}
                             className="sn-btn sn-btn-secondary sn-btn-sm"
-                            style={page === totalPages ? { opacity: 0.4 } : {}}
+                            style={articles.current_page === articles.last_page ? { opacity: 0.4 } : {}}
                         >
                             Suiv. →
                         </button>

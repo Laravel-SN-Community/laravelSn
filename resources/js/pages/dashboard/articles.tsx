@@ -1,14 +1,30 @@
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
+import ArticleCreateSheet from '@/components/site/article-create-sheet';
 import DashSidebar from '@/components/site/dashboard-sidebar';
-import { ARTICLES } from '@/data/community';
+import type { ArticleSummary, ArticleTag } from '@/types/article';
 
-const DRAFTS = [
-    { title: 'Scout + Meilisearch : setup complet', updatedAt: 'il y a 2 jours' },
-    { title: 'Pattern Repository dans une app Laravel réelle', updatedAt: 'il y a 5 jours' },
-];
+type DraftArticle = {
+    id: number;
+    slug: string;
+    title: string;
+    excerpt: string;
+    updated_at: string;
+    tags: ArticleTag[];
+};
 
-export default function DashboardArticles() {
-    const publishedArticles = ARTICLES.slice(0, 2);
+function fmtDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+type Props = {
+    tags: ArticleTag[];
+    publishedArticles: ArticleSummary[];
+    draftArticles: DraftArticle[];
+};
+
+export default function DashboardArticles({ tags = [], publishedArticles = [], draftArticles = [] }: Props) {
+    const [sheetOpen, setSheetOpen] = useState(false);
 
     return (
         <>
@@ -37,24 +53,18 @@ export default function DashboardArticles() {
                                     className="mt-1 font-mono text-[13px]"
                                     style={{ color: 'var(--sn-muted)' }}
                                 >
-                                    2 publiés · 2 brouillons
+                                    {publishedArticles.length} publié{publishedArticles.length !== 1 ? 's' : ''} · {draftArticles.length} brouillon{draftArticles.length !== 1 ? 's' : ''}
                                 </p>
                             </div>
-                            <Link
-                                href="/articles/nouveau"
-                                className="sn-btn sn-btn-primary"
-                            >
+                            <button onClick={() => setSheetOpen(true)} className="sn-btn sn-btn-primary">
                                 Nouvel article
-                            </Link>
+                            </button>
                         </div>
 
                         {/* Published */}
                         <div
                             className="rounded-xl p-6"
-                            style={{
-                                background: 'var(--sn-surface)',
-                                border: '1px solid var(--sn-border)',
-                            }}
+                            style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
                         >
                             <div
                                 className="mb-4 font-mono text-[10.5px] tracking-[0.18em] uppercase"
@@ -62,50 +72,42 @@ export default function DashboardArticles() {
                             >
                                 // publiés
                             </div>
-                            <div className="space-y-4">
-                                {publishedArticles.map((a) => (
-                                    <div
-                                        key={a.slug}
-                                        className="flex flex-wrap items-start justify-between gap-3 border-b pb-4 last:border-0 last:pb-0"
-                                        style={{ borderColor: 'var(--sn-border)' }}
-                                    >
-                                        <div className="min-w-0">
-                                            <div
-                                                className="text-[15px] font-semibold tracking-tight"
-                                                style={{ color: 'var(--sn-fg)' }}
-                                            >
-                                                {a.title}
+                            {publishedArticles.length === 0 ? (
+                                <p className="font-mono text-[12.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                    Aucun article publié pour l'instant.
+                                </p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {publishedArticles.map((a) => (
+                                        <div
+                                            key={a.slug}
+                                            className="flex flex-wrap items-start justify-between gap-3 border-b pb-4 last:border-0 last:pb-0"
+                                            style={{ borderColor: 'var(--sn-border)' }}
+                                        >
+                                            <div className="min-w-0">
+                                                <div className="text-[15px] font-semibold tracking-tight" style={{ color: 'var(--sn-fg)' }}>
+                                                    {a.title}
+                                                </div>
+                                                <div className="mt-0.5 font-mono text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                                    {a.published_at ? fmtDate(a.published_at) : '—'} · {a.reading_time_minutes} min · {a.views_count} vues
+                                                </div>
                                             </div>
-                                            <div
-                                                className="mt-0.5 font-mono text-[11.5px]"
-                                                style={{ color: 'var(--sn-muted)' }}
-                                            >
-                                                {a.date} · {a.readMinutes} min · 128 réactions
+                                            <div className="flex gap-2">
+                                                <Link href={`/articles/${a.slug}`} className="sn-btn sn-btn-ghost sn-btn-sm">
+                                                    Voir
+                                                </Link>
+                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">Stats</button>
                                             </div>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <Link
-                                                href={`/articles/${a.slug}`}
-                                                className="sn-btn sn-btn-ghost sn-btn-sm"
-                                            >
-                                                Modifier
-                                            </Link>
-                                            <button className="sn-btn sn-btn-ghost sn-btn-sm">
-                                                Stats
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Drafts */}
                         <div
                             className="rounded-xl p-6"
-                            style={{
-                                background: 'var(--sn-surface)',
-                                border: '1px solid var(--sn-border)',
-                            }}
+                            style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
                         >
                             <div
                                 className="mb-4 font-mono text-[10.5px] tracking-[0.18em] uppercase"
@@ -113,42 +115,40 @@ export default function DashboardArticles() {
                             >
                                 // brouillons
                             </div>
-                            <div className="space-y-4">
-                                {DRAFTS.map((d, i) => (
-                                    <div
-                                        key={i}
-                                        className="flex flex-wrap items-start justify-between gap-3 border-b pb-4 last:border-0 last:pb-0"
-                                        style={{ borderColor: 'var(--sn-border)' }}
-                                    >
-                                        <div className="min-w-0">
-                                            <div
-                                                className="text-[15px] font-semibold tracking-tight"
-                                                style={{ color: 'var(--sn-fg)' }}
-                                            >
-                                                {d.title}
+                            {draftArticles.length === 0 ? (
+                                <p className="font-mono text-[12.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                    Aucun brouillon. Commence à écrire !
+                                </p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {draftArticles.map((d) => (
+                                        <div
+                                            key={d.slug}
+                                            className="flex flex-wrap items-start justify-between gap-3 border-b pb-4 last:border-0 last:pb-0"
+                                            style={{ borderColor: 'var(--sn-border)' }}
+                                        >
+                                            <div className="min-w-0">
+                                                <div className="text-[15px] font-semibold tracking-tight" style={{ color: 'var(--sn-fg)' }}>
+                                                    {d.title}
+                                                </div>
+                                                <div className="mt-0.5 font-mono text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
+                                                    Modifié {fmtDate(d.updated_at)}
+                                                </div>
                                             </div>
-                                            <div
-                                                className="mt-0.5 font-mono text-[11.5px]"
-                                                style={{ color: 'var(--sn-muted)' }}
-                                            >
-                                                Modifié {d.updatedAt}
+                                            <div className="flex gap-2">
+                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">Reprendre</button>
+                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">Publier</button>
                                             </div>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <button className="sn-btn sn-btn-ghost sn-btn-sm">
-                                                Reprendre
-                                            </button>
-                                            <button className="sn-btn sn-btn-ghost sn-btn-sm">
-                                                Publier
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </main>
                 </div>
             </div>
+
+            <ArticleCreateSheet tags={tags} open={sheetOpen} onOpenChange={setSheetOpen} />
         </>
     );
 }

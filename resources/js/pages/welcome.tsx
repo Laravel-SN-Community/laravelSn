@@ -1,6 +1,7 @@
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import ArticlesSection from '@/components/site/articles-section';
+import type { ArticleSummary } from '@/types/article';
 import CommandPalette from '@/components/site/command-palette';
 import CtaSection from '@/components/site/cta-section';
 import EventsSection from '@/components/site/events-section';
@@ -12,8 +13,9 @@ import SiteNavbar from '@/components/site/site-navbar';
 import SponsorsSection from '@/components/site/sponsors-section';
 
 export default function Welcome() {
-    const { auth } = usePage().props as {
+    const { auth, latestArticles } = usePage().props as {
         auth: { user: { name: string } | null };
+        latestArticles: ArticleSummary[];
     };
     const [cmdOpen, setCmdOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -59,7 +61,7 @@ export default function Welcome() {
                 <main>
                     <SiteHero onOpenCmd={() => setCmdOpen(true)} />
                     <SponsorsSection />
-                    <ArticlesSection />
+                    <ArticlesSection articles={latestArticles} />
                     <EventsSection />
                     <OpenSourceSection />
                     <CtaSection />

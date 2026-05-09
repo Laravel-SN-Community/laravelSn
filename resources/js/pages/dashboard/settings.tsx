@@ -18,7 +18,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { useAppearance } from '@/hooks/use-appearance';
+import ThemeToggle from '@/components/site/theme-toggle';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import { disable, enable } from '@/routes/two-factor';
 
@@ -71,13 +71,6 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
     );
 }
 
-const THEMES = [
-    { value: 'light', label: '☀ Clair' },
-    { value: 'dark', label: '☾ Sombre' },
-    { value: 'system', label: '☐ Système' },
-] as const;
-
-type Theme = (typeof THEMES)[number]['value'];
 
 const EMAIL_PREFS = [
     {
@@ -111,7 +104,7 @@ export default function DashboardSettings({
     requiresConfirmation = false,
     twoFactorEnabled = false,
 }: Props) {
-    const { appearance, updateAppearance } = useAppearance();
+
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
     const deletePasswordInput = useRef<HTMLInputElement>(null);
@@ -162,26 +155,7 @@ export default function DashboardSettings({
 
                         {/* Appearance */}
                         <DashCard eyebrow="// apparence" title="Thème">
-                            <div className="flex flex-wrap gap-2">
-                                {THEMES.map((t) => {
-                                    const active = appearance === t.value;
-
-                                    return (
-                                        <button
-                                            key={t.value}
-                                            onClick={() => updateAppearance(t.value as Theme)}
-                                            className="rounded-md px-4 py-2 font-mono text-[12px] transition-colors"
-                                            style={{
-                                                background: active ? 'var(--sn-fg)' : 'transparent',
-                                                color: active ? 'var(--sn-bg)' : 'var(--sn-fg)',
-                                                border: '1px solid var(--sn-border)',
-                                            }}
-                                        >
-                                            {t.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                            <ThemeToggle />
                         </DashCard>
 
                         {/* Notifications */}
