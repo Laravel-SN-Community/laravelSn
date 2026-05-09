@@ -492,7 +492,7 @@ function Label({ children }: { children: React.ReactNode }) {
     );
 }
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({ message }: { message?: string | undefined }) {
     if (!message) {
         return null;
     }
@@ -513,7 +513,7 @@ function TagsSelect({
     tags: Tag[];
     selected: number[];
     onChange: (ids: number[]) => void;
-    error?: string;
+    error?: string | undefined;
 }) {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);

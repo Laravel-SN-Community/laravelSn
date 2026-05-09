@@ -18,7 +18,7 @@ type Props = {
 
 export default function Articles({ articles, tags, filters }: Props) {
     const [q, setQ] = useState(filters.q ?? '');
-    const qTimer = useRef<ReturnType<typeof setTimeout>>();
+    const qTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
     function go(overrides: Partial<Filters & { page: number }>) {
         const params: Record<string, string | number> = {};

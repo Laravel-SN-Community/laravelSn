@@ -42,7 +42,7 @@ function fmtJoined(iso: string): string {
 }
 
 export default function MembreShow() {
-    const { user, articles } = usePage().props as {
+    const { user, articles } = usePage().props as unknown as {
         user: UserProfile;
         articles: ArticleSummary[];
     };

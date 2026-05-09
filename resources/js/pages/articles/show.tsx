@@ -30,7 +30,7 @@ function renderBody(raw: string): string {
     };
 
     let out = raw
-        .replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) =>
+        .replace(/```(\w*)\n?([\s\S]*?)```/g, (_, _lang, code) =>
             ph(
                 `<pre><code>${code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>`,
             ),
@@ -224,7 +224,7 @@ function Comments() {
 }
 
 export default function ArticleShow() {
-    const { article, relatedArticles } = usePage().props as {
+    const { article, relatedArticles } = usePage().props as unknown as {
         article: ArticleFull;
         relatedArticles: ArticleSummary[];
     };
