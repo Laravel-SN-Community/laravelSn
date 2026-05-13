@@ -28,3 +28,6 @@ yarn-error.log
 /.vscode
 /.zed
 /.ai
+/.claude/settings.local.json
+/.codex/config.toml
+/.junie/mcp/
