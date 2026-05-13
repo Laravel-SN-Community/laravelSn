@@ -702,10 +702,14 @@ export default function ArticleCreateSheet({
                 locale: article.locale as 'fr' | 'en',
                 tags: article.tags.map((t) => t.id),
                 is_draft: article.status === 'draft',
-                published_at: article.published_at ?? '',
+                published_at: article.published_at
+                    ? article.published_at.split('T')[0]
+                    : '',
             });
         }
     }, [article?.slug, open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const isPublished = article?.status === 'published';
 
     const wordCount = data.body.trim()
         ? data.body.trim().split(/\s+/).length
@@ -947,12 +951,13 @@ export default function ArticleCreateSheet({
                                 {/* Draft toggle + date side by side */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div
-                                        className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 transition-colors"
+                                        className={`flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors ${isPublished ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                         style={{
                                             background: 'var(--sn-surface)',
                                             border: '1px solid var(--sn-border)',
                                         }}
                                         onClick={() =>
+                                            !isPublished &&
                                             setData('is_draft', !data.is_draft)
                                         }
                                     >
@@ -1000,12 +1005,12 @@ export default function ArticleCreateSheet({
                                         onChange={(v) =>
                                             setData('published_at', v)
                                         }
-                                        min={
-                                            new Date()
+                                        {...(!isPublished && {
+                                            min: new Date()
                                                 .toISOString()
-                                                .split('T')[0]
-                                        }
-                                        disabled={data.is_draft}
+                                                .split('T')[0],
+                                        })}
+                                        disabled={data.is_draft || isPublished}
                                     />
                                 </div>
 
@@ -1035,11 +1040,12 @@ export default function ArticleCreateSheet({
                                             <button
                                                 key={loc}
                                                 type="button"
+                                                disabled={isPublished}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setData('locale', loc);
                                                 }}
-                                                className="rounded-md px-4 py-1.5 text-[12.5px] font-semibold transition-all"
+                                                className="rounded-md px-4 py-1.5 text-[12.5px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50"
                                                 style={{
                                                     background:
                                                         data.locale === loc
@@ -1193,7 +1199,7 @@ export default function ArticleCreateSheet({
                                             placeholder={
                                                 '# Mon article\n\nCommence à rédiger ici…'
                                             }
-                                            className="w-full resize-none px-4 py-3 font-mono text-[13px] leading-relaxed focus:outline-none"
+                                            className="w-full resize-none px-4 py-3 text-[13px] leading-relaxed focus:outline-none"
                                             style={{
                                                 background: 'var(--sn-bg)',
                                                 color: 'var(--sn-fg)',
