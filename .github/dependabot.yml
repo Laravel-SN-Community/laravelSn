@@ -51,6 +51,11 @@ updates:
           - '@inertiajs/*'
       dev-dependencies:
         dependency-type: 'development'
+    ignore:
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint/js'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: 'github-actions'
     directory: '/'

@@ -12,6 +12,7 @@ concurrency:
 jobs:
   deploy:
     name: Deploy to production
+    if: false
     runs-on: ubuntu-latest
     environment:
       name: production
