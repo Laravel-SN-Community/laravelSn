@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import InputError from '@/components/input-error';
 import DashSidebar from '@/components/site/dashboard-sidebar';
+import { useInitials } from '@/hooks/use-initials';
 import { send } from '@/routes/verification';
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -74,15 +75,6 @@ type ExtendedUser = {
     website_url?: string;
 };
 
-function getInitials(name: string): string {
-    return name
-        .split(' ')
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
-}
-
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 function getTint(name: string): string {
     let hash = 0;
@@ -103,6 +95,7 @@ export default function DashboardProfile({
 }) {
     const { auth } = usePage().props;
     const user = auth.user as ExtendedUser;
+    const getInitials = useInitials();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(
@@ -138,7 +131,7 @@ export default function DashboardProfile({
                         </h1>
 
                         <Form
-                            {...ProfileController.update.form()}
+                            action={ProfileController.update()}
                             options={{ preserveScroll: true }}
                             encType="multipart/form-data"
                         >

@@ -168,3 +168,131 @@ test('store validates required fields', function () {
         ->post(route('articles.store'), [])
         ->assertSessionHasErrors(['title', 'body', 'locale', 'tags']);
 });
+
+// ── update ─────────────────────────────────────────────────────────────────
+
+test('guests cannot update articles', function () {
+    $article = Article::factory()->draft()->create();
+
+    $this->patch(route('articles.update', $article))->assertRedirect(route('login'));
+});
+
+test('author can update their own draft article', function () {
+    $user = User::factory()->create();
+    $tag = Tag::factory()->create();
+    $article = Article::factory()->draft()->for($user, 'author')->create();
+
+    $this->actingAs($user)->patch(route('articles.update', $article), [
+        'title' => 'Titre mis à jour',
+        'body' => str_repeat('word ', 100),
+        'locale' => 'fr',
+        'tags' => [$tag->id],
+        'is_draft' => true,
+    ])->assertRedirect(route('dashboard.articles'));
+
+    $this->assertDatabaseHas('articles', [
+        'id' => $article->id,
+        'title' => 'Titre mis à jour',
+    ]);
+});
+
+test('other users cannot update an article', function () {
+    $tag = Tag::factory()->create();
+    $article = Article::factory()->draft()->create();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)->patch(route('articles.update', $article), [
+        'title' => 'Tentative de modification',
+        'body' => str_repeat('word ', 100),
+        'locale' => 'fr',
+        'tags' => [$tag->id],
+    ])->assertForbidden();
+});
+
+test('updating a published article keeps it published', function () {
+    $user = User::factory()->create();
+    $tag = Tag::factory()->create();
+    $article = Article::factory()->for($user, 'author')->create();
+
+    $this->actingAs($user)->patch(route('articles.update', $article), [
+        'title' => 'Titre corrigé',
+        'body' => str_repeat('word ', 100),
+        'locale' => 'fr',
+        'tags' => [$tag->id],
+        'is_draft' => false,
+    ])->assertRedirect(route('dashboard.articles'));
+
+    $this->assertDatabaseHas('articles', [
+        'id' => $article->id,
+        'title' => 'Titre corrigé',
+        'status' => PublicationStatus::Published->value,
+    ]);
+});
+
+test('update validates required fields', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->draft()->for($user, 'author')->create();
+
+    $this->actingAs($user)
+        ->patch(route('articles.update', $article), [])
+        ->assertSessionHasErrors(['title', 'body', 'locale', 'tags']);
+});
+
+// ── destroy ────────────────────────────────────────────────────────────────
+
+test('guests cannot delete articles', function () {
+    $article = Article::factory()->draft()->create();
+
+    $this->delete(route('articles.destroy', $article))->assertRedirect(route('login'));
+});
+
+test('author can delete their own draft article', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->draft()->for($user, 'author')->create();
+
+    $this->actingAs($user)
+        ->delete(route('articles.destroy', $article))
+        ->assertRedirect(route('dashboard.articles'));
+
+    $this->assertSoftDeleted('articles', ['id' => $article->id]);
+});
+
+test('other users cannot delete an article', function () {
+    $article = Article::factory()->draft()->create();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)
+        ->delete(route('articles.destroy', $article))
+        ->assertForbidden();
+});
+
+// ── publish ────────────────────────────────────────────────────────────────
+
+test('guests cannot publish articles', function () {
+    $article = Article::factory()->draft()->create();
+
+    $this->post(route('articles.publish', $article))->assertRedirect(route('login'));
+});
+
+test('author can publish their own draft article', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->draft()->for($user, 'author')->create();
+
+    $this->actingAs($user)
+        ->post(route('articles.publish', $article))
+        ->assertRedirect(route('dashboard.articles'));
+
+    $this->assertDatabaseHas('articles', [
+        'id' => $article->id,
+        'status' => PublicationStatus::Published->value,
+    ]);
+});
+
+test('other users cannot publish an article', function () {
+    $article = Article::factory()->draft()->create();
+    $other = User::factory()->create();
+
+    $this->actingAs($other)
+        ->post(route('articles.publish', $article))
+        ->assertForbidden();
+});

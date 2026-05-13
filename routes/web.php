@@ -31,6 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');
     Route::get('/dashboard/articles', [ArticleController::class, 'dashboardIndex'])->name('dashboard.articles');
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+    Route::patch('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+    Route::post('/articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
     Route::inertia('/dashboard/events', 'dashboard/events')->name('dashboard.events');
     Route::inertia('/dashboard/notifications', 'dashboard/notifications')->name('dashboard.notifications');
 });

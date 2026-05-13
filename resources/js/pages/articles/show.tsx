@@ -2,6 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { Github, Link2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import ArticleCard from '@/components/site/article-card';
+import { useInitials } from '@/hooks/use-initials';
 import type { ArticleFull, ArticleSummary } from '@/types/article';
 
 function slugify(text: string): string {
@@ -229,6 +230,7 @@ export default function ArticleShow() {
         relatedArticles: ArticleSummary[];
     };
 
+    const getInitials = useInitials();
     const toc = useMemo(() => extractToc(article.body), [article.body]);
     const bodyHtml = useMemo(() => renderBody(article.body), [article.body]);
     const firstTag = article.tags[0];
@@ -272,7 +274,7 @@ export default function ArticleShow() {
 
             {/* Breadcrumb */}
             <div
-                className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-2 px-6 pt-6 font-mono text-[11.5px] lg:px-10"
+                className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-2 px-6 pt-6 text-[12px] lg:px-10"
                 style={{ color: 'var(--sn-muted)' }}
             >
                 <Link href="/" className="hover:underline">
@@ -335,41 +337,40 @@ export default function ArticleShow() {
                                 <img
                                     src={article.author.avatar}
                                     alt={article.author.name}
-                                    className="h-11 w-11 rounded-full object-cover"
+                                    className="h-8 w-8 rounded-full object-cover"
                                 />
                             ) : (
                                 <span
-                                    className="grid h-11 w-11 place-items-center rounded-full font-mono text-[13px]"
+                                    className="grid h-8 w-8 place-items-center rounded-full font-mono text-[11px]"
                                     style={{ background: tint, color: '#fff' }}
                                 >
-                                    {article.author.name
-                                        .slice(0, 2)
-                                        .toUpperCase()}
+                                    {getInitials(article.author.name)}
                                 </span>
                             )}
-                            <div>
-                                <div
-                                    className="text-[14px] font-medium"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
-                                    {article.author.name}
-                                </div>
-                                {article.author.location && (
-                                    <div
-                                        className="text-[12.5px]"
-                                        style={{ color: 'var(--sn-muted)' }}
-                                    >
-                                        {article.author.location}
-                                    </div>
-                                )}
+                            <div
+                                className="text-[14px] font-medium"
+                                style={{ color: 'var(--sn-fg)' }}
+                            >
+                                {article.author.name}
                             </div>
                         </Link>
                         {article.published_at && (
                             <div
-                                className="ml-auto text-right font-mono text-[11.5px]"
+                                className="ml-auto text-right text-[12px]"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                {fmtDate(article.published_at)}
+                                <div>{fmtDate(article.published_at)}</div>
+                                {new Date(article.updated_at).getTime() -
+                                    new Date(article.published_at).getTime() >
+                                    86_400_000 && (
+                                    <div
+                                        className="mt-0.5"
+                                        style={{ color: 'var(--sn-accent)' }}
+                                    >
+                                        Mis à jour le{' '}
+                                        {fmtDate(article.updated_at)}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -479,9 +480,7 @@ export default function ArticleShow() {
                                     className="grid h-16 w-16 place-items-center rounded-full font-mono text-[18px]"
                                     style={{ background: tint, color: '#fff' }}
                                 >
-                                    {article.author.name
-                                        .slice(0, 2)
-                                        .toUpperCase()}
+                                    {getInitials(article.author.name)}
                                 </span>
                             )}
                         </Link>

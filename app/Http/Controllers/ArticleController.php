@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Articles\CreateArticle;
+use App\Actions\Articles\DeleteArticle;
 use App\Actions\Articles\IncrementArticleViews;
+use App\Actions\Articles\PublishArticle;
+use App\Actions\Articles\UpdateArticle;
 use App\Enums\PublicationStatus;
 use App\Models\Article;
 use App\Models\Tag;
@@ -88,7 +91,7 @@ final class ArticleController extends Controller
             ->with('tags:id,name,slug')
             ->latest('published_at')
             ->get()
-            ->each->makeHidden(['body', 'seo_meta', 'submitted_at', 'approved_at', 'declined_at']);
+            ->each->makeHidden(['seo_meta', 'submitted_at', 'approved_at', 'declined_at']);
 
         $draftArticles = Article::query()
             ->where('author_id', $user->id)
@@ -96,7 +99,7 @@ final class ArticleController extends Controller
             ->with('tags:id,name,slug')
             ->latest('updated_at')
             ->get()
-            ->each->makeHidden(['body', 'seo_meta']);
+            ->each->makeHidden(['seo_meta']);
 
         return Inertia::render('dashboard/articles', [
             'tags' => Tag::query()->orderBy('name')->get(['id', 'name', 'slug']),
@@ -136,6 +139,62 @@ final class ArticleController extends Controller
             ],
             tagIds: array_map('intval', $validated['tags']),
         );
+
+        return redirect()->route('dashboard.articles');
+    }
+
+    public function update(Request $request, Article $article, UpdateArticle $updateArticle): RedirectResponse
+    {
+        Gate::authorize('update', $article);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+            'locale' => ['required', 'string', 'in:fr,en'],
+            'tags' => ['required', 'array', 'min:1', 'max:3'],
+            'tags.*' => ['required', 'integer', 'exists:tags,id'],
+            'is_draft' => ['boolean'],
+            'published_at' => ['nullable', 'date'],
+        ]);
+
+        $isDraft = (bool) ($validated['is_draft'] ?? true);
+
+        $data = [
+            'title' => $validated['title'],
+            'body' => $validated['body'],
+            'locale' => $validated['locale'],
+        ];
+
+        if (! $article->isPublished()) {
+            $data['status'] = $isDraft ? PublicationStatus::Draft : PublicationStatus::Pending;
+            $data['published_at'] = ! $isDraft && isset($validated['published_at'])
+                ? $validated['published_at']
+                : null;
+        }
+
+        $updateArticle(
+            article: $article,
+            data: $data,
+            tagIds: array_map('intval', $validated['tags']),
+        );
+
+        return redirect()->route('dashboard.articles');
+    }
+
+    public function destroy(Article $article, DeleteArticle $deleteArticle): RedirectResponse
+    {
+        Gate::authorize('delete', $article);
+
+        $deleteArticle($article);
+
+        return redirect()->route('dashboard.articles');
+    }
+
+    public function publish(Article $article, PublishArticle $publishArticle): RedirectResponse
+    {
+        Gate::authorize('publish', $article);
+
+        $publishArticle($article);
 
         return redirect()->route('dashboard.articles');
     }

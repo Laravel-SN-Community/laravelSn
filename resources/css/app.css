@@ -325,7 +325,6 @@
     font-weight: 500;
     padding: 0.2rem 0.5rem;
     border-radius: 6px;
-    font-family: var(--font-mono);
     letter-spacing: 0.02em;
     white-space: nowrap;
 }
@@ -336,6 +335,7 @@
 .sn-badge-primary {
     background: color-mix(in oklch, var(--sn-accent) 14%, transparent);
     color: var(--sn-accent);
+    font-family: var(--font-mono);
 }
 
 .sn-navlink {

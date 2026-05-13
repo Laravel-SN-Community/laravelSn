@@ -103,7 +103,7 @@ export default function Profile({
                             title="Informations"
                         >
                             <Form
-                                {...ProfileController.update.form()}
+                                action={ProfileController.update()}
                                 options={{ preserveScroll: true }}
                                 className="space-y-0"
                             >

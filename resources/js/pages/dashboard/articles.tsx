@@ -1,14 +1,23 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Trash2, X } from 'lucide-react';
 import { useState } from 'react';
+import ArticleController from '@/actions/App/Http/Controllers/ArticleController';
 import ArticleCreateSheet from '@/components/site/article-create-sheet';
 import DashSidebar from '@/components/site/dashboard-sidebar';
-import type { ArticleSummary, ArticleTag } from '@/types/article';
+import type { ArticleTag } from '@/types/article';
 
-type DraftArticle = {
+type DashboardArticle = {
     id: number;
     slug: string;
     title: string;
     excerpt: string;
+    body: string;
+    locale: string;
+    status: string;
+    published_at: string | null;
+    reading_time_minutes: number;
+    views_count: number;
     updated_at: string;
     tags: ArticleTag[];
 };
@@ -23,8 +32,8 @@ function fmtDate(iso: string): string {
 
 type Props = {
     tags: ArticleTag[];
-    publishedArticles: ArticleSummary[];
-    draftArticles: DraftArticle[];
+    publishedArticles: DashboardArticle[];
+    draftArticles: DashboardArticle[];
 };
 
 export default function DashboardArticles({
@@ -33,6 +42,45 @@ export default function DashboardArticles({
     draftArticles = [],
 }: Props) {
     const [sheetOpen, setSheetOpen] = useState(false);
+    const [editArticle, setEditArticle] = useState<DashboardArticle | null>(
+        null,
+    );
+    const [deleteTarget, setDeleteTarget] = useState<DashboardArticle | null>(
+        null,
+    );
+
+    function openCreate() {
+        setEditArticle(null);
+        setSheetOpen(true);
+    }
+
+    function openEdit(a: DashboardArticle) {
+        setEditArticle(a);
+        setSheetOpen(true);
+    }
+
+    function handleSheetChange(next: boolean) {
+        if (!next) {
+            setEditArticle(null);
+        }
+
+        setSheetOpen(next);
+    }
+
+    function handlePublish(slug: string) {
+        router.post(ArticleController.publish.url({ article: slug }));
+    }
+
+    function confirmDelete() {
+        if (!deleteTarget) {
+            return;
+        }
+
+        router.delete(
+            ArticleController.destroy.url({ article: deleteTarget.slug }),
+            { onFinish: () => setDeleteTarget(null) },
+        );
+    }
 
     return (
         <>
@@ -70,7 +118,7 @@ export default function DashboardArticles({
                                 </p>
                             </div>
                             <button
-                                onClick={() => setSheetOpen(true)}
+                                onClick={openCreate}
                                 className="sn-btn sn-btn-primary"
                             >
                                 Nouvel article
@@ -129,7 +177,11 @@ export default function DashboardArticles({
                                                           )
                                                         : '—'}{' '}
                                                     · {a.reading_time_minutes}{' '}
-                                                    min · {a.views_count} vues
+                                                    min ·{' '}
+                                                    {a.views_count.toLocaleString(
+                                                        'fr-FR',
+                                                    )}{' '}
+                                                    vues
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
@@ -139,8 +191,11 @@ export default function DashboardArticles({
                                                 >
                                                     Voir
                                                 </Link>
-                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">
-                                                    Stats
+                                                <button
+                                                    onClick={() => openEdit(a)}
+                                                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                                                >
+                                                    Modifier
                                                 </button>
                                             </div>
                                         </div>
@@ -199,12 +254,44 @@ export default function DashboardArticles({
                                                     {fmtDate(d.updated_at)}
                                                 </div>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => openEdit(d)}
+                                                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                                                >
                                                     Reprendre
                                                 </button>
-                                                <button className="sn-btn sn-btn-ghost sn-btn-sm">
+                                                <button
+                                                    onClick={() =>
+                                                        handlePublish(d.slug)
+                                                    }
+                                                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                                                >
                                                     Publier
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        setDeleteTarget(d)
+                                                    }
+                                                    className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
+                                                    style={{
+                                                        color: 'var(--sn-muted)',
+                                                    }}
+                                                    title="Supprimer"
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.background =
+                                                            'color-mix(in oklch, var(--destructive) 10%, transparent)';
+                                                        e.currentTarget.style.color =
+                                                            'var(--destructive)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.background =
+                                                            'transparent';
+                                                        e.currentTarget.style.color =
+                                                            'var(--sn-muted)';
+                                                    }}
+                                                >
+                                                    <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         </div>
@@ -216,10 +303,104 @@ export default function DashboardArticles({
                 </div>
             </div>
 
+            {/* Delete confirm modal */}
+            <Dialog.Root
+                open={deleteTarget !== null}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setDeleteTarget(null);
+                    }
+                }}
+            >
+                <Dialog.Portal>
+                    <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+                    <Dialog.Content
+                        className="fixed top-1/2 left-1/2 z-50 w-full max-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-6 shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
+                        style={{
+                            background: 'var(--sn-bg)',
+                            border: '1px solid var(--sn-border)',
+                        }}
+                    >
+                        <div className="flex items-start justify-between gap-4">
+                            <div
+                                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                                style={{
+                                    background:
+                                        'color-mix(in oklch, var(--destructive) 10%, transparent)',
+                                }}
+                            >
+                                <Trash2
+                                    size={18}
+                                    style={{ color: 'var(--destructive)' }}
+                                />
+                            </div>
+                            <Dialog.Close
+                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors focus:outline-none"
+                                style={{ color: 'var(--sn-muted)' }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background =
+                                        'var(--sn-surface-2)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background =
+                                        'transparent';
+                                }}
+                            >
+                                <X size={14} />
+                            </Dialog.Close>
+                        </div>
+
+                        <Dialog.Title
+                            className="mt-4 text-[17px] font-semibold tracking-tight"
+                            style={{ color: 'var(--sn-fg)' }}
+                        >
+                            Supprimer le brouillon
+                        </Dialog.Title>
+                        <Dialog.Description
+                            className="mt-1.5 text-[13.5px] leading-relaxed"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
+                            Le brouillon{' '}
+                            <span
+                                className="font-medium"
+                                style={{ color: 'var(--sn-fg)' }}
+                            >
+                                «&nbsp;{deleteTarget?.title}&nbsp;»
+                            </span>{' '}
+                            sera supprimé définitivement. Cette action est
+                            irréversible.
+                        </Dialog.Description>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <Dialog.Close className="sn-btn sn-btn-secondary sn-btn-sm">
+                                Annuler
+                            </Dialog.Close>
+                            <button
+                                onClick={confirmDelete}
+                                className="sn-btn sn-btn-sm rounded-lg px-4 py-2 text-[13px] font-semibold transition-colors focus:outline-none"
+                                style={{
+                                    background: 'var(--destructive)',
+                                    color: '#fff',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.opacity = '0.88';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.opacity = '1';
+                                }}
+                            >
+                                Supprimer
+                            </button>
+                        </div>
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
+
             <ArticleCreateSheet
                 tags={tags}
                 open={sheetOpen}
-                onOpenChange={setSheetOpen}
+                onOpenChange={handleSheetChange}
+                article={editArticle ?? undefined}
             />
         </>
     );

@@ -8,6 +8,7 @@ import {
     Settings,
     UserCircle,
 } from 'lucide-react';
+import { useInitials } from '@/hooks/use-initials';
 import { logout } from '@/routes';
 
 interface AuthUser {
@@ -56,15 +57,6 @@ const SECTIONS = [
 
 type SectionId = (typeof SECTIONS)[number]['id'];
 
-function getInitials(name: string): string {
-    return name
-        .split(' ')
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
-}
-
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 
 function getTint(name: string): string {
@@ -80,6 +72,7 @@ function getTint(name: string): string {
 export default function DashSidebar({ section }: { section: SectionId }) {
     const { auth } = usePage().props as { auth: { user: AuthUser | null } };
     const user = auth?.user;
+    const getInitials = useInitials();
 
     if (!user) {
         return null;

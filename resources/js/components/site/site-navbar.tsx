@@ -16,6 +16,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useInitials } from '@/hooks/use-initials';
 import { login, logout } from '@/routes';
 
 interface SiteNavbarProps {
@@ -42,21 +43,13 @@ function getTint(name: string): string {
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
-function getInitials(name: string): string {
-    return name
-        .split(' ')
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
-}
-
 export default function SiteNavbar({
     onOpenCmd,
     onOpenMenu,
     active = 'home',
 }: SiteNavbarProps) {
     const [scrolled, setScrolled] = useState(false);
+    const getInitials = useInitials();
     const { auth } = usePage().props as {
         auth: { user: { name: string; email: string; avatar?: string } | null };
     };

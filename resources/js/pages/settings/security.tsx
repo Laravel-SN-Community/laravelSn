@@ -117,7 +117,7 @@ export default function Security({
                             title="Changer le mot de passe"
                         >
                             <Form
-                                {...SecurityController.update.form()}
+                                action={SecurityController.update()}
                                 options={{ preserveScroll: true }}
                                 resetOnError={[
                                     'password',
@@ -222,7 +222,7 @@ export default function Security({
                                             activée. Tu seras invité·e à entrer
                                             un code lors de la connexion.
                                         </p>
-                                        <Form {...disable.form()}>
+                                        <Form action={disable()}>
                                             {({ processing }) => (
                                                 <Button
                                                     variant="destructive"
@@ -265,7 +265,7 @@ export default function Security({
                                             </button>
                                         ) : (
                                             <Form
-                                                {...enable.form()}
+                                                action={enable()}
                                                 onSuccess={() =>
                                                     setShowSetupModal(true)
                                                 }

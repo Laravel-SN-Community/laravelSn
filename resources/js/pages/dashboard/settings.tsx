@@ -225,7 +225,7 @@ export default function DashboardSettings({
                             title="Changer le mot de passe"
                         >
                             <Form
-                                {...SecurityController.update.form()}
+                                action={SecurityController.update()}
                                 options={{ preserveScroll: true }}
                                 resetOnError={[
                                     'password',
@@ -331,7 +331,7 @@ export default function DashboardSettings({
                                             activée. Tu seras invité·e à entrer
                                             un code lors de la connexion.
                                         </p>
-                                        <Form {...disable.form()}>
+                                        <Form action={disable()}>
                                             {({ processing }) => (
                                                 <Button
                                                     variant="destructive"
@@ -374,7 +374,7 @@ export default function DashboardSettings({
                                             </button>
                                         ) : (
                                             <Form
-                                                {...enable.form()}
+                                                action={enable()}
                                                 onSuccess={() =>
                                                     setShowSetupModal(true)
                                                 }
@@ -445,7 +445,7 @@ export default function DashboardSettings({
                                     </DialogDescription>
 
                                     <Form
-                                        {...ProfileController.destroy.form()}
+                                        action={ProfileController.destroy()}
                                         options={{ preserveScroll: true }}
                                         onError={() =>
                                             deletePasswordInput.current?.focus()

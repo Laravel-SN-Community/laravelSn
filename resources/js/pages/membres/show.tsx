@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Github, Globe, MapPin, Twitter } from 'lucide-react';
+import { useInitials } from '@/hooks/use-initials';
 import type { ArticleSummary } from '@/types/article';
 
 type UserProfile = {
@@ -46,20 +47,16 @@ export default function MembreShow() {
         user: UserProfile;
         articles: ArticleSummary[];
     };
+    const getInitials = useInitials();
 
     const tint = memberTint(user.username ?? user.name);
-    const initials = user.name
-        .split(' ')
-        .map((w) => w[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase();
+    const initials = getInitials(user.name);
 
     return (
         <>
             <Head title={`@${user.username} — Laravel Sénégal`} />
 
-            <div className="mx-auto max-w-[1300px] px-6 pt-6 pb-16 lg:px-10">
+            <div className="mx-auto max-w-325 px-6 pt-6 pb-16 lg:px-10">
                 {/* Breadcrumb */}
                 <div
                     className="mb-8 flex items-center gap-2 font-mono text-[11.5px]"

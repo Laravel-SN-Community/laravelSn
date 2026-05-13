@@ -7,6 +7,7 @@ import {
     FORUM_THREADS,
     MEMBERS,
 } from '@/data/community';
+import { useInitials } from '@/hooks/use-initials';
 
 function ChannelIcon({ k }: { k: string }) {
     const props = {
@@ -70,8 +71,9 @@ function ChannelIcon({ k }: { k: string }) {
 }
 
 function ThreadCard({ thread }: { thread: (typeof FORUM_THREADS)[0] }) {
+    const getInitials = useInitials();
     const author = MEMBERS.find((m) => m.slug === thread.authorSlug) ?? {
-        init: thread.author.slice(0, 2).toUpperCase(),
+        init: getInitials(thread.author),
         tint: '#0f7b4d',
     };
 

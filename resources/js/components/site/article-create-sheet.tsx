@@ -22,10 +22,22 @@ import { useEffect, useRef, useState } from 'react';
 import ArticleController from '@/actions/App/Http/Controllers/ArticleController';
 
 type Tag = { id: number; name: string; slug: string };
+
+type EditableArticle = {
+    slug: string;
+    title: string;
+    body: string;
+    locale: string;
+    status: string;
+    published_at: string | null;
+    tags: Tag[];
+};
+
 type Props = {
     tags: Tag[];
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    article?: EditableArticle | undefined;
 };
 
 type ToolbarItem =
@@ -663,12 +675,13 @@ export default function ArticleCreateSheet({
     tags,
     open,
     onOpenChange,
+    article,
 }: Props) {
     const [tipsOpen, setTipsOpen] = useState(false);
     const [tab, setTab] = useState<'write' | 'preview'>('write');
     const bodyRef = useRef<HTMLTextAreaElement>(null);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, patch, processing, errors, reset } = useForm({
         title: '',
         body: '',
         locale: 'fr' as 'fr' | 'en',
@@ -676,6 +689,23 @@ export default function ArticleCreateSheet({
         is_draft: true,
         published_at: '',
     });
+
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+
+        if (article) {
+            setData({
+                title: article.title,
+                body: article.body,
+                locale: article.locale as 'fr' | 'en',
+                tags: article.tags.map((t) => t.id),
+                is_draft: article.status === 'draft',
+                published_at: article.published_at ?? '',
+            });
+        }
+    }, [article?.slug, open]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const wordCount = data.body.trim()
         ? data.body.trim().split(/\s+/).length
@@ -694,9 +724,16 @@ export default function ArticleCreateSheet({
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post(ArticleController.store.url(), {
-            onSuccess: () => handleClose(false),
-        });
+
+        if (article) {
+            patch(ArticleController.update.url({ article: article.slug }), {
+                onSuccess: () => handleClose(false),
+            });
+        } else {
+            post(ArticleController.store.url(), {
+                onSuccess: () => handleClose(false),
+            });
+        }
     }
 
     function insertMarkdown(before: string, after: string) {
@@ -776,13 +813,17 @@ export default function ArticleCreateSheet({
                                 className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                // nouvel article
+                                {article
+                                    ? "// modifier l'article"
+                                    : '// nouvel article'}
                             </p>
                             <h2
                                 className="mt-0.5 text-[18px] font-semibold tracking-tight"
                                 style={{ color: 'var(--sn-fg)' }}
                             >
-                                Rédiger un article
+                                {article
+                                    ? "Modifier l'article"
+                                    : 'Rédiger un article'}
                             </h2>
                         </div>
                         <Dialog.Close
@@ -1232,7 +1273,11 @@ export default function ArticleCreateSheet({
                                 className="sn-btn sn-btn-primary"
                                 disabled={processing}
                             >
-                                {processing ? 'Enregistrement…' : 'Enregistrer'}
+                                {processing
+                                    ? 'Enregistrement…'
+                                    : article
+                                      ? 'Mettre à jour'
+                                      : 'Enregistrer'}
                             </button>
                         </div>
                     </form>

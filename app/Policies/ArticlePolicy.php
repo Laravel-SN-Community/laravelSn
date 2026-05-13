@@ -48,7 +48,7 @@ final class ArticlePolicy
 
     public function publish(User $user, Article $article): bool
     {
-        return $user->canPublishArticles();
+        return $this->update($user, $article);
     }
 
     public function restore(User $user, Article $article): bool

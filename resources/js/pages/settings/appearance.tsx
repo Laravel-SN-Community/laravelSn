@@ -201,7 +201,7 @@ export default function Appearance() {
                                     </DialogDescription>
 
                                     <Form
-                                        {...ProfileController.destroy.form()}
+                                        action={ProfileController.destroy()}
                                         options={{ preserveScroll: true }}
                                         onError={() =>
                                             passwordInput.current?.focus()
