@@ -97,7 +97,7 @@ export default function Login({
                 />
             </div>
 
-            <Form {...store.form()} resetOnSuccess={['password']}>
+            <Form action={store()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <div className="flex flex-col gap-4">
                         {/* Email */}

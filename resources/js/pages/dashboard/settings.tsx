@@ -1,0 +1,514 @@
+import { Form, Head } from '@inertiajs/react';
+import { ShieldCheck } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
+import InputError from '@/components/input-error';
+import PasswordInput from '@/components/password-input';
+import DashSidebar from '@/components/site/dashboard-sidebar';
+import ThemeToggle from '@/components/site/theme-toggle';
+import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
+import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
+import { disable, enable } from '@/routes/two-factor';
+
+function DashCard({
+    eyebrow,
+    title,
+    children,
+}: {
+    eyebrow?: string;
+    title?: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div
+            className="rounded-xl p-6"
+            style={{
+                background: 'var(--sn-surface)',
+                border: '1px solid var(--sn-border)',
+            }}
+        >
+            {eyebrow && (
+                <div
+                    className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
+                    style={{ color: 'var(--sn-muted)' }}
+                >
+                    {eyebrow}
+                </div>
+            )}
+            {title && (
+                <h3
+                    className="mt-1 text-[18px] font-semibold tracking-[-0.01em]"
+                    style={{ color: 'var(--sn-fg)' }}
+                >
+                    {title}
+                </h3>
+            )}
+            <div className="mt-4">{children}</div>
+        </div>
+    );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+    return (
+        <div
+            className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
+            style={{ color: 'var(--sn-muted)' }}
+        >
+            {children}
+        </div>
+    );
+}
+
+const EMAIL_PREFS = [
+    {
+        key: 'digest',
+        title: 'Digest hebdomadaire',
+        desc: 'Tous les vendredis, les meilleurs articles + meetups à venir.',
+        defaultOn: true,
+    },
+    {
+        key: 'replies',
+        title: 'Réponses à mes commentaires',
+        desc: "Quand quelqu'un répond à un commentaire que j'ai posté.",
+        defaultOn: true,
+    },
+    {
+        key: 'events',
+        title: "Rappels d'évènements",
+        desc: '24h avant un évènement où je suis inscrit·e.',
+        defaultOn: false,
+    },
+] as const;
+
+type Props = {
+    canManageTwoFactor?: boolean;
+    requiresConfirmation?: boolean;
+    twoFactorEnabled?: boolean;
+};
+
+export default function DashboardSettings({
+    canManageTwoFactor = false,
+    requiresConfirmation = false,
+    twoFactorEnabled = false,
+}: Props) {
+    const passwordInput = useRef<HTMLInputElement>(null);
+    const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const deletePasswordInput = useRef<HTMLInputElement>(null);
+
+    const [emailPrefs, setEmailPrefs] = useState<Record<string, boolean>>({
+        digest: true,
+        replies: true,
+        events: false,
+    });
+
+    const {
+        qrCodeSvg,
+        hasSetupData,
+        manualSetupKey,
+        clearSetupData,
+        clearTwoFactorAuthData,
+        fetchSetupData,
+        recoveryCodesList,
+        fetchRecoveryCodes,
+        errors: twoFaErrors,
+    } = useTwoFactorAuth();
+    const [showSetupModal, setShowSetupModal] = useState(false);
+    const prevTwoFactorEnabled = useRef(twoFactorEnabled);
+
+    useEffect(() => {
+        if (prevTwoFactorEnabled.current && !twoFactorEnabled) {
+            clearTwoFactorAuthData();
+        }
+
+        prevTwoFactorEnabled.current = twoFactorEnabled;
+    }, [twoFactorEnabled, clearTwoFactorAuthData]);
+
+    return (
+        <>
+            <Head title="Paramètres — Laravel Sénégal" />
+
+            <div className="mx-auto max-w-[1300px] px-6 py-8 lg:px-10">
+                <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+                    <DashSidebar section="settings" />
+
+                    <main className="min-w-0 space-y-6">
+                        <h1
+                            className="text-[32px] font-semibold tracking-[-0.02em]"
+                            style={{ color: 'var(--sn-fg)' }}
+                        >
+                            Paramètres
+                        </h1>
+
+                        {/* Appearance */}
+                        <DashCard eyebrow="// apparence" title="Thème">
+                            <ThemeToggle />
+                        </DashCard>
+
+                        {/* Notifications */}
+                        <DashCard eyebrow="// notifications" title="Email">
+                            <div className="space-y-1">
+                                {EMAIL_PREFS.map((row, i) => (
+                                    <div
+                                        key={row.key}
+                                        className="flex cursor-pointer items-start gap-3 py-3"
+                                        style={{
+                                            borderTop:
+                                                i === 0
+                                                    ? 'none'
+                                                    : '1px solid var(--sn-border)',
+                                        }}
+                                        onClick={() =>
+                                            setEmailPrefs((p) => ({
+                                                ...p,
+                                                [row.key]: !p[row.key],
+                                            }))
+                                        }
+                                    >
+                                        <button
+                                            type="button"
+                                            className="mt-0.5 h-5 w-9 shrink-0 rounded-full p-0.5 transition-colors"
+                                            style={{
+                                                background: emailPrefs[row.key]
+                                                    ? 'var(--sn-700)'
+                                                    : 'var(--sn-surface-2)',
+                                            }}
+                                        >
+                                            <span
+                                                className="block h-4 w-4 rounded-full bg-white transition-transform"
+                                                style={{
+                                                    transform: emailPrefs[
+                                                        row.key
+                                                    ]
+                                                        ? 'translateX(16px)'
+                                                        : 'translateX(0)',
+                                                }}
+                                            />
+                                        </button>
+                                        <div className="flex-1">
+                                            <div
+                                                className="text-[14px] font-medium"
+                                                style={{
+                                                    color: 'var(--sn-fg)',
+                                                }}
+                                            >
+                                                {row.title}
+                                            </div>
+                                            <div
+                                                className="mt-0.5 font-mono text-[11.5px]"
+                                                style={{
+                                                    color: 'var(--sn-muted)',
+                                                }}
+                                            >
+                                                {row.desc}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </DashCard>
+
+                        {/* Password */}
+                        <DashCard
+                            eyebrow="// mot de passe"
+                            title="Changer le mot de passe"
+                        >
+                            <Form
+                                action={SecurityController.update()}
+                                options={{ preserveScroll: true }}
+                                resetOnError={[
+                                    'password',
+                                    'password_confirmation',
+                                    'current_password',
+                                ]}
+                                resetOnSuccess
+                                onError={(errs) => {
+                                    if (errs.password) {
+                                        passwordInput.current?.focus();
+                                    }
+
+                                    if (errs.current_password) {
+                                        currentPasswordInput.current?.focus();
+                                    }
+                                }}
+                                className="space-y-4"
+                            >
+                                {({ errors, processing }) => (
+                                    <>
+                                        <div>
+                                            <FieldLabel>
+                                                Mot de passe actuel
+                                            </FieldLabel>
+                                            <PasswordInput
+                                                id="current_password"
+                                                ref={currentPasswordInput}
+                                                name="current_password"
+                                                className="mt-1.5 block w-full"
+                                                autoComplete="current-password"
+                                                placeholder="••••••••••"
+                                            />
+                                            <InputError
+                                                message={
+                                                    errors.current_password
+                                                }
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <FieldLabel>
+                                                Nouveau mot de passe
+                                            </FieldLabel>
+                                            <PasswordInput
+                                                id="password"
+                                                ref={passwordInput}
+                                                name="password"
+                                                className="mt-1.5 block w-full"
+                                                autoComplete="new-password"
+                                                placeholder="••••••••••"
+                                            />
+                                            <InputError
+                                                message={errors.password}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <FieldLabel>
+                                                Confirmer le mot de passe
+                                            </FieldLabel>
+                                            <PasswordInput
+                                                id="password_confirmation"
+                                                name="password_confirmation"
+                                                className="mt-1.5 block w-full"
+                                                autoComplete="new-password"
+                                                placeholder="••••••••••"
+                                            />
+                                            <InputError
+                                                message={
+                                                    errors.password_confirmation
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="flex justify-end">
+                                            <button
+                                                type="submit"
+                                                disabled={processing}
+                                                className="sn-btn sn-btn-primary"
+                                                data-test="update-password-button"
+                                            >
+                                                Enregistrer
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </Form>
+                        </DashCard>
+
+                        {/* 2FA */}
+                        {canManageTwoFactor && (
+                            <DashCard
+                                eyebrow="// authentification"
+                                title="Double authentification (2FA)"
+                            >
+                                {twoFactorEnabled ? (
+                                    <div className="space-y-4">
+                                        <p
+                                            className="text-[13.5px] leading-relaxed"
+                                            style={{ color: 'var(--sn-muted)' }}
+                                        >
+                                            La double authentification est
+                                            activée. Tu seras invité·e à entrer
+                                            un code lors de la connexion.
+                                        </p>
+                                        <Form action={disable()}>
+                                            {({ processing }) => (
+                                                <Button
+                                                    variant="destructive"
+                                                    type="submit"
+                                                    disabled={processing}
+                                                >
+                                                    Désactiver la 2FA
+                                                </Button>
+                                            )}
+                                        </Form>
+                                        <TwoFactorRecoveryCodes
+                                            recoveryCodesList={
+                                                recoveryCodesList
+                                            }
+                                            fetchRecoveryCodes={
+                                                fetchRecoveryCodes
+                                            }
+                                            errors={twoFaErrors}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <p
+                                            className="text-[13.5px] leading-relaxed"
+                                            style={{ color: 'var(--sn-muted)' }}
+                                        >
+                                            Ajoute une couche de sécurité
+                                            supplémentaire. Un code TOTP te sera
+                                            demandé à chaque connexion.
+                                        </p>
+                                        {hasSetupData ? (
+                                            <button
+                                                onClick={() =>
+                                                    setShowSetupModal(true)
+                                                }
+                                                className="sn-btn sn-btn-primary"
+                                            >
+                                                <ShieldCheck size={14} />
+                                                Continuer la configuration
+                                            </button>
+                                        ) : (
+                                            <Form
+                                                action={enable()}
+                                                onSuccess={() =>
+                                                    setShowSetupModal(true)
+                                                }
+                                            >
+                                                {({ processing }) => (
+                                                    <button
+                                                        type="submit"
+                                                        disabled={processing}
+                                                        className="sn-btn sn-btn-primary"
+                                                    >
+                                                        Activer la 2FA
+                                                    </button>
+                                                )}
+                                            </Form>
+                                        )}
+                                    </div>
+                                )}
+
+                                <TwoFactorSetupModal
+                                    isOpen={showSetupModal}
+                                    onClose={() => setShowSetupModal(false)}
+                                    requiresConfirmation={requiresConfirmation}
+                                    twoFactorEnabled={twoFactorEnabled}
+                                    qrCodeSvg={qrCodeSvg}
+                                    manualSetupKey={manualSetupKey}
+                                    clearSetupData={clearSetupData}
+                                    fetchSetupData={fetchSetupData}
+                                    errors={twoFaErrors}
+                                />
+                            </DashCard>
+                        )}
+
+                        {/* Danger zone */}
+                        <DashCard
+                            eyebrow="// zone dangereuse"
+                            title="Supprimer mon compte"
+                        >
+                            <p
+                                className="text-[13.5px]"
+                                style={{ color: 'var(--sn-muted)' }}
+                            >
+                                Cette action est irréversible. Tes articles
+                                seront anonymisés mais conservés.
+                            </p>
+
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <button
+                                        className="mt-3 rounded-md px-4 py-2 font-mono text-[12px] transition-colors"
+                                        style={{
+                                            background: 'transparent',
+                                            border: '1px solid #c0392b',
+                                            color: '#c0392b',
+                                        }}
+                                        data-test="delete-user-button"
+                                    >
+                                        Supprimer mon compte
+                                    </button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogTitle>
+                                        Supprimer ton compte ?
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Cette action est définitive. Toutes tes
+                                        données seront supprimées. Entre ton mot
+                                        de passe pour confirmer.
+                                    </DialogDescription>
+
+                                    <Form
+                                        action={ProfileController.destroy()}
+                                        options={{ preserveScroll: true }}
+                                        onError={() =>
+                                            deletePasswordInput.current?.focus()
+                                        }
+                                        resetOnSuccess
+                                        className="space-y-4"
+                                    >
+                                        {({
+                                            resetAndClearErrors,
+                                            processing,
+                                            errors,
+                                        }) => (
+                                            <>
+                                                <div className="grid gap-2">
+                                                    <PasswordInput
+                                                        id="password"
+                                                        name="password"
+                                                        ref={
+                                                            deletePasswordInput
+                                                        }
+                                                        placeholder="Mot de passe"
+                                                        autoComplete="current-password"
+                                                    />
+                                                    <InputError
+                                                        message={
+                                                            errors.password
+                                                        }
+                                                    />
+                                                </div>
+
+                                                <DialogFooter className="gap-2">
+                                                    <DialogClose asChild>
+                                                        <Button
+                                                            variant="secondary"
+                                                            onClick={() =>
+                                                                resetAndClearErrors()
+                                                            }
+                                                        >
+                                                            Annuler
+                                                        </Button>
+                                                    </DialogClose>
+                                                    <Button
+                                                        variant="destructive"
+                                                        disabled={processing}
+                                                        asChild
+                                                    >
+                                                        <button
+                                                            type="submit"
+                                                            data-test="confirm-delete-user-button"
+                                                        >
+                                                            Supprimer
+                                                        </button>
+                                                    </Button>
+                                                </DialogFooter>
+                                            </>
+                                        )}
+                                    </Form>
+                                </DialogContent>
+                            </Dialog>
+                        </DashCard>
+                    </main>
+                </div>
+            </div>
+        </>
+    );
+}

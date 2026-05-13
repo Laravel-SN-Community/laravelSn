@@ -16,7 +16,7 @@ export default function Register() {
             <Head title="Inscription" />
 
             <Form
-                {...store.form()}
+                action={store()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
             >

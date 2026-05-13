@@ -8,12 +8,16 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'username', 'email', 'password'])]
+/**
+ * @property-read string|null $avatar
+ */
+#[Fillable(['name', 'username', 'email', 'password', 'bio', 'location', 'github_handle', 'twitter_handle', 'linkedin_handle', 'website_url'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 
 class User extends Authenticatable
@@ -23,6 +27,23 @@ class User extends Authenticatable
 
     use Notifiable;
     use TwoFactorAuthenticatable;
+
+    protected function avatar(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->avatar_path);
+    }
+
+    /** @todo Replace with Spatie role check once configured. */
+    public function isAdmin(): bool
+    {
+        return false;
+    }
+
+    /** @todo Replace with Spatie permission check once configured. */
+    public function canPublishArticles(): bool
+    {
+        return true;
+    }
 
     /**
      * Get the attributes that should be cast.

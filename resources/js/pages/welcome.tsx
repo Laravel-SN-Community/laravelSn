@@ -10,10 +10,12 @@ import SiteFooter from '@/components/site/site-footer';
 import SiteHero from '@/components/site/site-hero';
 import SiteNavbar from '@/components/site/site-navbar';
 import SponsorsSection from '@/components/site/sponsors-section';
+import type { ArticleSummary } from '@/types/article';
 
 export default function Welcome() {
-    const { auth } = usePage().props as {
+    const { auth, latestArticles } = usePage().props as unknown as {
         auth: { user: { name: string } | null };
+        latestArticles: ArticleSummary[];
     };
     const [cmdOpen, setCmdOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -59,7 +61,7 @@ export default function Welcome() {
                 <main>
                     <SiteHero onOpenCmd={() => setCmdOpen(true)} />
                     <SponsorsSection />
-                    <ArticlesSection />
+                    <ArticlesSection articles={latestArticles} />
                     <EventsSection />
                     <OpenSourceSection />
                     <CtaSection />

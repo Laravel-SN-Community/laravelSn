@@ -7,6 +7,7 @@ import {
     FORUM_THREADS,
     MEMBERS,
 } from '@/data/community';
+import { useInitials } from '@/hooks/use-initials';
 
 function ChannelIcon({ k }: { k: string }) {
     const props = {
@@ -89,13 +90,14 @@ const FAKE_REPLIES = [
 ];
 
 export default function ForumThread() {
+    const getInitials = useInitials();
     const { slug } = usePage().props as unknown as { slug: string };
     const thread =
         FORUM_THREADS.find((x) => x.slug === slug) ?? FORUM_THREADS[0];
     const authorMember = MEMBERS.find((m) => m.slug === thread.authorSlug);
     const author = authorMember ?? {
         name: thread.author,
-        init: thread.author.slice(0, 2).toUpperCase(),
+        init: getInitials(thread.author),
         tint: '#0f7b4d',
         role: 'Membre',
         company: '—',

@@ -2,30 +2,40 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
-Route::inertia('/', 'welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+Route::get('/', HomeController::class)->name('home');
 
-Route::inertia('/articles', 'site/articles')->name('articles');
-Route::get('/articles/{slug}', fn (string $slug) => inertia('site/article', ['slug' => $slug]))->name('article');
+Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
+Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('article');
 
-Route::inertia('/evenements', 'site/evenements')->name('evenements');
-Route::get('/evenements/{slug}', fn (string $slug) => inertia('site/evenement', ['slug' => $slug]))->name('evenement');
+Route::inertia('/evenements', 'evenements/index')->name('evenements');
+Route::get('/evenements/{slug}', fn (string $slug) => inertia('evenements/show', ['slug' => $slug]))->name('evenement');
 
-Route::inertia('/forum', 'site/forum')->name('forum');
-Route::get('/forum/{slug}', fn (string $slug) => inertia('site/forum-thread', ['slug' => $slug]))->name('forum.thread');
+Route::inertia('/forum', 'forum/index')->name('forum');
+Route::get('/forum/{slug}', fn (string $slug) => inertia('forum/show', ['slug' => $slug]))->name('forum.thread');
 
-Route::inertia('/rejoindre', 'site/rejoindre')->name('rejoindre');
+Route::get('/@{username}', [UserController::class, 'show'])->name('profile');
 
-Route::inertia('/rules', 'site/rules')->name('rules');
-Route::inertia('/terms', 'site/terms')->name('terms');
-Route::inertia('/privacy', 'site/privacy')->name('privacy');
+Route::inertia('/ressources', 'ressources/index')->name('ressources');
+
+Route::inertia('/rejoindre', 'rejoindre')->name('rejoindre');
+Route::inertia('/rules', 'rules')->name('rules');
+Route::inertia('/terms', 'terms')->name('terms');
+Route::inertia('/privacy', 'privacy')->name('privacy');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');
+    Route::get('/dashboard/articles', [ArticleController::class, 'dashboardIndex'])->name('dashboard.articles');
+    Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+    Route::patch('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+    Route::post('/articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
+    Route::inertia('/dashboard/events', 'dashboard/events')->name('dashboard.events');
+    Route::inertia('/dashboard/notifications', 'dashboard/notifications')->name('dashboard.notifications');
 });
 
 require __DIR__.'/settings.php';

@@ -6,17 +6,21 @@ use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', '/settings/profile');
+// Redirects from old settings URLs
+Route::redirect('settings', '/dashboard/profile');
+Route::redirect('settings/profile', '/dashboard/profile');
+Route::redirect('settings/security', '/dashboard/settings');
+Route::redirect('settings/appearance', '/dashboard/settings');
 
-    Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::middleware(['auth'])->group(function () {
+    Route::get('dashboard/profile', [ProfileController::class, 'edit'])->name('dashboard.profile');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
+    Route::get('dashboard/settings', [SecurityController::class, 'edit'])->name('dashboard.settings');
 
     Route::put('settings/password', [SecurityController::class, 'update'])
         ->middleware('throttle:6,1')

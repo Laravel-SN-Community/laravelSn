@@ -1,8 +1,23 @@
-import { Link, usePage } from '@inertiajs/react';
-import { ArrowRight, Menu, Search } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import {
+    ArrowRight,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    Search,
+    Settings,
+    UserCircle,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { login } from '@/routes';
-import ThemeToggle from './theme-toggle';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useInitials } from '@/hooks/use-initials';
+import { login, logout } from '@/routes';
 
 interface SiteNavbarProps {
     onOpenCmd: () => void;
@@ -16,14 +31,27 @@ const navLinks = [
     { label: 'Événements', href: '/evenements', key: 'evenements' },
 ];
 
+const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
+
+function getTint(name: string): string {
+    let hash = 0;
+
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    return TINTS[Math.abs(hash) % TINTS.length];
+}
+
 export default function SiteNavbar({
     onOpenCmd,
     onOpenMenu,
     active = 'home',
 }: SiteNavbarProps) {
     const [scrolled, setScrolled] = useState(false);
+    const getInitials = useInitials();
     const { auth } = usePage().props as {
-        auth: { user: { name: string } | null };
+        auth: { user: { name: string; email: string; avatar?: string } | null };
     };
 
     useEffect(() => {
@@ -81,7 +109,7 @@ export default function SiteNavbar({
                     </nav>
                 </div>
 
-                {/* Right: search + theme + auth */}
+                {/* Right: search + auth */}
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onOpenCmd}
@@ -106,17 +134,86 @@ export default function SiteNavbar({
                         </span>
                     </button>
 
-                    <div className="hidden sm:block">
-                        <ThemeToggle />
-                    </div>
-
                     {auth?.user ? (
-                        <Link
-                            href="/dashboard"
-                            className="sn-btn sn-btn-sm sn-btn-secondary hidden sm:inline-flex"
-                        >
-                            Dashboard
-                        </Link>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ring-2 ring-transparent transition-all hover:ring-[var(--sn-border)] focus:outline-none sm:flex"
+                                    style={{
+                                        background: auth.user.avatar
+                                            ? 'transparent'
+                                            : getTint(auth.user.name),
+                                        color: '#fff',
+                                        overflow: 'hidden',
+                                    }}
+                                    aria-label="Menu utilisateur"
+                                >
+                                    {auth.user.avatar ? (
+                                        <img
+                                            src={auth.user.avatar}
+                                            alt={auth.user.name}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        getInitials(auth.user.name)
+                                    )}
+                                </button>
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent align="end" className="w-56">
+                                <div className="px-2 py-1.5">
+                                    <p
+                                        className="text-[13px] font-medium"
+                                        style={{ color: 'var(--sn-fg)' }}
+                                    >
+                                        {auth.user.name}
+                                    </p>
+                                    <p
+                                        className="truncate text-[11.5px]"
+                                        style={{ color: 'var(--sn-muted)' }}
+                                    >
+                                        {auth.user.email}
+                                    </p>
+                                </div>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href="/dashboard"
+                                        className="flex cursor-pointer items-center gap-2"
+                                    >
+                                        <LayoutDashboard size={14} />
+                                        Tableau de bord
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href="/dashboard/profile"
+                                        className="flex cursor-pointer items-center gap-2"
+                                    >
+                                        <UserCircle size={14} />
+                                        Mon profil
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href="/dashboard/settings"
+                                        className="flex cursor-pointer items-center gap-2"
+                                    >
+                                        <Settings size={14} />
+                                        Paramètres
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="cursor-pointer"
+                                    style={{ color: 'var(--destructive)' }}
+                                    onClick={() => router.post(logout())}
+                                >
+                                    <LogOut size={14} />
+                                    Se déconnecter
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     ) : (
                         <Link
                             href={login()}
