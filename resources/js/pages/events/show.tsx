@@ -66,15 +66,18 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
             <Head title={`${event.title} — Laravel Sénégal`} />
 
             {/* ── Hero ── */}
-            <div
-                className="relative overflow-hidden border-b"
-                style={{
-                    borderColor: 'var(--sn-border)',
-                    backgroundImage:
-                        'linear-gradient(rgba(15,123,77,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(15,123,77,.04) 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
-                }}
-            >
+            <div className="relative overflow-hidden">
+                {/* Grid — fades out at the bottom */}
+                <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                        backgroundImage:
+                            'linear-gradient(rgba(15,123,77,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(15,123,77,.04) 1px, transparent 1px)',
+                        backgroundSize: '24px 24px',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 95%)',
+                        maskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 95%)',
+                    }}
+                />
                 {/* Green blur accent */}
                 <div
                     className="pointer-events-none absolute -top-24 -right-24 h-105 w-105 rounded-full blur-3xl"
