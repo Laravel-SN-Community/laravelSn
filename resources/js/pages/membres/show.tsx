@@ -270,12 +270,6 @@ export default function MembreShow() {
                     <div>
                         {articles.length > 0 ? (
                             <>
-                                <div
-                                    className="mb-5 font-mono text-[11px] tracking-[0.2em] uppercase"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    // articles publiés
-                                </div>
                                 <div className="space-y-4">
                                     {articles.map((a) => (
                                         <Link
@@ -345,12 +339,12 @@ export default function MembreShow() {
                                     border: '1px solid var(--sn-border)',
                                 }}
                             >
-                                <div
-                                    className="font-mono text-[12px]"
+                                <p
+                                    className="text-[14px]"
                                     style={{ color: 'var(--sn-muted)' }}
                                 >
-                                    // aucun article publié pour l'instant
-                                </div>
+                                    Aucun article publié pour l'instant.
+                                </p>
                             </div>
                         )}
                     </div>

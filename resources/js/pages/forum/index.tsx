@@ -213,16 +213,10 @@ export default function Forum() {
         <>
             <Head title="Forum — Laravel Sénégal" />
 
-            <div className="mx-auto max-w-[1200px] px-6 pt-10 pb-16 lg:px-10">
+            <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-16 lg:px-10">
                 {/* Header */}
                 <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <div
-                            className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            // forum
-                        </div>
                         <h1
                             className="mt-2 text-[34px] font-semibold tracking-tight"
                             style={{ color: 'var(--sn-fg)' }}
@@ -230,7 +224,7 @@ export default function Forum() {
                             Discussions de la communauté
                         </h1>
                         <p
-                            className="mt-2 max-w-[60ch] text-[14px] leading-relaxed"
+                            className="mt-2 max-w-[60ch] text-[16px] leading-relaxed"
                             style={{ color: 'var(--sn-muted)' }}
                         >
                             Pose ta question, partage un retour d'expérience, ou

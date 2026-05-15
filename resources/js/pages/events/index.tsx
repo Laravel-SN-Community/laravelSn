@@ -53,14 +53,8 @@ export default function EventsIndex({ events, filters }: Props) {
             <section className="mx-auto max-w-[1400px] px-6 pt-10 pb-6 lg:px-10 lg:pt-16">
                 <div className="flex flex-wrap items-end justify-between gap-6">
                     <div>
-                        <div
-                            className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            // communauté · IRL
-                        </div>
                         <h1
-                            className="mt-2 text-[40px] leading-[1.02] font-semibold tracking-[-0.025em] lg:text-[56px]"
+                            className="mt-2 text-[34px] font-semibold tracking-tight"
                             style={{ color: 'var(--sn-fg)' }}
                         >
                             Événements
@@ -115,10 +109,10 @@ export default function EventsIndex({ events, filters }: Props) {
             {rest.length > 0 && (
                 <section className="mx-auto max-w-[1400px] px-6 pb-20 lg:px-10">
                     <h3
-                        className="mb-4 font-mono text-[11.5px] tracking-[0.2em] uppercase"
+                        className="mb-4 text-[13px] font-semibold tracking-wide uppercase"
                         style={{ color: 'var(--sn-muted)' }}
                     >
-                        ── {tab === 'upcoming' ? 'prochains rendez-vous' : 'archives'}
+                        {tab === 'upcoming' ? 'Prochains rendez-vous' : 'Archives'}
                     </h3>
                     <div className="grid gap-4 md:grid-cols-2">
                         {rest.map((e) => (
@@ -177,12 +171,6 @@ export default function EventsIndex({ events, filters }: Props) {
                             border: '1px solid var(--sn-border)',
                         }}
                     >
-                        <div
-                            className="mb-2 font-mono text-[12px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            // aucun résultat
-                        </div>
                         <p className="text-[15px]" style={{ color: 'var(--sn-muted)' }}>
                             {tab === 'upcoming'
                                 ? 'Aucun événement à venir pour le moment.'

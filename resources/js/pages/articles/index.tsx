@@ -63,14 +63,8 @@ export default function Articles({ articles, tags, filters }: Props) {
             <section className="mx-auto max-w-[1400px] px-6 pt-10 pb-10 lg:px-10 lg:pt-16">
                 <div className="flex flex-wrap items-end justify-between gap-6">
                     <div className="max-w-[60ch]">
-                        <div
-                            className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            // articles
-                        </div>
                         <h1
-                            className="mt-2 text-[40px] leading-[1.02] font-semibold tracking-[-0.025em] lg:text-[56px]"
+                            className="mt-2 text-[34px] font-semibold tracking-tight"
                             style={{ color: 'var(--sn-fg)' }}
                         >
                             Écrits par la communauté.
@@ -255,12 +249,6 @@ export default function Articles({ articles, tags, filters }: Props) {
             <section className="mx-auto max-w-[1400px] px-6 lg:px-10">
                 {articles.data.length === 0 ? (
                     <div className="sn-card p-10 text-center">
-                        <div
-                            className="mb-2 font-mono text-[12px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            // aucun résultat
-                        </div>
                         <p
                             className="text-[15px]"
                             style={{ color: 'var(--sn-muted)' }}
