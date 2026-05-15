@@ -12,7 +12,7 @@ interface MobileSheetProps {
 const links = [
     { label: 'Articles', href: '/articles' },
     { label: 'Forum', href: '/forum' },
-    { label: 'Événements', href: '/evenements' },
+    { label: 'Événements', href: '/events' },
     { label: 'Rejoindre', href: '/rejoindre' },
 ];
 

@@ -28,7 +28,7 @@ interface SiteNavbarProps {
 const navLinks = [
     { label: 'Articles', href: '/articles', key: 'articles' },
     { label: 'Forum', href: '/forum', key: 'forum' },
-    { label: 'Événements', href: '/evenements', key: 'evenements' },
+    { label: 'Événements', href: '/events', key: 'events' },
 ];
 
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];

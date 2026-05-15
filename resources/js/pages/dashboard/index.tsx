@@ -140,7 +140,7 @@ function DashOverview({ user }: { user: AuthUser }) {
                 title={nextEvent.title}
                 actions={
                     <Link
-                        href={`/evenements/${nextEvent.slug}`}
+                        href={`/events/${nextEvent.slug}`}
                         className="sn-btn sn-btn-ghost sn-btn-sm"
                     >
                         détails →

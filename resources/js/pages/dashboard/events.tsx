@@ -94,7 +94,7 @@ export default function DashboardEvents() {
                                                 ● confirmé
                                             </span>
                                             <Link
-                                                href={`/evenements/${e.slug}`}
+                                                href={`/events/${e.slug}`}
                                                 className="sn-btn sn-btn-ghost sn-btn-sm"
                                             >
                                                 détails

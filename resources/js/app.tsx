@@ -24,7 +24,7 @@ createInertiaApp({
                 return SiteLayout;
             case name.startsWith('articles/'):
                 return SiteLayout;
-            case name.startsWith('evenements/'):
+            case name.startsWith('events/'):
                 return SiteLayout;
             case name.startsWith('forum/'):
                 return SiteLayout;

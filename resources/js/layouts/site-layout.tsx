@@ -17,8 +17,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
 
     const activeKey = url.startsWith('/articles')
         ? 'articles'
-        : url.startsWith('/evenements')
-          ? 'evenements'
+        : url.startsWith('/events')
+          ? 'events'
           : url.startsWith('/forum')
             ? 'forum'
             : 'home';

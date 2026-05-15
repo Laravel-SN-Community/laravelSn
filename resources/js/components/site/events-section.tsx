@@ -95,7 +95,7 @@ export default function EventsSection() {
                         .ics
                     </button>
                     <a
-                        href="/evenements"
+                        href="/events"
                         className="sn-btn sn-btn-secondary sn-btn-sm"
                     >
                         Tous les événements <ArrowRight size={13} />
@@ -113,7 +113,7 @@ export default function EventsSection() {
                 {EVENTS.map((e, i) => (
                     <a
                         key={i}
-                        href={`/evenements/${e.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        href={`/events/${e.title.toLowerCase().replace(/\s+/g, '-')}`}
                         className="group grid grid-cols-12 items-center gap-4 p-5 transition-colors hover:bg-[color:var(--sn-surface-2)] md:gap-6 md:p-6"
                         style={{
                             borderBottom:
