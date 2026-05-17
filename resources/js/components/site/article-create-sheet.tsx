@@ -796,7 +796,7 @@ export default function ArticleCreateSheet({
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
                 <Dialog.Content
-                    className="fixed inset-2 z-50 flex flex-col rounded-2xl shadow-2xl outline-none transition ease-in-out sm:top-4 sm:right-4 sm:bottom-4 sm:left-auto sm:w-[760px] sm:max-w-[calc(100vw-32px)] data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-right"
+                    className="fixed inset-2 z-50 flex flex-col rounded-2xl shadow-2xl transition ease-in-out outline-none data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-right sm:top-4 sm:right-4 sm:bottom-4 sm:left-auto sm:w-[760px] sm:max-w-[calc(100vw-32px)]"
                     style={{
                         background: 'var(--sn-bg)',
                         border: '1px solid var(--sn-border)',
@@ -824,7 +824,10 @@ export default function ArticleCreateSheet({
                         <div className="flex items-center gap-2">
                             <span
                                 className="rounded px-1.5 py-0.5 font-mono text-[10px] font-medium"
-                                style={{ background: 'var(--sn-n200)', color: 'var(--sn-n500)' }}
+                                style={{
+                                    background: 'var(--sn-n200)',
+                                    color: 'var(--sn-n500)',
+                                }}
                             >
                                 ESC
                             </span>
