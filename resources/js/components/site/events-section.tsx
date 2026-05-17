@@ -23,7 +23,10 @@ interface Props {
 }
 
 function SeatsBar({ taken, total }: { taken: number; total: number | null }) {
-    if (total === null) return null;
+    if (total === null) {
+return null;
+}
+
     const pct = Math.round((taken / total) * 100);
 
     return (
