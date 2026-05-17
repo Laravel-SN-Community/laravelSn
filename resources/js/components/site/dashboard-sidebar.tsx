@@ -14,20 +14,62 @@ import { logout } from '@/routes';
 import type { Auth } from '@/types/auth';
 
 const USER_SECTIONS = [
-    { id: 'overview', label: "Vue d'ensemble", Icon: LayoutDashboard, href: '/dashboard' },
-    { id: 'profile', label: 'Mon profil', Icon: UserCircle, href: '/dashboard/profile' },
-    { id: 'articles', label: 'Mes articles', Icon: FileText, href: '/dashboard/articles' },
-    { id: 'events', label: 'Mes inscriptions', Icon: CalendarDays, href: '/dashboard/events' },
-    { id: 'notifications', label: 'Notifications', Icon: Bell, href: '/dashboard/notifications' },
-    { id: 'settings', label: 'Paramètres', Icon: Settings, href: '/dashboard/settings' },
+    {
+        id: 'overview',
+        label: "Vue d'ensemble",
+        Icon: LayoutDashboard,
+        href: '/dashboard',
+    },
+    {
+        id: 'profile',
+        label: 'Mon profil',
+        Icon: UserCircle,
+        href: '/dashboard/profile',
+    },
+    {
+        id: 'articles',
+        label: 'Mes articles',
+        Icon: FileText,
+        href: '/dashboard/articles',
+    },
+    {
+        id: 'events',
+        label: 'Mes inscriptions',
+        Icon: CalendarDays,
+        href: '/dashboard/events',
+    },
+    {
+        id: 'notifications',
+        label: 'Notifications',
+        Icon: Bell,
+        href: '/dashboard/notifications',
+    },
+    {
+        id: 'settings',
+        label: 'Paramètres',
+        Icon: Settings,
+        href: '/dashboard/settings',
+    },
 ] as const;
 
 const MANAGE_SECTIONS = [
-    { id: 'manage-articles', label: 'Articles', Icon: FileText, href: '/dashboard/manage/articles' },
-    { id: 'manage-events', label: 'Évènements', Icon: CalendarDays, href: '/dashboard/manage/events' },
+    {
+        id: 'manage-articles',
+        label: 'Articles',
+        Icon: FileText,
+        href: '/dashboard/manage/articles',
+    },
+    {
+        id: 'manage-events',
+        label: 'Évènements',
+        Icon: CalendarDays,
+        href: '/dashboard/manage/events',
+    },
 ] as const;
 
-type SectionId = (typeof USER_SECTIONS)[number]['id'] | (typeof MANAGE_SECTIONS)[number]['id'];
+type SectionId =
+    | (typeof USER_SECTIONS)[number]['id']
+    | (typeof MANAGE_SECTIONS)[number]['id'];
 
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 
@@ -43,12 +85,12 @@ function getTint(name: string): string {
 
 function roleLabel(role: string): string {
     if (role === 'admin') {
-return 'Admin';
-}
+        return 'Admin';
+    }
 
     if (role === 'moderator') {
-return 'Modérateur';
-}
+        return 'Modérateur';
+    }
 
     return role;
 }
@@ -76,7 +118,10 @@ function NavLink({
             <Icon
                 size={15}
                 strokeWidth={active ? 2 : 1.5}
-                style={{ color: active ? 'var(--sn-600)' : 'inherit', flexShrink: 0 }}
+                style={{
+                    color: active ? 'var(--sn-600)' : 'inherit',
+                    flexShrink: 0,
+                }}
             />
             {label}
         </Link>
@@ -90,8 +135,8 @@ export default function DashSidebar({ section }: { section: SectionId }) {
     const getInitials = useInitials();
 
     if (!user) {
-return null;
-}
+        return null;
+    }
 
     const init = getInitials(user.name);
     const tint = getTint(user.name);
@@ -110,10 +155,10 @@ return null;
         <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
             {/* ── Mobile: horizontal scrollable tab bar ── */}
             <div
-                className="lg:hidden mb-5 overflow-x-auto"
+                className="mb-5 overflow-x-auto lg:hidden"
                 style={{ borderBottom: '1px solid var(--sn-border)' }}
             >
-                <div className="flex min-w-max items-center gap-0.5 pb-2 pt-1">
+                <div className="flex min-w-max items-center gap-0.5 pt-1 pb-2">
                     {allMobileItems.map((s) => {
                         const active = s.id === section;
 
@@ -123,8 +168,12 @@ return null;
                                 href={s.href}
                                 className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors"
                                 style={{
-                                    background: active ? 'color-mix(in srgb, var(--sn-600) 12%, transparent)' : 'transparent',
-                                    color: active ? 'var(--sn-600)' : 'var(--sn-muted)',
+                                    background: active
+                                        ? 'color-mix(in srgb, var(--sn-600) 12%, transparent)'
+                                        : 'transparent',
+                                    color: active
+                                        ? 'var(--sn-600)'
+                                        : 'var(--sn-muted)',
                                 }}
                             >
                                 <s.Icon
@@ -141,7 +190,11 @@ return null;
                         className="flex shrink-0 items-center gap-1.5 px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-opacity hover:opacity-70"
                         style={{ color: 'var(--destructive)' }}
                     >
-                        <LogOut size={14} strokeWidth={1.5} style={{ flexShrink: 0 }} />
+                        <LogOut
+                            size={14}
+                            strokeWidth={1.5}
+                            style={{ flexShrink: 0 }}
+                        />
                         Déconnexion
                     </button>
                 </div>
@@ -152,7 +205,10 @@ return null;
                 {/* User card */}
                 <div
                     className="mb-3 rounded-xl p-4"
-                    style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
+                    style={{
+                        background: 'var(--sn-surface)',
+                        border: '1px solid var(--sn-border)',
+                    }}
                 >
                     <div className="flex items-center gap-3">
                         <div
@@ -162,10 +218,16 @@ return null;
                             {init}
                         </div>
                         <div className="min-w-0">
-                            <div className="truncate text-[14px] font-semibold" style={{ color: 'var(--sn-fg)' }}>
+                            <div
+                                className="truncate text-[14px] font-semibold"
+                                style={{ color: 'var(--sn-fg)' }}
+                            >
                                 {user.name}
                             </div>
-                            <div className="truncate text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
+                            <div
+                                className="truncate text-[11.5px]"
+                                style={{ color: 'var(--sn-muted)' }}
+                            >
                                 {user.email}
                             </div>
                         </div>
@@ -175,7 +237,10 @@ return null;
                         <div className="mt-3">
                             <span
                                 className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase"
-                                style={{ background: 'var(--sn-accent)', color: 'var(--sn-accent-fg)' }}
+                                style={{
+                                    background: 'var(--sn-accent)',
+                                    color: 'var(--sn-accent-fg)',
+                                }}
                             >
                                 <Shield size={11} strokeWidth={2} />
                                 {roleLabel(role!)}
@@ -231,7 +296,11 @@ return null;
                     className="mt-4 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-opacity hover:opacity-70"
                     style={{ color: 'var(--destructive)' }}
                 >
-                    <LogOut size={15} strokeWidth={1.5} style={{ flexShrink: 0 }} />
+                    <LogOut
+                        size={15}
+                        strokeWidth={1.5}
+                        style={{ flexShrink: 0 }}
+                    />
                     Se déconnecter
                 </button>
             </div>

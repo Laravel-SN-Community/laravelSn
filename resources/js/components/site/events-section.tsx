@@ -24,8 +24,8 @@ interface Props {
 
 function SeatsBar({ taken, total }: { taken: number; total: number | null }) {
     if (total === null) {
-return null;
-}
+        return null;
+    }
 
     const pct = Math.round((taken / total) * 100);
 
@@ -97,10 +97,17 @@ export default function EventsSection({ events }: Props) {
                 >
                     {events.map((e, i) => {
                         const date = new Date(e.starts_at);
-                        const day = date.toLocaleDateString('fr-FR', { day: '2-digit' });
-                        const month = date.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase();
+                        const day = date.toLocaleDateString('fr-FR', {
+                            day: '2-digit',
+                        });
+                        const month = date
+                            .toLocaleDateString('fr-FR', { month: 'short' })
+                            .toUpperCase();
                         const year = date.getFullYear().toString();
-                        const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        const time = date.toLocaleTimeString('fr-FR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        });
                         const where = e.venue
                             ? `${e.venue.name} · ${e.venue.district}`
                             : 'En ligne';
@@ -151,7 +158,9 @@ export default function EventsSection({ events }: Props) {
                                             </span>
                                         )}
                                         <span className="sn-badge sn-badge-neutral text-[10px] tracking-[0.12em] uppercase">
-                                            {e.registrations_open ? 'ouvert' : 'fermé'}
+                                            {e.registrations_open
+                                                ? 'ouvert'
+                                                : 'fermé'}
                                         </span>
                                     </div>
                                     <div
@@ -185,14 +194,18 @@ export default function EventsSection({ events }: Props) {
                                             places
                                         </div>
                                         <SeatsBar
-                                            taken={e.confirmed_registrations_count}
+                                            taken={
+                                                e.confirmed_registrations_count
+                                            }
                                             total={e.capacity}
                                         />
                                     </div>
                                 )}
 
                                 {/* Arrow */}
-                                <div className={`flex justify-end ${e.capacity !== null ? 'col-span-4 md:col-span-1' : 'col-span-12 md:col-span-4'}`}>
+                                <div
+                                    className={`flex justify-end ${e.capacity !== null ? 'col-span-4 md:col-span-1' : 'col-span-12 md:col-span-4'}`}
+                                >
                                     <div
                                         className="grid h-9 w-9 place-items-center rounded-full transition-all group-hover:bg-[color:var(--sn-accent)] group-hover:text-[color:var(--sn-accent-fg)]"
                                         style={{

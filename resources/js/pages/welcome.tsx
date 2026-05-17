@@ -13,7 +13,8 @@ import SponsorsSection from '@/components/site/sponsors-section';
 import type { ArticleSummary } from '@/types/article';
 
 export default function Welcome() {
-    const { auth, latestArticles, upcomingEvents } = usePage().props as unknown as {
+    const { auth, latestArticles, upcomingEvents } = usePage()
+        .props as unknown as {
         auth: { user: { name: string } | null };
         latestArticles: ArticleSummary[];
         upcomingEvents: Parameters<typeof EventsSection>[0]['events'];

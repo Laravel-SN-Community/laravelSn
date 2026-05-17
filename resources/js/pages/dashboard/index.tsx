@@ -130,7 +130,6 @@ function DashOverview({ user }: { user: AuthUser }) {
 
             {/* Next event */}
             <DashCard
-                
                 title={nextEvent.title}
                 actions={
                     <Link
@@ -159,10 +158,7 @@ function DashOverview({ user }: { user: AuthUser }) {
 
             {/* Activity + Recommendations */}
             <div className="grid gap-4 md:grid-cols-2">
-                <DashCard
-                    
-                    title="Derniers évènements"
-                >
+                <DashCard title="Derniers évènements">
                     <ul className="space-y-3 text-[13.5px]">
                         {[
                             [
@@ -204,7 +200,7 @@ function DashOverview({ user }: { user: AuthUser }) {
                     </ul>
                 </DashCard>
 
-                <DashCard  title="Recommandé pour toi">
+                <DashCard title="Recommandé pour toi">
                     <ul className="space-y-3">
                         {recentArticles.map((a) => (
                             <li key={a.slug} className="flex items-start gap-3">
@@ -231,7 +227,7 @@ function DashOverview({ user }: { user: AuthUser }) {
             </div>
 
             {/* Members spotlight */}
-            <DashCard  title="La communauté">
+            <DashCard title="La communauté">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {MEMBERS.slice(0, 6).map((m) => (
                         <div

@@ -11,7 +11,11 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useInitials } from '@/hooks/use-initials';
-import { register as registerRoute, show as eventsShow, unregister as unregisterRoute } from '@/routes/events';
+import {
+    register as registerRoute,
+    show as eventsShow,
+    unregister as unregisterRoute,
+} from '@/routes/events';
 import type { EventFull, EventRegistration, EventSummary } from '@/types/event';
 import { formatEventDate } from '@/types/event';
 
@@ -33,8 +37,14 @@ function formatLabel(format: string): string {
     return map[format] ?? format;
 }
 
-
-const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777', '#126b44', '#1a9966'];
+const TINTS = [
+    '#0f7b4d',
+    '#188a5c',
+    '#0b6640',
+    '#3ea777',
+    '#126b44',
+    '#1a9966',
+];
 
 function getTint(name: string): string {
     let hash = 0;
@@ -46,16 +56,23 @@ function getTint(name: string): string {
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
-export default function EventShow({ event, userRegistration, similarEvents }: Props) {
-    const { auth } = usePage().props as { auth: { user: { name: string } | null } };
+export default function EventShow({
+    event,
+    userRegistration,
+    similarEvents,
+}: Props) {
+    const { auth } = usePage().props as {
+        auth: { user: { name: string } | null };
+    };
     const getInitials = useInitials();
     const { day, month, year } = formatEventDate(event.starts_at);
     const isLoggedIn = !!auth?.user;
 
     const endDate = event.ends_at ? formatEventDate(event.ends_at) : null;
-    const dateLabel = endDate && endDate.day !== day
-        ? `${day}–${endDate.day} ${month} ${year}`
-        : `${day} ${month} ${year}`;
+    const dateLabel =
+        endDate && endDate.day !== day
+            ? `${day}–${endDate.day} ${month} ${year}`
+            : `${day} ${month} ${year}`;
 
     const location = event.is_online
         ? 'En ligne'
@@ -74,8 +91,10 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                         backgroundImage:
                             'linear-gradient(rgba(15,123,77,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(15,123,77,.04) 1px, transparent 1px)',
                         backgroundSize: '24px 24px',
-                        WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 95%)',
-                        maskImage: 'linear-gradient(to bottom, black 0%, black 55%, transparent 95%)',
+                        WebkitMaskImage:
+                            'linear-gradient(to bottom, black 0%, black 55%, transparent 95%)',
+                        maskImage:
+                            'linear-gradient(to bottom, black 0%, black 55%, transparent 95%)',
                     }}
                 />
                 {/* Green blur accent */}
@@ -85,7 +104,13 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                 />
 
                 <div className="relative mx-auto max-w-350 px-6 py-12 lg:px-10">
-                    <div className={event.cover_path ? 'grid items-center gap-10 lg:grid-cols-[1fr_420px]' : undefined}>
+                    <div
+                        className={
+                            event.cover_path
+                                ? 'grid items-center gap-10 lg:grid-cols-[1fr_420px]'
+                                : undefined
+                        }
+                    >
                         {/* Left: text */}
                         <div>
                             {/* Breadcrumb */}
@@ -93,11 +118,16 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                                 className="mb-5 flex items-center gap-2 text-[11.5px]"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                <Link href="/events" className="hover:underline">
+                                <Link
+                                    href="/events"
+                                    className="hover:underline"
+                                >
                                     événements
                                 </Link>
                                 <span>/</span>
-                                <span>{formatLabel(event.format).toLowerCase()}</span>
+                                <span>
+                                    {formatLabel(event.format).toLowerCase()}
+                                </span>
                             </div>
 
                             {/* Badges */}
@@ -105,20 +135,28 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                                 <span className="sn-badge sn-badge-primary">
                                     {formatLabel(event.format).toUpperCase()}
                                 </span>
-                                {event.ends_at && endDate && endDate.day !== day && (
-                                    <span className="sn-badge sn-badge-neutral">
-                                        · multi-jours
-                                    </span>
-                                )}
+                                {event.ends_at &&
+                                    endDate &&
+                                    endDate.day !== day && (
+                                        <span className="sn-badge sn-badge-neutral">
+                                            · multi-jours
+                                        </span>
+                                    )}
                                 {event.is_online && (
                                     <span className="sn-badge sn-badge-neutral">
-                                        <Presentation size={13} style={{ color: 'var(--sn-muted)' }} />{' '}
+                                        <Presentation
+                                            size={13}
+                                            style={{ color: 'var(--sn-muted)' }}
+                                        />{' '}
                                         En ligne
                                     </span>
                                 )}
                                 {event.is_featured && (
                                     <span className="sn-badge sn-badge-neutral">
-                                        <Award size={13} style={{ color: 'var(--sn-muted)' }} />{' '}
+                                        <Award
+                                            size={13}
+                                            style={{ color: 'var(--sn-muted)' }}
+                                        />{' '}
                                         à la une
                                     </span>
                                 )}
@@ -135,7 +173,10 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                             {/* Description */}
                             <p
                                 className="mt-4 max-w-[60ch] text-[16px] leading-relaxed italic lg:text-[18px]"
-                                style={{ color: 'var(--sn-muted)', fontFamily: 'Georgia, serif' }}
+                                style={{
+                                    color: 'var(--sn-muted)',
+                                    fontFamily: 'Georgia, serif',
+                                }}
                             >
                                 {event.description}
                             </p>
@@ -146,17 +187,35 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                                 style={{ color: 'var(--sn-fg)' }}
                             >
                                 <span className="flex items-center gap-1.5">
-                                    <CalendarDays size={13} style={{ color: 'var(--sn-muted)' }} />
+                                    <CalendarDays
+                                        size={13}
+                                        style={{ color: 'var(--sn-muted)' }}
+                                    />
                                     <b>{dateLabel}</b>
                                 </span>
                                 {location && (
                                     <>
-                                        <span style={{ color: 'var(--sn-muted)' }}>·</span>
+                                        <span
+                                            style={{ color: 'var(--sn-muted)' }}
+                                        >
+                                            ·
+                                        </span>
                                         <span className="flex items-center gap-1.5">
-                                            <MapPin size={13} style={{ color: 'var(--sn-muted)' }} />
-                                            <b>{event.venue?.name ?? location}</b>
+                                            <MapPin
+                                                size={13}
+                                                style={{
+                                                    color: 'var(--sn-muted)',
+                                                }}
+                                            />
+                                            <b>
+                                                {event.venue?.name ?? location}
+                                            </b>
                                             {event.venue?.district && (
-                                                <span style={{ color: 'var(--sn-muted)' }}>
+                                                <span
+                                                    style={{
+                                                        color: 'var(--sn-muted)',
+                                                    }}
+                                                >
                                                     {event.venue.district}
                                                 </span>
                                             )}
@@ -189,7 +248,8 @@ export default function EventShow({ event, userRegistration, similarEvents }: Pr
                                     className="w-full rounded-xl object-cover"
                                     style={{
                                         aspectRatio: '16/9',
-                                        boxShadow: '0 8px 32px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12)',
+                                        boxShadow:
+                                            '0 8px 32px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12)',
                                     }}
                                 />
                             </div>
@@ -381,10 +441,14 @@ function HeroCta({
 
     function handleRegister() {
         setLoading(true);
-        router.post(registerRoute.url(event.slug), {}, {
-            preserveScroll: true,
-            onFinish: () => setLoading(false),
-        });
+        router.post(
+            registerRoute.url(event.slug),
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => setLoading(false),
+            },
+        );
     }
 
     function handleCancel() {
@@ -411,7 +475,11 @@ function HeroCta({
                     className="sn-btn sn-btn-ghost sn-btn-sm"
                     style={{ color: 'var(--sn-muted)' }}
                 >
-                    {loading ? <Loader2 size={13} className="animate-spin" /> : 'Annuler'}
+                    {loading ? (
+                        <Loader2 size={13} className="animate-spin" />
+                    ) : (
+                        'Annuler'
+                    )}
                 </button>
             </>
         );
@@ -419,7 +487,10 @@ function HeroCta({
 
     if (!isLoggedIn) {
         return (
-            <Link href={`/login?redirect=/events/${event.slug}`} className="sn-btn sn-btn-primary">
+            <Link
+                href={`/login?redirect=/events/${event.slug}`}
+                className="sn-btn sn-btn-primary"
+            >
                 Se connecter pour s'inscrire <ArrowRight size={14} />
             </Link>
         );
@@ -429,7 +500,11 @@ function HeroCta({
         return (
             <div
                 className="rounded-lg px-4 py-2.5 text-[12px]"
-                style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)', color: 'var(--sn-muted)' }}
+                style={{
+                    background: 'var(--sn-surface)',
+                    border: '1px solid var(--sn-border)',
+                    color: 'var(--sn-muted)',
+                }}
             >
                 {event.is_full ? 'Complet' : 'Inscriptions fermées'}
             </div>
@@ -447,12 +522,13 @@ function HeroCta({
                     <Loader2 size={14} className="animate-spin" />
                 ) : (
                     <>
-                        {event.is_full ? 'Liste d\'attente' : 'S\'inscrire · Gratuit'}
+                        {event.is_full
+                            ? "Liste d'attente"
+                            : "S'inscrire · Gratuit"}
                         <ArrowRight size={14} />
                     </>
                 )}
             </button>
-
         </>
     );
 }
@@ -471,23 +547,29 @@ function BottomBar({
 
     function handleRegister() {
         setLoading(true);
-        router.post(registerRoute.url(event.slug), {}, {
-            preserveScroll: true,
-            onFinish: () => setLoading(false),
-        });
+        router.post(
+            registerRoute.url(event.slug),
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => setLoading(false),
+            },
+        );
     }
 
     function handleCopy() {
         navigator.clipboard.writeText(window.location.href);
     }
 
-    const alreadyRegistered = userRegistration && userRegistration.status !== 'cancelled';
+    const alreadyRegistered =
+        userRegistration && userRegistration.status !== 'cancelled';
 
     return (
         <div
             className="sticky bottom-0 z-20 border-t lg:hidden"
             style={{
-                background: 'color-mix(in oklch, var(--sn-bg) 85%, transparent)',
+                background:
+                    'color-mix(in oklch, var(--sn-bg) 85%, transparent)',
                 backdropFilter: 'blur(14px)',
                 WebkitBackdropFilter: 'blur(14px)',
                 borderColor: 'var(--sn-border)',
@@ -495,10 +577,16 @@ function BottomBar({
         >
             <div className="flex items-center gap-3 px-4 py-3">
                 <div className="min-w-0 flex-1">
-                    <div className="truncate text-[13px] font-semibold" style={{ color: 'var(--sn-fg)' }}>
+                    <div
+                        className="truncate text-[13px] font-semibold"
+                        style={{ color: 'var(--sn-fg)' }}
+                    >
                         {event.title}
                     </div>
-                    <div className="text-[11px]" style={{ color: 'var(--sn-muted)' }}>
+                    <div
+                        className="text-[11px]"
+                        style={{ color: 'var(--sn-muted)' }}
+                    >
                         {day} {month}
                         {event.venue?.name ? ` · ${event.venue.name}` : ''}
                     </div>
@@ -525,10 +613,17 @@ function BottomBar({
                         disabled={loading}
                         className="sn-btn sn-btn-primary sn-btn-sm"
                     >
-                        {loading ? <Loader2 size={13} className="animate-spin" /> : 'S\'inscrire'}
+                        {loading ? (
+                            <Loader2 size={13} className="animate-spin" />
+                        ) : (
+                            "S'inscrire"
+                        )}
                     </button>
                 ) : !isLoggedIn ? (
-                    <Link href="/login" className="sn-btn sn-btn-primary sn-btn-sm">
+                    <Link
+                        href="/login"
+                        className="sn-btn sn-btn-primary sn-btn-sm"
+                    >
                         Se connecter
                     </Link>
                 ) : null}

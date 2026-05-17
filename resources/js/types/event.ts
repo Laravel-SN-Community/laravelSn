@@ -68,8 +68,18 @@ export type PaginatedEvents = {
 };
 
 const MONTHS_FR = [
-    'jan', 'fév', 'mar', 'avr', 'mai', 'juin',
-    'juil', 'août', 'sep', 'oct', 'nov', 'déc',
+    'jan',
+    'fév',
+    'mar',
+    'avr',
+    'mai',
+    'juin',
+    'juil',
+    'août',
+    'sep',
+    'oct',
+    'nov',
+    'déc',
 ] as const;
 
 export function formatEventDate(isoString: string): {
@@ -84,6 +94,9 @@ export function formatEventDate(isoString: string): {
         day: String(d.getDate()).padStart(2, '0'),
         month: MONTHS_FR[d.getMonth()],
         year: String(d.getFullYear()),
-        time: d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        time: d.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+        }),
     };
 }

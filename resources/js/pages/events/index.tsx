@@ -23,7 +23,11 @@ function formatLabel(format: string): string {
     return map[format] ?? format;
 }
 
-function seatsInfo(event: EventSummary): { filled: number; pct: number; label: string } {
+function seatsInfo(event: EventSummary): {
+    filled: number;
+    pct: number;
+    label: string;
+} {
     if (event.capacity === null) {
         return { filled: 0, pct: 0, label: 'Places libres' };
     }
@@ -32,14 +36,22 @@ function seatsInfo(event: EventSummary): { filled: number; pct: number; label: s
     const pct = Math.min(100, Math.round((filled / event.capacity) * 100));
     const remaining = Math.max(0, event.capacity - filled);
 
-    return { filled, pct, label: `${remaining} restant${remaining !== 1 ? 's' : ''}` };
+    return {
+        filled,
+        pct,
+        label: `${remaining} restant${remaining !== 1 ? 's' : ''}`,
+    };
 }
 
 export default function EventsIndex({ events, filters }: Props) {
     const tab = filters.tab ?? 'upcoming';
 
     function go(newTab: string) {
-        router.get(eventsIndex.url(), { tab: newTab }, { preserveState: true, replace: true });
+        router.get(
+            eventsIndex.url(),
+            { tab: newTab },
+            { preserveState: true, replace: true },
+        );
     }
 
     const featured = events.data.find((e) => e.is_featured) ?? events.data[0];
@@ -79,15 +91,22 @@ export default function EventsIndex({ events, filters }: Props) {
                             onClick={() => go(t)}
                             className="rounded-md px-3 py-1 transition-colors"
                             style={{
-                                background: tab === t ? 'var(--sn-fg)' : 'transparent',
-                                color: tab === t ? 'var(--sn-bg)' : 'var(--sn-muted)',
+                                background:
+                                    tab === t ? 'var(--sn-fg)' : 'transparent',
+                                color:
+                                    tab === t
+                                        ? 'var(--sn-bg)'
+                                        : 'var(--sn-muted)',
                                 border: '1px solid var(--sn-border)',
                             }}
                         >
                             {t === 'upcoming' ? 'À venir' : 'Passés'}
                         </button>
                     ))}
-                    <span className="ml-auto" style={{ color: 'var(--sn-muted)' }}>
+                    <span
+                        className="ml-auto"
+                        style={{ color: 'var(--sn-muted)' }}
+                    >
                         {events.total} événement{events.total !== 1 ? 's' : ''}
                     </span>
                 </div>
@@ -112,7 +131,9 @@ export default function EventsIndex({ events, filters }: Props) {
                         className="mb-4 text-[13px] font-semibold tracking-wide uppercase"
                         style={{ color: 'var(--sn-muted)' }}
                     >
-                        {tab === 'upcoming' ? 'Prochains rendez-vous' : 'Archives'}
+                        {tab === 'upcoming'
+                            ? 'Prochains rendez-vous'
+                            : 'Archives'}
                     </h3>
                     <div className="grid gap-4 md:grid-cols-2">
                         {rest.map((e) => (
@@ -171,7 +192,10 @@ export default function EventsIndex({ events, filters }: Props) {
                             border: '1px solid var(--sn-border)',
                         }}
                     >
-                        <p className="text-[15px]" style={{ color: 'var(--sn-muted)' }}>
+                        <p
+                            className="text-[15px]"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
                             {tab === 'upcoming'
                                 ? 'Aucun événement à venir pour le moment.'
                                 : 'Aucun événement passé.'}
@@ -190,7 +214,9 @@ function FeaturedCard({ event }: { event: EventSummary }) {
     const { label } = seatsInfo(event);
     const location = event.is_online
         ? 'En ligne'
-        : [event.venue?.name, event.venue?.district].filter(Boolean).join(' · ');
+        : [event.venue?.name, event.venue?.district]
+              .filter(Boolean)
+              .join(' · ');
 
     return (
         <div
@@ -251,7 +277,9 @@ function FeaturedCard({ event }: { event: EventSummary }) {
                 >
                     {location && <span>📍 {location}</span>}
                     {event.capacity !== null && (
-                        <span>👥 {label} / {event.capacity}</span>
+                        <span>
+                            👥 {label} / {event.capacity}
+                        </span>
                     )}
                 </div>
                 <div className="mt-6 flex items-center gap-3">
@@ -269,7 +297,9 @@ function EventCard({ event }: { event: EventSummary }) {
     const { pct, label } = seatsInfo(event);
     const location = event.is_online
         ? 'En ligne'
-        : [event.venue?.name, event.venue?.district].filter(Boolean).join(' · ');
+        : [event.venue?.name, event.venue?.district]
+              .filter(Boolean)
+              .join(' · ');
 
     return (
         <div className="flex items-start gap-5">
@@ -325,10 +355,15 @@ function EventCard({ event }: { event: EventSummary }) {
                         >
                             <div
                                 className="h-full"
-                                style={{ width: `${pct}%`, background: 'var(--sn-600)' }}
+                                style={{
+                                    width: `${pct}%`,
+                                    background: 'var(--sn-600)',
+                                }}
                             />
                         </div>
-                        <span style={{ color: 'var(--sn-muted)' }}>{label}</span>
+                        <span style={{ color: 'var(--sn-muted)' }}>
+                            {label}
+                        </span>
                     </div>
                 )}
             </div>

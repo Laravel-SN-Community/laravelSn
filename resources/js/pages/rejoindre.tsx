@@ -12,7 +12,7 @@ const BENEFITS = [
 const TOPICS = [
     'Laravel & PHP',
     'Code reviews',
-    'Offres d\'emploi',
+    "Offres d'emploi",
     'Projets & freelance',
     'Événements',
     'Ressources',
@@ -33,7 +33,6 @@ export default function Rejoindre() {
             <Head title="Rejoindre — Laravel Sénégal" />
 
             <div className="mx-auto max-w-[1400px] px-6 pt-16 pb-24 lg:px-10">
-
                 {/* Hero */}
                 <div className="mb-14 max-w-[660px]">
                     <h1
@@ -41,7 +40,9 @@ export default function Rejoindre() {
                         style={{ color: 'var(--sn-fg)' }}
                     >
                         La communauté{' '}
-                        <span style={{ color: 'var(--sn-accent)' }}>Laravel</span>{' '}
+                        <span style={{ color: 'var(--sn-accent)' }}>
+                            Laravel
+                        </span>{' '}
                         du Sénégal t'attend.
                     </h1>
                     <p
@@ -94,7 +95,10 @@ export default function Rejoindre() {
                                 <div className="flex items-center gap-3">
                                     <div
                                         className="flex h-10 w-10 items-center justify-center rounded-xl"
-                                        style={{ background: 'rgba(255,255,255,0.15)' }}
+                                        style={{
+                                            background:
+                                                'rgba(255,255,255,0.15)',
+                                        }}
                                     >
                                         <span style={{ color: '#fff' }}>
                                             <WhatsAppIcon />
@@ -106,7 +110,9 @@ export default function Rejoindre() {
                                         </div>
                                         <div
                                             className="text-[12.5px]"
-                                            style={{ color: 'rgba(255,255,255,0.6)' }}
+                                            style={{
+                                                color: 'rgba(255,255,255,0.6)',
+                                            }}
                                         >
                                             500+ membres actifs
                                         </div>
@@ -117,10 +123,11 @@ export default function Rejoindre() {
                                     className="mt-6 max-w-[46ch] text-[15px] leading-[1.7]"
                                     style={{ color: 'rgba(255,255,255,0.75)' }}
                                 >
-                                    Le canal principal de la communauté. Discussions
-                                    en temps réel, partage de liens, annonces
-                                    d'événements et entraide quotidienne — des
-                                    réponses en moins d'une heure.
+                                    Le canal principal de la communauté.
+                                    Discussions en temps réel, partage de liens,
+                                    annonces d'événements et entraide
+                                    quotidienne — des réponses en moins d'une
+                                    heure.
                                 </p>
                             </div>
 
@@ -129,7 +136,10 @@ export default function Rejoindre() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex w-fit items-center gap-2 rounded-xl px-6 py-3 text-[14px] font-semibold transition-opacity hover:opacity-90"
-                                style={{ background: '#fff', color: 'var(--sn-700)' }}
+                                style={{
+                                    background: '#fff',
+                                    color: 'var(--sn-700)',
+                                }}
                             >
                                 Rejoindre le groupe WhatsApp
                                 <ArrowRight size={15} />
