@@ -82,13 +82,6 @@ const ALL_ITEMS: CommandItem[] = [
     },
     {
         g: 'Actions',
-        label: 'Discord Laravel Sénégal',
-        hint: 'canal dev',
-        Icon: MessageCircle,
-        href: '/rejoindre',
-    },
-    {
-        g: 'Actions',
         label: 'GitHub — laravel-sn',
         hint: 'repo communauté',
         Icon: Github,

@@ -419,7 +419,7 @@ function HeroCta({
 
     if (!isLoggedIn) {
         return (
-            <Link href="/login" className="sn-btn sn-btn-primary">
+            <Link href={`/login?redirect=/events/${event.slug}`} className="sn-btn sn-btn-primary">
                 Se connecter pour s'inscrire <ArrowRight size={14} />
             </Link>
         );

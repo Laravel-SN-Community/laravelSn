@@ -45,7 +45,7 @@ function RepoCard({ name, desc, href }: Repo) {
             href={`https://${href}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group block p-7 transition-colors hover:bg-[color:var(--sn-surface-2)]"
+            className="group flex h-full flex-col p-7 transition-colors hover:bg-[color:var(--sn-surface-2)]"
         >
             {/* GitHub icon */}
             <svg
@@ -134,6 +134,7 @@ export default function OpenSourceSection() {
                         return (
                             <div
                                 key={r.name}
+                                className="flex flex-col"
                                 style={{
                                     borderRight:
                                         col !== 2

@@ -802,6 +802,8 @@ export default function ArticleCreateSheet({
                         background: 'var(--sn-bg)',
                         border: '1px solid var(--sn-border)',
                     }}
+                    onPointerDownOutside={(e) => e.preventDefault()}
+                    onInteractOutside={(e) => e.preventDefault()}
                 >
                     {/* ── Header ── */}
                     <div
@@ -812,39 +814,37 @@ export default function ArticleCreateSheet({
                             borderRadius: '16px 16px 0 0',
                         }}
                     >
-                        <div>
-                            <p
-                                className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                {article
-                                    ? "// modifier l'article"
-                                    : '// nouvel article'}
-                            </p>
-                            <h2
-                                className="mt-0.5 text-[18px] font-semibold tracking-tight"
-                                style={{ color: 'var(--sn-fg)' }}
-                            >
-                                {article
-                                    ? "Modifier l'article"
-                                    : 'Rédiger un article'}
-                            </h2>
-                        </div>
-                        <Dialog.Close
-                            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors focus:outline-none"
-                            style={{ color: 'var(--sn-muted)' }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background =
-                                    'var(--sn-surface-2)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background =
-                                    'transparent';
-                            }}
+                        <h2
+                            className="text-[18px] font-semibold tracking-tight"
+                            style={{ color: 'var(--sn-fg)' }}
                         >
-                            <X size={16} />
-                            <span className="sr-only">Fermer</span>
-                        </Dialog.Close>
+                            {article
+                                ? "Modifier l'article"
+                                : 'Rédiger un article'}
+                        </h2>
+                        <div className="flex items-center gap-2">
+                            <span
+                                className="rounded px-1.5 py-0.5 font-mono text-[10px] font-medium"
+                                style={{ background: 'var(--sn-n200)', color: 'var(--sn-n500)' }}
+                            >
+                                ESC
+                            </span>
+                            <Dialog.Close
+                                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors focus:outline-none"
+                                style={{ color: 'var(--sn-muted)' }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background =
+                                        'var(--sn-surface-2)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background =
+                                        'transparent';
+                                }}
+                            >
+                                <X size={16} />
+                                <span className="sr-only">Fermer</span>
+                            </Dialog.Close>
+                        </div>
                     </div>
 
                     <form

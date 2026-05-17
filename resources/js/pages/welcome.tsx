@@ -13,9 +13,10 @@ import SponsorsSection from '@/components/site/sponsors-section';
 import type { ArticleSummary } from '@/types/article';
 
 export default function Welcome() {
-    const { auth, latestArticles } = usePage().props as unknown as {
+    const { auth, latestArticles, upcomingEvents } = usePage().props as unknown as {
         auth: { user: { name: string } | null };
         latestArticles: ArticleSummary[];
+        upcomingEvents: Parameters<typeof EventsSection>[0]['events'];
     };
     const [cmdOpen, setCmdOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -62,7 +63,7 @@ export default function Welcome() {
                     <SiteHero onOpenCmd={() => setCmdOpen(true)} />
                     <SponsorsSection />
                     <ArticlesSection articles={latestArticles} />
-                    <EventsSection />
+                    <EventsSection events={upcomingEvents} />
                     <OpenSourceSection />
                     <CtaSection />
                 </main>
