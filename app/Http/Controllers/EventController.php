@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Events\CancelEventRegistration;
+use App\Actions\Events\CreateEvent;
 use App\Actions\Events\RegisterUserToEvent;
+use App\Actions\Events\UpdateEvent;
+use App\Enums\EventFormat;
 use App\Enums\EventRegistrationStatus;
+use App\Enums\PublicationStatus;
 use App\Models\Event;
+use App\Models\Venue;
 use App\Support\Exceptions\EventRegistrationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -104,31 +109,111 @@ final class EventController extends Controller
     {
         Gate::authorize('events:manage');
 
-        $events = Event::query()
+        $tab = $request->string('tab', 'all')->toString();
+
+        $query = Event::query()
             ->with(['venue:id,name,district'])
-            ->withCount('confirmedRegistrations')
-            ->latest('starts_at')
-            ->paginate(20)
-            ->withQueryString();
+            ->withCount('confirmedRegistrations');
+
+        match ($tab) {
+            'upcoming' => $query
+                ->where('status', PublicationStatus::Published)
+                ->where('starts_at', '>', now())
+                ->orderBy('starts_at'),
+            'drafts' => $query
+                ->where('status', PublicationStatus::Draft)
+                ->orderByDesc('starts_at'),
+            'past' => $query
+                ->where('status', PublicationStatus::Published)
+                ->where('starts_at', '<', now())
+                ->orderByDesc('starts_at'),
+            default => $query->orderByDesc('starts_at'),
+        };
+
+        $events = $query->paginate(20)->withQueryString();
+
+        $stats = [
+            'total' => Event::query()->count(),
+            'upcoming' => Event::query()
+                ->where('status', PublicationStatus::Published)
+                ->where('starts_at', '>', now())
+                ->count(),
+            'drafts' => Event::query()->where('status', PublicationStatus::Draft)->count(),
+            'past' => Event::query()
+                ->where('status', PublicationStatus::Published)
+                ->where('starts_at', '<', now())
+                ->count(),
+        ];
+
+        $venues = Venue::query()->orderBy('name')->get(['id', 'name', 'district']);
 
         return Inertia::render('dashboard/manage/events', [
             'events' => $events,
+            'stats' => $stats,
+            'venues' => $venues,
+            'filters' => ['tab' => $tab],
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, CreateEvent $createEvent): RedirectResponse
     {
         Gate::authorize('events:manage');
 
-        // TODO: implement event creation form & action
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'format' => ['required', 'string', 'in:'.implode(',', array_column(EventFormat::cases(), 'value'))],
+            'description' => ['required', 'string'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['nullable', 'date'],
+            'registration_opens_at' => ['nullable', 'date'],
+            'registration_closes_at' => ['nullable', 'date'],
+            'is_online' => ['boolean'],
+            'venue_id' => ['nullable', 'integer', 'exists:venues,id'],
+            'online_url' => ['nullable', 'url'],
+            'capacity' => ['nullable', 'integer', 'min:1'],
+            'waitlist_capacity' => ['integer', 'min:0'],
+            'agenda' => ['nullable', 'array'],
+            'agenda.*.time' => ['required', 'string', 'max:10'],
+            'agenda.*.title' => ['required', 'string', 'max:255'],
+            'is_featured' => ['boolean'],
+            'is_sponsored' => ['boolean'],
+            'replay_url' => ['nullable', 'url'],
+            'publish' => ['boolean'],
+        ]);
+
+        $createEvent($data);
+
         return redirect()->route('manage.events.index');
     }
 
-    public function update(Request $request, Event $event): RedirectResponse
+    public function update(Request $request, Event $event, UpdateEvent $updateEvent): RedirectResponse
     {
         Gate::authorize('events:manage');
 
-        // TODO: implement event update action
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'format' => ['required', 'string', 'in:'.implode(',', array_column(EventFormat::cases(), 'value'))],
+            'description' => ['required', 'string'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['nullable', 'date'],
+            'registration_opens_at' => ['nullable', 'date'],
+            'registration_closes_at' => ['nullable', 'date'],
+            'is_online' => ['boolean'],
+            'venue_id' => ['nullable', 'integer', 'exists:venues,id'],
+            'online_url' => ['nullable', 'url'],
+            'capacity' => ['nullable', 'integer', 'min:1'],
+            'waitlist_capacity' => ['integer', 'min:0'],
+            'agenda' => ['nullable', 'array'],
+            'agenda.*.time' => ['required', 'string', 'max:10'],
+            'agenda.*.title' => ['required', 'string', 'max:255'],
+            'is_featured' => ['boolean'],
+            'is_sponsored' => ['boolean'],
+            'replay_url' => ['nullable', 'url'],
+            'publish' => ['boolean'],
+        ]);
+
+        $updateEvent($event, $data);
+
         return redirect()->route('manage.events.index');
     }
 

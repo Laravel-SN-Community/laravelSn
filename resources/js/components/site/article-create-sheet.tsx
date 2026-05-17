@@ -796,9 +796,8 @@ export default function ArticleCreateSheet({
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
                 <Dialog.Content
-                    className="fixed top-4 right-4 bottom-4 z-50 flex flex-col rounded-2xl shadow-2xl transition ease-in-out outline-none data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-right"
+                    className="fixed inset-2 z-50 flex flex-col rounded-2xl shadow-2xl outline-none transition ease-in-out sm:top-4 sm:right-4 sm:bottom-4 sm:left-auto sm:w-[760px] sm:max-w-[calc(100vw-32px)] data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-right"
                     style={{
-                        width: 'min(680px, calc(100vw - 32px))',
                         background: 'var(--sn-bg)',
                         border: '1px solid var(--sn-border)',
                     }}
@@ -949,7 +948,7 @@ export default function ArticleCreateSheet({
                             {/* ── Draft + date + locale ── */}
                             <div className="space-y-3">
                                 {/* Draft toggle + date side by side */}
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     <div
                                         className={`flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors ${isPublished ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                         style={{

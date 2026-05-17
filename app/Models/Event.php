@@ -50,6 +50,7 @@ final class Event extends Model
             'waitlist_capacity' => 'integer',
             'format' => EventFormat::class,
             'status' => PublicationStatus::class,
+            'agenda' => 'array',
             'seo_meta' => 'array',
         ];
     }
