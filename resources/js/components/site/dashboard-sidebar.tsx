@@ -6,17 +6,14 @@ import {
     LayoutDashboard,
     LogOut,
     Settings,
+    Shield,
     UserCircle,
 } from 'lucide-react';
 import { useInitials } from '@/hooks/use-initials';
 import { logout } from '@/routes';
+import type { Auth } from '@/types/auth';
 
-interface AuthUser {
-    name: string;
-    email: string;
-}
-
-const SECTIONS = [
+const USER_SECTIONS = [
     {
         id: 'overview',
         label: "Vue d'ensemble",
@@ -55,7 +52,24 @@ const SECTIONS = [
     },
 ] as const;
 
-type SectionId = (typeof SECTIONS)[number]['id'];
+const MANAGE_SECTIONS = [
+    {
+        id: 'manage-articles',
+        label: 'Articles',
+        Icon: FileText,
+        href: '/dashboard/manage/articles',
+    },
+    {
+        id: 'manage-events',
+        label: 'Évènements',
+        Icon: CalendarDays,
+        href: '/dashboard/manage/events',
+    },
+] as const;
+
+type SectionId =
+    | (typeof USER_SECTIONS)[number]['id']
+    | (typeof MANAGE_SECTIONS)[number]['id'];
 
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 
@@ -69,9 +83,55 @@ function getTint(name: string): string {
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
+function roleLabel(role: string): string {
+    if (role === 'admin') {
+        return 'Admin';
+    }
+
+    if (role === 'moderator') {
+        return 'Modérateur';
+    }
+
+    return role;
+}
+
+function NavLink({
+    href,
+    icon: Icon,
+    label,
+    active,
+}: {
+    href: string;
+    icon: React.ElementType;
+    label: string;
+    active: boolean;
+}) {
+    return (
+        <Link
+            href={href}
+            className="flex items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
+            style={{
+                background: active ? 'var(--sn-surface-2)' : 'transparent',
+                color: active ? 'var(--sn-fg)' : 'var(--sn-muted)',
+            }}
+        >
+            <Icon
+                size={15}
+                strokeWidth={active ? 2 : 1.5}
+                style={{
+                    color: active ? 'var(--sn-600)' : 'inherit',
+                    flexShrink: 0,
+                }}
+            />
+            {label}
+        </Link>
+    );
+}
+
 export default function DashSidebar({ section }: { section: SectionId }) {
-    const { auth } = usePage().props as { auth: { user: AuthUser | null } };
-    const user = auth?.user;
+    const { auth } = usePage().props as unknown as { auth: Auth };
+    const user = auth?.user ?? null;
+    const role = auth?.role ?? null;
     const getInitials = useInitials();
 
     if (!user) {
@@ -80,90 +140,170 @@ export default function DashSidebar({ section }: { section: SectionId }) {
 
     const init = getInitials(user.name);
     const tint = getTint(user.name);
+    const isMod = role === 'moderator' || role === 'admin';
 
     function handleLogout() {
         router.post(logout());
     }
 
+    const allMobileItems = [
+        ...USER_SECTIONS,
+        ...(isMod ? MANAGE_SECTIONS : []),
+    ];
+
     return (
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+            {/* ── Mobile: horizontal scrollable tab bar ── */}
             <div
-                className="mb-3 rounded-xl p-4"
-                style={{
-                    background: 'var(--sn-surface)',
-                    border: '1px solid var(--sn-border)',
-                }}
+                className="mb-5 overflow-x-auto lg:hidden"
+                style={{ borderBottom: '1px solid var(--sn-border)' }}
             >
-                <div className="flex items-center gap-3">
-                    <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold tracking-wide"
-                        style={{ background: tint, color: '#fff' }}
+                <div className="flex min-w-max items-center gap-0.5 pt-1 pb-2">
+                    {allMobileItems.map((s) => {
+                        const active = s.id === section;
+
+                        return (
+                            <Link
+                                key={s.id}
+                                href={s.href}
+                                className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors"
+                                style={{
+                                    background: active
+                                        ? 'color-mix(in srgb, var(--sn-600) 12%, transparent)'
+                                        : 'transparent',
+                                    color: active
+                                        ? 'var(--sn-600)'
+                                        : 'var(--sn-muted)',
+                                }}
+                            >
+                                <s.Icon
+                                    size={14}
+                                    strokeWidth={active ? 2 : 1.5}
+                                    style={{ flexShrink: 0 }}
+                                />
+                                {s.label}
+                            </Link>
+                        );
+                    })}
+                    <button
+                        onClick={handleLogout}
+                        className="flex shrink-0 items-center gap-1.5 px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-opacity hover:opacity-70"
+                        style={{ color: 'var(--destructive)' }}
                     >
-                        {init}
-                    </div>
-                    <div className="min-w-0">
-                        <div
-                            className="truncate text-[14px] font-semibold"
-                            style={{ color: 'var(--sn-fg)' }}
-                        >
-                            {user.name}
-                        </div>
-                        <div
-                            className="truncate text-[11.5px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            {user.email}
-                        </div>
-                    </div>
+                        <LogOut
+                            size={14}
+                            strokeWidth={1.5}
+                            style={{ flexShrink: 0 }}
+                        />
+                        Déconnexion
+                    </button>
                 </div>
             </div>
 
-            <nav className="space-y-0.5">
-                {SECTIONS.map((s) => {
-                    const active = s.id === section;
+            {/* ── Desktop: vertical sidebar ── */}
+            <div className="hidden lg:block">
+                {/* User card */}
+                <div
+                    className="mb-3 rounded-xl p-4"
+                    style={{
+                        background: 'var(--sn-surface)',
+                        border: '1px solid var(--sn-border)',
+                    }}
+                >
+                    <div className="flex items-center gap-3">
+                        <div
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold tracking-wide"
+                            style={{ background: tint, color: '#fff' }}
+                        >
+                            {init}
+                        </div>
+                        <div className="min-w-0">
+                            <div
+                                className="truncate text-[14px] font-semibold"
+                                style={{ color: 'var(--sn-fg)' }}
+                            >
+                                {user.name}
+                            </div>
+                            <div
+                                className="truncate text-[11.5px]"
+                                style={{ color: 'var(--sn-muted)' }}
+                            >
+                                {user.email}
+                            </div>
+                        </div>
+                    </div>
 
-                    return (
-                        <Link
+                    {isMod && (
+                        <div className="mt-3">
+                            <span
+                                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase"
+                                style={{
+                                    background: 'var(--sn-accent)',
+                                    color: 'var(--sn-accent-fg)',
+                                }}
+                            >
+                                <Shield size={11} strokeWidth={2} />
+                                {roleLabel(role!)}
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Mon espace */}
+                <div
+                    className="mb-0.5 px-3 pt-3 pb-1 font-mono text-[10px] tracking-[0.18em] uppercase"
+                    style={{ color: 'var(--sn-muted)' }}
+                >
+                    Mon espace
+                </div>
+                <nav className="space-y-0.5">
+                    {USER_SECTIONS.map((s) => (
+                        <NavLink
                             key={s.id}
                             href={s.href}
-                            className="flex items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
-                            style={{
-                                background: active
-                                    ? 'var(--sn-surface-2)'
-                                    : 'transparent',
-                                color: active
-                                    ? 'var(--sn-fg)'
-                                    : 'var(--sn-muted)',
-                            }}
-                        >
-                            <s.Icon
-                                size={15}
-                                strokeWidth={active ? 2 : 1.5}
-                                style={{
-                                    color: active ? 'var(--sn-600)' : 'inherit',
-                                    flexShrink: 0,
-                                }}
-                            />
-                            {s.label}
-                        </Link>
-                    );
-                })}
-            </nav>
+                            icon={s.Icon}
+                            label={s.label}
+                            active={s.id === section}
+                        />
+                    ))}
+                </nav>
 
-            <button
-                onClick={handleLogout}
-                className="mt-3 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
-                style={{ color: 'var(--destructive)' }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = '0.8';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.opacity = '1';
-                }}
-            >
-                <LogOut size={15} strokeWidth={1.5} style={{ flexShrink: 0 }} />
-                Se déconnecter
-            </button>
+                {/* Modération section — mods and admins only */}
+                {isMod && (
+                    <>
+                        <div
+                            className="mb-0.5 px-3 pt-5 pb-1 font-mono text-[10px] tracking-[0.18em] uppercase"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
+                            Modération
+                        </div>
+                        <nav className="space-y-0.5">
+                            {MANAGE_SECTIONS.map((s) => (
+                                <NavLink
+                                    key={s.id}
+                                    href={s.href}
+                                    icon={s.Icon}
+                                    label={s.label}
+                                    active={s.id === section}
+                                />
+                            ))}
+                        </nav>
+                    </>
+                )}
+
+                <button
+                    onClick={handleLogout}
+                    className="mt-4 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-opacity hover:opacity-70"
+                    style={{ color: 'var(--destructive)' }}
+                >
+                    <LogOut
+                        size={15}
+                        strokeWidth={1.5}
+                        style={{ flexShrink: 0 }}
+                    />
+                    Se déconnecter
+                </button>
+            </div>
         </aside>
     );
 }

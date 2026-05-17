@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -12,8 +13,8 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('article');
 
-Route::inertia('/evenements', 'evenements/index')->name('evenements');
-Route::get('/evenements/{slug}', fn (string $slug) => inertia('evenements/show', ['slug' => $slug]))->name('evenement');
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
 Route::inertia('/forum', 'forum/index')->name('forum');
 Route::get('/forum/{slug}', fn (string $slug) => inertia('forum/show', ['slug' => $slug]))->name('forum.thread');
@@ -33,9 +34,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
     Route::patch('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
     Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
-    Route::post('/articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
+    Route::post('/events/{event}/register', [EventController::class, 'register'])->name('events.register');
+    Route::delete('/events/{event}/register', [EventController::class, 'unregister'])->name('events.unregister');
     Route::inertia('/dashboard/events', 'dashboard/events')->name('dashboard.events');
     Route::inertia('/dashboard/notifications', 'dashboard/notifications')->name('dashboard.notifications');
+
+    // Management routes — admin or moderator only
+    Route::middleware(['role:admin|moderator'])->prefix('dashboard/manage')->name('manage.')->group(function () {
+        Route::get('/articles', [ArticleController::class, 'manageIndex'])->name('articles.index');
+        Route::post('/articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
+        Route::delete('/articles/{article}', [ArticleController::class, 'manageDestroy'])->name('articles.destroy');
+        Route::get('/events', [EventController::class, 'manageIndex'])->name('events.index');
+        Route::post('/events', [EventController::class, 'store'])->name('events.store');
+        Route::patch('/events/{event}', [EventController::class, 'update'])->name('events.update');
+        Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+        Route::get('/users', [UserController::class, 'manageIndex'])->name('users.index');
+    });
 });
 
 require __DIR__.'/settings.php';

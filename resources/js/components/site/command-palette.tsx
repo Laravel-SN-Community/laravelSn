@@ -41,9 +41,9 @@ const ALL_ITEMS: CommandItem[] = [
     {
         g: 'Navigation',
         label: 'Événements',
-        hint: '/evenements',
+        hint: '/events',
         Icon: Calendar,
-        href: '/evenements',
+        href: '/events',
     },
     {
         g: 'Articles récents',
@@ -71,19 +71,12 @@ const ALL_ITEMS: CommandItem[] = [
         label: 'Meetup Dakar #09 — Filament',
         hint: '18 mai · 42/80 places',
         Icon: Calendar,
-        href: '/evenements/meetup-09',
+        href: '/events/meetup-09',
     },
     {
         g: 'Actions',
         label: 'Rejoindre le WhatsApp',
         hint: 'canal principal',
-        Icon: MessageCircle,
-        href: '/rejoindre',
-    },
-    {
-        g: 'Actions',
-        label: 'Discord Laravel Sénégal',
-        hint: 'canal dev',
         Icon: MessageCircle,
         href: '/rejoindre',
     },

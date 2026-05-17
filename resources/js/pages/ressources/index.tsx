@@ -45,15 +45,9 @@ export default function Ressources() {
         <>
             <Head title="Ressources — Laravel Sénégal" />
 
-            <section className="mx-auto max-w-[1300px] px-6 pt-10 pb-8 lg:px-10 lg:pt-16">
-                <div
-                    className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    // bibliothèque · ndank ndank
-                </div>
+            <section className="mx-auto max-w-[1400px] px-6 pt-10 pb-8 lg:px-10 lg:pt-16">
                 <h1
-                    className="mt-2 text-[40px] leading-[1.02] font-semibold tracking-[-0.025em] lg:text-[56px]"
+                    className="mt-2 text-[34px] font-semibold tracking-tight"
                     style={{ color: 'var(--sn-fg)' }}
                 >
                     Ressources
@@ -66,7 +60,7 @@ export default function Ressources() {
                 </p>
             </section>
 
-            <section className="mx-auto max-w-[1300px] px-6 pb-6 lg:px-10">
+            <section className="mx-auto max-w-[1400px] px-6 pb-6 lg:px-10">
                 <div className="sn-card p-4 md:p-5">
                     <div className="flex flex-wrap items-center gap-3">
                         <div
@@ -163,15 +157,9 @@ export default function Ressources() {
                 </div>
             </section>
 
-            <section className="mx-auto max-w-[1300px] px-6 pb-20 lg:px-10">
+            <section className="mx-auto max-w-[1400px] px-6 pb-20 lg:px-10">
                 {filtered.length === 0 ? (
                     <div className="sn-card p-10 text-center">
-                        <div
-                            className="mb-2 font-mono text-[12px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            // aucun résultat
-                        </div>
                         <p
                             className="text-[15px]"
                             style={{ color: 'var(--sn-muted)' }}

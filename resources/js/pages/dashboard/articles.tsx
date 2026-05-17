@@ -93,12 +93,6 @@ export default function DashboardArticles({
                     <main className="min-w-0 space-y-6">
                         <div className="flex flex-wrap items-end justify-between gap-4">
                             <div>
-                                <div
-                                    className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    // mes articles
-                                </div>
                                 <h1
                                     className="mt-1 text-[32px] font-semibold tracking-[-0.02em]"
                                     style={{ color: 'var(--sn-fg)' }}
@@ -133,12 +127,12 @@ export default function DashboardArticles({
                                 border: '1px solid var(--sn-border)',
                             }}
                         >
-                            <div
-                                className="mb-4 font-mono text-[10.5px] tracking-[0.18em] uppercase"
+                            <h3
+                                className="mb-4 text-[13px] font-semibold tracking-wide uppercase"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                // publiés
-                            </div>
+                                Publiés
+                            </h3>
                             {publishedArticles.length === 0 ? (
                                 <p
                                     className="font-mono text-[12.5px]"
@@ -212,12 +206,12 @@ export default function DashboardArticles({
                                 border: '1px solid var(--sn-border)',
                             }}
                         >
-                            <div
-                                className="mb-4 font-mono text-[10.5px] tracking-[0.18em] uppercase"
+                            <h3
+                                className="mb-4 text-[13px] font-semibold tracking-wide uppercase"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                // brouillons
-                            </div>
+                                Brouillons
+                            </h3>
                             {draftArticles.length === 0 ? (
                                 <p
                                     className="font-mono text-[12.5px]"

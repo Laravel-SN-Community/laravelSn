@@ -311,7 +311,7 @@ export default function ArticleShow() {
                     </div>
 
                     <h1
-                        className="text-[38px] leading-[1.08] font-semibold tracking-[-0.025em] lg:text-[52px]"
+                        className="text-[28px] leading-[1.1] font-semibold tracking-tight lg:text-[34px]"
                         style={{ color: 'var(--sn-fg)' }}
                     >
                         {article.title}
@@ -562,10 +562,10 @@ export default function ArticleShow() {
                         {toc.length > 0 && (
                             <>
                                 <div
-                                    className="mb-3 font-mono text-[10.5px] tracking-[0.18em] uppercase"
+                                    className="mb-3 text-[11px] font-semibold tracking-wide uppercase"
                                     style={{ color: 'var(--sn-muted)' }}
                                 >
-                                    // sommaire
+                                    Sommaire
                                 </div>
                                 <nav
                                     className="flex flex-col gap-1 border-l pl-4"
@@ -612,10 +612,10 @@ export default function ArticleShow() {
                         {/* Newsletter */}
                         <div className="sn-card mt-8 p-5">
                             <div
-                                className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
+                                className="text-[11px] font-semibold tracking-wide uppercase"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
-                                // newsletter
+                                Newsletter
                             </div>
                             <div
                                 className="mt-2 text-[15px] font-semibold tracking-tight"

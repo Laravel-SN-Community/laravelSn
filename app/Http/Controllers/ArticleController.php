@@ -190,12 +190,36 @@ final class ArticleController extends Controller
         return redirect()->route('dashboard.articles');
     }
 
+    public function manageIndex(Request $request): Response
+    {
+        Gate::authorize('articles:publish');
+
+        $articles = Article::query()
+            ->with(['author:id,name,username,avatar', 'tags:id,name,slug'])
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return Inertia::render('dashboard/manage/articles', [
+            'articles' => $articles,
+        ]);
+    }
+
     public function publish(Article $article, PublishArticle $publishArticle): RedirectResponse
     {
-        Gate::authorize('publish', $article);
+        Gate::authorize('articles:publish');
 
         $publishArticle($article);
 
-        return redirect()->route('dashboard.articles');
+        return redirect()->route('manage.articles.index');
+    }
+
+    public function manageDestroy(Article $article, DeleteArticle $deleteArticle): RedirectResponse
+    {
+        Gate::authorize('articles:delete');
+
+        $deleteArticle($article);
+
+        return redirect()->route('manage.articles.index');
     }
 }

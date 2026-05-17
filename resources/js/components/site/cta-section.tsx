@@ -50,21 +50,20 @@ export default function CtaSection() {
                             className="mt-4 max-w-[52ch] text-[15px] leading-relaxed"
                             style={{ color: 'rgba(255,255,255,.72)' }}
                         >
-                            Rejoins 500+ développeurs sur WhatsApp et Discord.
-                            Événements mensuels, code reviews, offres d'emploi,
-                            entraide — le tout en français.
+                            Rejoins 500+ développeurs sur WhatsApp. Événements
+                            mensuels, code reviews, offres d'emploi, entraide —
+                            le tout en français.
                         </p>
                     </div>
 
                     {/* CTAs */}
                     <div className="flex flex-col gap-3 lg:col-span-4">
                         <a
-                            href="https://chat.whatsapp.com/laravel-sn"
+                            href="https://chat.whatsapp.com/Cjeivt4kyDmFx3L8QB7rFE"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="sn-btn sn-btn-primary w-full justify-center"
                         >
-                            {/* WhatsApp icon */}
                             <svg
                                 width="16"
                                 height="16"
@@ -77,36 +76,15 @@ export default function CtaSection() {
                             Rejoindre WhatsApp
                         </a>
 
-                        <a
-                            href="https://discord.gg/laravel-sn"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="sn-btn w-full justify-center"
-                            style={{
-                                background: 'rgba(255,255,255,.08)',
-                                color: '#fff',
-                                border: '1px solid rgba(255,255,255,.15)',
-                            }}
-                        >
-                            {/* Discord icon */}
-                            <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                            >
-                                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-                            </svg>
-                            Rejoindre Discord
-                        </a>
-
                         <span
                             className="text-center font-mono text-[11px]"
                             style={{ color: 'rgba(255,255,255,.5)' }}
                         >
                             ou ·{' '}
                             <a
-                                href="https://github.com/laravel-sn"
+                                href="https://github.com/Laravel-SN-Community/laravel.sn"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="underline hover:text-white"
                             >
                                 GitHub

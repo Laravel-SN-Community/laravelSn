@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     $this->skipUnlessFortifyHas(Features::registration());
 });
 

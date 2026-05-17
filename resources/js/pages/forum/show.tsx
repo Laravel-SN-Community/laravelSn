@@ -117,7 +117,7 @@ export default function ForumThread() {
         <>
             <Head title={`${thread.title} — Forum — Laravel Sénégal`} />
 
-            <div className="mx-auto max-w-[1200px] px-6 pt-10 pb-16 lg:px-10">
+            <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-16 lg:px-10">
                 {/* Breadcrumb */}
                 <div
                     className="mb-6 flex items-center gap-2 font-mono text-[11.5px]"
@@ -291,13 +291,6 @@ export default function ForumThread() {
                             className="mt-10 border-t pt-8"
                             style={{ borderColor: 'var(--sn-border)' }}
                         >
-                            <div
-                                className="mb-5 font-mono text-[11px] tracking-[0.2em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                // {thread.replies} réponse
-                                {thread.replies > 1 ? 's' : ''}
-                            </div>
                             <div className="space-y-6">
                                 {replies.map((r, i) => (
                                     <div

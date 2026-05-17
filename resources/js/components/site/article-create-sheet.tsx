@@ -796,12 +796,13 @@ export default function ArticleCreateSheet({
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
                 <Dialog.Content
-                    className="fixed top-4 right-4 bottom-4 z-50 flex flex-col rounded-2xl shadow-2xl transition ease-in-out outline-none data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-right"
+                    className="fixed inset-2 z-50 flex flex-col rounded-2xl shadow-2xl transition ease-in-out outline-none data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-right sm:top-4 sm:right-4 sm:bottom-4 sm:left-auto sm:w-[760px] sm:max-w-[calc(100vw-32px)]"
                     style={{
-                        width: 'min(680px, calc(100vw - 32px))',
                         background: 'var(--sn-bg)',
                         border: '1px solid var(--sn-border)',
                     }}
+                    onPointerDownOutside={(e) => e.preventDefault()}
+                    onInteractOutside={(e) => e.preventDefault()}
                 >
                     {/* ── Header ── */}
                     <div
@@ -812,39 +813,40 @@ export default function ArticleCreateSheet({
                             borderRadius: '16px 16px 0 0',
                         }}
                     >
-                        <div>
-                            <p
-                                className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                {article
-                                    ? "// modifier l'article"
-                                    : '// nouvel article'}
-                            </p>
-                            <h2
-                                className="mt-0.5 text-[18px] font-semibold tracking-tight"
-                                style={{ color: 'var(--sn-fg)' }}
-                            >
-                                {article
-                                    ? "Modifier l'article"
-                                    : 'Rédiger un article'}
-                            </h2>
-                        </div>
-                        <Dialog.Close
-                            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors focus:outline-none"
-                            style={{ color: 'var(--sn-muted)' }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background =
-                                    'var(--sn-surface-2)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background =
-                                    'transparent';
-                            }}
+                        <h2
+                            className="text-[18px] font-semibold tracking-tight"
+                            style={{ color: 'var(--sn-fg)' }}
                         >
-                            <X size={16} />
-                            <span className="sr-only">Fermer</span>
-                        </Dialog.Close>
+                            {article
+                                ? "Modifier l'article"
+                                : 'Rédiger un article'}
+                        </h2>
+                        <div className="flex items-center gap-2">
+                            <span
+                                className="rounded px-1.5 py-0.5 font-mono text-[10px] font-medium"
+                                style={{
+                                    background: 'var(--sn-n200)',
+                                    color: 'var(--sn-n500)',
+                                }}
+                            >
+                                ESC
+                            </span>
+                            <Dialog.Close
+                                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors focus:outline-none"
+                                style={{ color: 'var(--sn-muted)' }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background =
+                                        'var(--sn-surface-2)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background =
+                                        'transparent';
+                                }}
+                            >
+                                <X size={16} />
+                                <span className="sr-only">Fermer</span>
+                            </Dialog.Close>
+                        </div>
                     </div>
 
                     <form
@@ -949,7 +951,7 @@ export default function ArticleCreateSheet({
                             {/* ── Draft + date + locale ── */}
                             <div className="space-y-3">
                                 {/* Draft toggle + date side by side */}
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     <div
                                         className={`flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors ${isPublished ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                         style={{

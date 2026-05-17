@@ -98,14 +98,8 @@ function DashOverview({ user }: { user: AuthUser }) {
         <div className="space-y-6">
             {/* Greeting */}
             <div>
-                <div
-                    className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    // tableau de bord
-                </div>
                 <h1
-                    className="mt-1 text-[36px] font-semibold tracking-[-0.02em]"
+                    className="mt-1 text-[32px] font-semibold tracking-[-0.02em]"
                     style={{ color: 'var(--sn-fg)' }}
                 >
                     Salaam, {firstName} 👋
@@ -136,11 +130,10 @@ function DashOverview({ user }: { user: AuthUser }) {
 
             {/* Next event */}
             <DashCard
-                eyebrow="// prochain rendez-vous"
                 title={nextEvent.title}
                 actions={
                     <Link
-                        href={`/evenements/${nextEvent.slug}`}
+                        href={`/events/${nextEvent.slug}`}
                         className="sn-btn sn-btn-ghost sn-btn-sm"
                     >
                         détails →
@@ -165,10 +158,7 @@ function DashOverview({ user }: { user: AuthUser }) {
 
             {/* Activity + Recommendations */}
             <div className="grid gap-4 md:grid-cols-2">
-                <DashCard
-                    eyebrow="// activité récente"
-                    title="Derniers évènements"
-                >
+                <DashCard title="Derniers évènements">
                     <ul className="space-y-3 text-[13.5px]">
                         {[
                             [
@@ -210,7 +200,7 @@ function DashOverview({ user }: { user: AuthUser }) {
                     </ul>
                 </DashCard>
 
-                <DashCard eyebrow="// suggestions" title="Recommandé pour toi">
+                <DashCard title="Recommandé pour toi">
                     <ul className="space-y-3">
                         {recentArticles.map((a) => (
                             <li key={a.slug} className="flex items-start gap-3">
@@ -237,7 +227,7 @@ function DashOverview({ user }: { user: AuthUser }) {
             </div>
 
             {/* Members spotlight */}
-            <DashCard eyebrow="// membres actifs" title="La communauté">
+            <DashCard title="La communauté">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {MEMBERS.slice(0, 6).map((m) => (
                         <div

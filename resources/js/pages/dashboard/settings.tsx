@@ -152,12 +152,12 @@ export default function DashboardSettings({
                         </h1>
 
                         {/* Appearance */}
-                        <DashCard eyebrow="// apparence" title="Thème">
+                        <DashCard title="Thème">
                             <ThemeToggle />
                         </DashCard>
 
                         {/* Notifications */}
-                        <DashCard eyebrow="// notifications" title="Email">
+                        <DashCard title="Email">
                             <div className="space-y-1">
                                 {EMAIL_PREFS.map((row, i) => (
                                     <div
@@ -220,10 +220,7 @@ export default function DashboardSettings({
                         </DashCard>
 
                         {/* Password */}
-                        <DashCard
-                            eyebrow="// mot de passe"
-                            title="Changer le mot de passe"
-                        >
+                        <DashCard title="Changer le mot de passe">
                             <Form
                                 action={SecurityController.update()}
                                 options={{ preserveScroll: true }}
@@ -317,10 +314,7 @@ export default function DashboardSettings({
 
                         {/* 2FA */}
                         {canManageTwoFactor && (
-                            <DashCard
-                                eyebrow="// authentification"
-                                title="Double authentification (2FA)"
-                            >
+                            <DashCard title="Double authentification (2FA)">
                                 {twoFactorEnabled ? (
                                     <div className="space-y-4">
                                         <p
@@ -408,10 +402,7 @@ export default function DashboardSettings({
                         )}
 
                         {/* Danger zone */}
-                        <DashCard
-                            eyebrow="// zone dangereuse"
-                            title="Supprimer mon compte"
-                        >
+                        <DashCard title="Supprimer mon compte">
                             <p
                                 className="text-[13.5px]"
                                 style={{ color: 'var(--sn-muted)' }}

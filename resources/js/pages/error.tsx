@@ -72,10 +72,7 @@ export default function Error({ status }: { status: number }) {
                     <Link href="/articles" className="sn-btn sn-btn-secondary">
                         Articles
                     </Link>
-                    <Link
-                        href="/evenements"
-                        className="sn-btn sn-btn-secondary"
-                    >
+                    <Link href="/events" className="sn-btn sn-btn-secondary">
                         Évènements
                     </Link>
                 </div>

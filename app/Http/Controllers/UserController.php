@@ -6,11 +6,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 final class UserController extends Controller
 {
+    public function manageIndex(Request $request): Response
+    {
+        Gate::authorize('users:manage');
+
+        $users = User::query()
+            ->with('roles:name')
+            ->latest()
+            ->paginate(30)
+            ->withQueryString();
+
+        return Inertia::render('dashboard/manage/users', [
+            'users' => $users,
+        ]);
+    }
+
     public function show(string $username): Response
     {
         $user = User::where('username', $username)->firstOrFail();

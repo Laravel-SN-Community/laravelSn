@@ -15,12 +15,6 @@ export default function DashboardEvents() {
 
                     <main className="min-w-0 space-y-6">
                         <div>
-                            <div
-                                className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                // mes inscriptions
-                            </div>
                             <h1
                                 className="mt-1 text-[32px] font-semibold tracking-[-0.02em]"
                                 style={{ color: 'var(--sn-fg)' }}
@@ -36,12 +30,6 @@ export default function DashboardEvents() {
                                 border: '1px solid var(--sn-border)',
                             }}
                         >
-                            <div
-                                className="mb-5 font-mono text-[10.5px] tracking-[0.18em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                // à venir
-                            </div>
                             <div className="space-y-4">
                                 {upcomingEvents.map((e) => (
                                     <div
@@ -94,7 +82,7 @@ export default function DashboardEvents() {
                                                 ● confirmé
                                             </span>
                                             <Link
-                                                href={`/evenements/${e.slug}`}
+                                                href={`/events/${e.slug}`}
                                                 className="sn-btn sn-btn-ghost sn-btn-sm"
                                             >
                                                 détails

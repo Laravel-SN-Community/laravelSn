@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Fragment+Mono&display=swap');
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
@@ -15,8 +15,8 @@
         'Noto Color Emoji';
 
     --font-mono:
-        'Geist Mono', ui-monospace, 'SFMono-Regular', 'Menlo', 'Monaco',
-        'Cascadia Code', monospace;
+        'Fragment Mono', 'Geist Mono', ui-monospace, 'SFMono-Regular', 'Menlo',
+        'Monaco', 'Cascadia Code', monospace;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);

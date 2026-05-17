@@ -67,12 +67,6 @@ export default function DashboardNotifications() {
                     <main className="min-w-0 space-y-6">
                         <div className="flex flex-wrap items-end justify-between gap-4">
                             <div>
-                                <div
-                                    className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    // notifications
-                                </div>
                                 <h1
                                     className="mt-1 text-[32px] font-semibold tracking-[-0.02em]"
                                     style={{ color: 'var(--sn-fg)' }}
