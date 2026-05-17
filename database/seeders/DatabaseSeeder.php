@@ -11,10 +11,24 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        // Admin
+        User::factory()->admin()->create([
+            'name' => 'Admin Laravel SN',
+            'username' => 'admin',
+            'email' => 'admin@laravel.sn',
         ]);
+
+        // Moderators
+        User::factory()->moderator()->createMany([
+            ['name' => 'Aïssatou Diop', 'username' => 'aissatou', 'email' => 'aissatou@laravel.sn'],
+            ['name' => 'Omar Sy', 'username' => 'omarsy', 'email' => 'omar@laravel.sn'],
+            ['name' => 'Mamadou Fall', 'username' => 'mamadou', 'email' => 'mamadou@laravel.sn'],
+        ]);
+
+        // Regular users
+        User::factory()->asUser()->count(20)->create();
 
         $this->call([
             TagSeeder::class,

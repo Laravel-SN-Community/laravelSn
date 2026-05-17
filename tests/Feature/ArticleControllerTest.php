@@ -6,6 +6,9 @@ use App\Enums\PublicationStatus;
 use App\Models\Article;
 use App\Models\Tag;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+
+beforeEach(fn () => $this->seed(RolesAndPermissionsSeeder::class));
 
 // ── index ──────────────────────────────────────────────────────────────────
 
@@ -271,16 +274,16 @@ test('other users cannot delete an article', function () {
 test('guests cannot publish articles', function () {
     $article = Article::factory()->draft()->create();
 
-    $this->post(route('articles.publish', $article))->assertRedirect(route('login'));
+    $this->post(route('manage.articles.publish', $article))->assertRedirect(route('login'));
 });
 
-test('author can publish their own draft article', function () {
-    $user = User::factory()->create();
-    $article = Article::factory()->draft()->for($user, 'author')->create();
+test('moderator can publish a draft article', function () {
+    $moderator = User::factory()->moderator()->create();
+    $article = Article::factory()->draft()->create();
 
-    $this->actingAs($user)
-        ->post(route('articles.publish', $article))
-        ->assertRedirect(route('dashboard.articles'));
+    $this->actingAs($moderator)
+        ->post(route('manage.articles.publish', $article))
+        ->assertRedirect(route('manage.articles.index'));
 
     $this->assertDatabaseHas('articles', [
         'id' => $article->id,
@@ -288,11 +291,11 @@ test('author can publish their own draft article', function () {
     ]);
 });
 
-test('other users cannot publish an article', function () {
+test('regular users cannot publish an article', function () {
     $article = Article::factory()->draft()->create();
-    $other = User::factory()->create();
+    $user = User::factory()->asUser()->create();
 
-    $this->actingAs($other)
-        ->post(route('articles.publish', $article))
+    $this->actingAs($user)
+        ->post(route('manage.articles.publish', $article))
         ->assertForbidden();
 });

@@ -29,7 +29,7 @@ final class ArticlePolicy
 
     public function create(User $user): bool
     {
-        return $user->canPublishArticles();
+        return true;
     }
 
     public function update(User $user, Article $article): bool
@@ -38,7 +38,7 @@ final class ArticlePolicy
             return true;
         }
 
-        return $user->canPublishArticles() && $user->id === $article->author_id;
+        return $user->id === $article->author_id;
     }
 
     public function delete(User $user, Article $article): bool

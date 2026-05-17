@@ -22,11 +22,6 @@ interface Props {
     events: Event[];
 }
 
-function seatsLabel(taken: number, total: number | null): string {
-    if (total === null) return '';
-    return `${taken} / ${total}`;
-}
-
 function SeatsBar({ taken, total }: { taken: number; total: number | null }) {
     if (total === null) return null;
     const pct = Math.round((taken / total) * 100);

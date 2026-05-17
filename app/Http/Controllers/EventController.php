@@ -99,4 +99,45 @@ final class EventController extends Controller
 
         return back()->with('success', 'Inscription annulée.');
     }
+
+    public function manageIndex(Request $request): Response
+    {
+        Gate::authorize('events:manage');
+
+        $events = Event::query()
+            ->with(['venue:id,name,district'])
+            ->withCount('confirmedRegistrations')
+            ->latest('starts_at')
+            ->paginate(20)
+            ->withQueryString();
+
+        return Inertia::render('dashboard/manage/events', [
+            'events' => $events,
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        Gate::authorize('events:manage');
+
+        // TODO: implement event creation form & action
+        return redirect()->route('manage.events.index');
+    }
+
+    public function update(Request $request, Event $event): RedirectResponse
+    {
+        Gate::authorize('events:manage');
+
+        // TODO: implement event update action
+        return redirect()->route('manage.events.index');
+    }
+
+    public function destroy(Event $event): RedirectResponse
+    {
+        Gate::authorize('events:manage');
+
+        $event->delete();
+
+        return redirect()->route('manage.events.index');
+    }
 }

@@ -187,7 +187,7 @@ export default function EventsIndex({ events, filters }: Props) {
 
 function FeaturedCard({ event }: { event: EventSummary }) {
     const { day, month, year } = formatEventDate(event.starts_at);
-    const { pct, label } = seatsInfo(event);
+    const { label } = seatsInfo(event);
     const location = event.is_online
         ? 'En ligne'
         : [event.venue?.name, event.venue?.district].filter(Boolean).join(' · ');

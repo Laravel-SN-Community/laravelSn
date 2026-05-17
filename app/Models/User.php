@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property-read string|null $avatar
@@ -25,6 +26,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
+    use HasRoles;
     use Notifiable;
     use TwoFactorAuthenticatable;
 
@@ -33,16 +35,14 @@ class User extends Authenticatable
         return Attribute::get(fn (): ?string => $this->avatar_path);
     }
 
-    /** @todo Replace with Spatie role check once configured. */
     public function isAdmin(): bool
     {
-        return false;
+        return $this->hasRole('admin');
     }
 
-    /** @todo Replace with Spatie permission check once configured. */
-    public function canPublishArticles(): bool
+    public function isModerator(): bool
     {
-        return true;
+        return $this->hasRole(['admin', 'moderator']);
     }
 
     /**

@@ -7,6 +7,7 @@ namespace App\Providers;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -26,6 +27,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureGates();
+    }
+
+    protected function configureGates(): void
+    {
+        // Admins bypass all gates
+        Gate::before(fn ($user) => $user->hasRole('admin') ? true : null);
+
+        Gate::define('articles:publish', fn ($user) => $user->hasPermissionTo('articles:publish'));
+        Gate::define('articles:delete', fn ($user) => $user->hasPermissionTo('articles:delete'));
+        Gate::define('events:manage', fn ($user) => $user->hasPermissionTo('events:manage'));
+        Gate::define('forum:moderate', fn ($user) => $user->hasPermissionTo('forum:moderate'));
+        Gate::define('users:manage', fn ($user) => $user->hasPermissionTo('users:manage'));
     }
 
     /**

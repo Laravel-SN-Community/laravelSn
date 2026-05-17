@@ -15,11 +15,7 @@ final class ArticleSeeder extends Seeder
     {
         $tags = Tag::all();
 
-        $authors = User::factory(5)->create();
-        $testUser = User::where('email', 'test@example.com')->first();
-        if ($testUser) {
-            $authors->push($testUser);
-        }
+        $authors = User::factory(5)->asUser()->create();
 
         Article::factory()
             ->count(20)
@@ -29,16 +25,13 @@ final class ArticleSeeder extends Seeder
                 $article->tags()->attach($tags->random(rand(1, 3))->pluck('id'));
             });
 
-        // Drafts for the test user
-        if ($testUser) {
-            Article::factory()
-                ->draft()
-                ->count(3)
-                ->for($testUser, 'author')
-                ->create()
-                ->each(function (Article $article) use ($tags): void {
-                    $article->tags()->attach($tags->random(rand(1, 2))->pluck('id'));
-                });
-        }
+        Article::factory()
+            ->draft()
+            ->count(5)
+            ->recycle($authors)
+            ->create()
+            ->each(function (Article $article) use ($tags): void {
+                $article->tags()->attach($tags->random(rand(1, 2))->pluck('id'));
+            });
     }
 }
