@@ -6,80 +6,86 @@ import {
     LayoutDashboard,
     LogOut,
     Settings,
+    Shield,
     UserCircle,
 } from 'lucide-react';
 import { useInitials } from '@/hooks/use-initials';
 import { logout } from '@/routes';
+import type { Auth } from '@/types/auth';
 
-interface AuthUser {
-    name: string;
-    email: string;
-}
-
-const SECTIONS = [
-    {
-        id: 'overview',
-        label: "Vue d'ensemble",
-        Icon: LayoutDashboard,
-        href: '/dashboard',
-    },
-    {
-        id: 'profile',
-        label: 'Mon profil',
-        Icon: UserCircle,
-        href: '/dashboard/profile',
-    },
-    {
-        id: 'articles',
-        label: 'Mes articles',
-        Icon: FileText,
-        href: '/dashboard/articles',
-    },
-    {
-        id: 'events',
-        label: 'Mes inscriptions',
-        Icon: CalendarDays,
-        href: '/dashboard/events',
-    },
-    {
-        id: 'notifications',
-        label: 'Notifications',
-        Icon: Bell,
-        href: '/dashboard/notifications',
-    },
-    {
-        id: 'settings',
-        label: 'Paramètres',
-        Icon: Settings,
-        href: '/dashboard/settings',
-    },
+const USER_SECTIONS = [
+    { id: 'overview', label: "Vue d'ensemble", Icon: LayoutDashboard, href: '/dashboard' },
+    { id: 'profile', label: 'Mon profil', Icon: UserCircle, href: '/dashboard/profile' },
+    { id: 'articles', label: 'Mes articles', Icon: FileText, href: '/dashboard/articles' },
+    { id: 'events', label: 'Mes inscriptions', Icon: CalendarDays, href: '/dashboard/events' },
+    { id: 'notifications', label: 'Notifications', Icon: Bell, href: '/dashboard/notifications' },
+    { id: 'settings', label: 'Paramètres', Icon: Settings, href: '/dashboard/settings' },
 ] as const;
 
-type SectionId = (typeof SECTIONS)[number]['id'];
+const MANAGE_SECTIONS = [
+    { id: 'manage-articles', label: 'Articles', Icon: FileText, href: '/dashboard/manage/articles' },
+    { id: 'manage-events', label: 'Évènements', Icon: CalendarDays, href: '/dashboard/manage/events' },
+] as const;
+
+type SectionId = (typeof USER_SECTIONS)[number]['id'] | (typeof MANAGE_SECTIONS)[number]['id'];
 
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 
 function getTint(name: string): string {
     let hash = 0;
-
     for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
+function roleLabel(role: string): string {
+    if (role === 'admin') return 'Admin';
+    if (role === 'moderator') return 'Modérateur';
+    return role;
+}
+
+function NavLink({
+    href,
+    icon: Icon,
+    label,
+    active,
+}: {
+    href: string;
+    icon: React.ElementType;
+    label: string;
+    active: boolean;
+}) {
+    return (
+        <Link
+            href={href}
+            className="flex items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
+            style={{
+                background: active ? 'var(--sn-surface-2)' : 'transparent',
+                color: active ? 'var(--sn-fg)' : 'var(--sn-muted)',
+            }}
+        >
+            <Icon
+                size={15}
+                strokeWidth={active ? 2 : 1.5}
+                style={{ color: active ? 'var(--sn-600)' : 'inherit', flexShrink: 0 }}
+            />
+            {label}
+        </Link>
+    );
+}
+
 export default function DashSidebar({ section }: { section: SectionId }) {
-    const { auth } = usePage().props as { auth: { user: AuthUser | null } };
-    const user = auth?.user;
+    const { auth } = usePage().props as unknown as { auth: Auth };
+    const user = auth?.user ?? null;
+    const role = auth?.role ?? null;
     const getInitials = useInitials();
 
-    if (!user) {
-        return null;
-    }
+    if (!user) return null;
 
     const init = getInitials(user.name);
     const tint = getTint(user.name);
+    const isMod = role === 'moderator' || role === 'admin';
 
     function handleLogout() {
         router.post(logout());
@@ -87,12 +93,10 @@ export default function DashSidebar({ section }: { section: SectionId }) {
 
     return (
         <aside className="lg:sticky lg:top-24 lg:self-start">
+            {/* User card */}
             <div
                 className="mb-3 rounded-xl p-4"
-                style={{
-                    background: 'var(--sn-surface)',
-                    border: '1px solid var(--sn-border)',
-                }}
+                style={{ background: 'var(--sn-surface)', border: '1px solid var(--sn-border)' }}
             >
                 <div className="flex items-center gap-3">
                     <div
@@ -102,64 +106,74 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                         {init}
                     </div>
                     <div className="min-w-0">
-                        <div
-                            className="truncate text-[14px] font-semibold"
-                            style={{ color: 'var(--sn-fg)' }}
-                        >
+                        <div className="truncate text-[14px] font-semibold" style={{ color: 'var(--sn-fg)' }}>
                             {user.name}
                         </div>
-                        <div
-                            className="truncate text-[11.5px]"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
+                        <div className="truncate text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>
                             {user.email}
                         </div>
                     </div>
                 </div>
+
+                {isMod && (
+                    <div className="mt-3">
+                        <span
+                            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase"
+                            style={{ background: 'var(--sn-accent)', color: 'var(--sn-accent-fg)' }}
+                        >
+                            <Shield size={11} strokeWidth={2} />
+                            {roleLabel(role!)}
+                        </span>
+                    </div>
+                )}
             </div>
 
+            {/* Mon espace */}
+            <div
+                className="mb-0.5 px-3 pt-3 pb-1 font-mono text-[10px] tracking-[0.18em] uppercase"
+                style={{ color: 'var(--sn-muted)' }}
+            >
+                Mon espace
+            </div>
             <nav className="space-y-0.5">
-                {SECTIONS.map((s) => {
-                    const active = s.id === section;
-
-                    return (
-                        <Link
-                            key={s.id}
-                            href={s.href}
-                            className="flex items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
-                            style={{
-                                background: active
-                                    ? 'var(--sn-surface-2)'
-                                    : 'transparent',
-                                color: active
-                                    ? 'var(--sn-fg)'
-                                    : 'var(--sn-muted)',
-                            }}
-                        >
-                            <s.Icon
-                                size={15}
-                                strokeWidth={active ? 2 : 1.5}
-                                style={{
-                                    color: active ? 'var(--sn-600)' : 'inherit',
-                                    flexShrink: 0,
-                                }}
-                            />
-                            {s.label}
-                        </Link>
-                    );
-                })}
+                {USER_SECTIONS.map((s) => (
+                    <NavLink
+                        key={s.id}
+                        href={s.href}
+                        icon={s.Icon}
+                        label={s.label}
+                        active={s.id === section}
+                    />
+                ))}
             </nav>
+
+            {/* Modération section — mods and admins only */}
+            {isMod && (
+                <>
+                    <div
+                        className="mb-0.5 px-3 pt-5 pb-1 font-mono text-[10px] tracking-[0.18em] uppercase"
+                        style={{ color: 'var(--sn-muted)' }}
+                    >
+                        Modération
+                    </div>
+                    <nav className="space-y-0.5">
+                        {MANAGE_SECTIONS.map((s) => (
+                            <NavLink
+                                key={s.id}
+                                href={s.href}
+                                icon={s.Icon}
+                                label={s.label}
+                                active={s.id === section}
+                            />
+                        ))}
+                    </nav>
+                </>
+            )}
 
             <button
                 onClick={handleLogout}
-                className="mt-3 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
+                className="mt-4 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-opacity hover:opacity-70"
                 style={{ color: 'var(--destructive)' }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = '0.8';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.opacity = '1';
-                }}
             >
                 <LogOut size={15} strokeWidth={1.5} style={{ flexShrink: 0 }} />
                 Se déconnecter
