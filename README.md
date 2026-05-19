@@ -1,18 +1,16 @@
 <div align="center">
 
-<img src="public/images/laravel-sn-logo.svg" alt="Laravel Sénégal" width="120" />
+<img src="public/images/logo.svg" alt="Laravel Sénégal" width="120" />
 
 # Laravel Sénégal
 
 Le portail de la communauté des développeurs PHP & Laravel au Sénégal.
-On partage, on apprend, on construit — en français, depuis Dakar.
 
-[![CI](https://github.com/laravel-sn/laravel.sn/actions/workflows/ci.yml/badge.svg)](https://github.com/laravel-sn/laravel.sn/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.4+-777BB4)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4)](https://php.net)
 
-[Site](https://laravel-senegal.com) · [Discord](https://discord.gg/laravel-sn) · [WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx) · [Contribuer](.github/CONTRIBUTING.md)
+[Site](https://laravel-senegal.com) · [WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx) · [Contribuer](.github/CONTRIBUTING.md)
 
 </div>
 
@@ -20,7 +18,7 @@ On partage, on apprend, on construit — en français, depuis Dakar.
 
 ## À propos
 
-Ce dépôt contient le code source de [laravel-senegal.com](https://laravel-senegal.com), le portail de la communauté Laravel Sénégal. La plateforme rassemble plus de 500 développeurs autour d'articles techniques, de meetups réguliers, d'un podcast et de ressources en français.
+Ce dépôt contient le code source de [laravel-senegal.com](https://laravel-senegal.com), le portail de la communauté Laravel Sénégal.
 
 Le projet est **open source** et entretenu par la communauté. Toute contribution est la bienvenue, qu'il s'agisse de code, de design, de documentation ou de signalement de bugs.
 
@@ -30,7 +28,7 @@ Le projet est **open source** et entretenu par la communauté. Toute contributio
 - **Frontend** : Inertia.js 3, React 19, TypeScript
 - **Styling** : Tailwind CSS v4, shadcn/ui
 - **Base de données** : MySQL 8 (production), SQLite (dev)
-- **Tests** : Pest 3
+- **Tests** : Pest 4
 - **CI/CD** : GitHub Actions, Laravel Forge
 
 ## Pré-requis
@@ -46,7 +44,7 @@ Le projet est **open source** et entretenu par la communauté. Toute contributio
 Clone le dépôt :
 
 ```bash
-git clone git@github.com:laravel-sn/laravel.sn.git
+git clone git@github.com:Laravel-SN-Community/laravel.sn.git
 cd laravel.sn
 ```
 
@@ -74,14 +72,13 @@ php artisan migrate --seed
 Lance le serveur de développement :
 
 ```bash
-npm run dev          # dans un terminal
-php artisan serve    # dans un autre terminal
+composer run dev
 ```
 
 Ouvre [http://localhost:8000](http://localhost:8000).
 
 Compte de test créé par le seeder :
-- Email : `dev@laravel-sn.com`
+- Email : `admin@admin.com`
 - Mot de passe : `password`
 
 ## Tests
@@ -113,7 +110,7 @@ php artisan test
 npm run lint
 
 # Type-check TypeScript
-npm run typecheck
+npm run types:check
 
 # Format JS/TS
 npm run format
@@ -128,17 +125,33 @@ npm run check
 laravel.sn/
 ├── app/                       # Code applicatif Laravel
 │   ├── Actions/               # Logique métier réutilisable
-│   ├── Http/Controllers/      # Controllers Inertia
-│   └── Models/                # Models Eloquent
+│   ├── Concerns/              # Traits partagés
+│   ├── Enums/                 # Enums PHP 8
+│   ├── Http/
+│   │   ├── Controllers/       # Controllers Inertia
+│   │   ├── Middleware/
+│   │   └── Requests/          # Form requests
+│   ├── Models/                # Models Eloquent
+│   ├── Policies/              # Policies d'autorisation
+│   ├── Providers/
+│   └── Support/               # Classes utilitaires
 ├── resources/
 │   ├── css/                   # Tailwind v4 + tokens
 │   └── js/
+│       ├── actions/           # Wayfinder (généré)
 │       ├── components/        # Composants React
+│       │   ├── site/          # Composants métier
 │       │   └── ui/            # shadcn/ui customisés
+│       ├── hooks/             # React hooks
 │       ├── layouts/           # Layouts Inertia
-│       └── pages/             # Pages Inertia
+│       ├── lib/               # Utilitaires JS
+│       ├── pages/             # Pages Inertia
+│       ├── routes/            # Wayfinder routes (généré)
+│       ├── types/             # Types TypeScript
+│       └── wayfinder/         # Config Wayfinder
 ├── routes/
-│   └── web.php                # Routes principales
+│   ├── web.php                # Routes principales
+│   └── settings.php           # Routes paramètres
 └── tests/
     ├── Feature/               # Tests fonctionnels
     └── Unit/                  # Tests unitaires
@@ -148,17 +161,17 @@ laravel.sn/
 
 Les contributions sont chaleureusement accueillies. Avant de proposer une modification, lis [CONTRIBUTING.md](.github/CONTRIBUTING.md) et le [code de conduite](.github/CODE_OF_CONDUCT.md).
 
-Pour signaler un bug ou proposer une fonctionnalité, ouvre une [issue](https://github.com/laravel-sn/laravel.sn/issues/new/choose).
+Pour signaler un bug ou proposer une fonctionnalité, ouvre une [issue](https://github.com/Laravel-SN-Community/laravel.sn/issues/new/choose).
 
-Pour les questions générales, utilise plutôt les [Discussions](https://github.com/laravel-sn/laravel.sn/discussions) ou rejoins la [communauté WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx).
+Pour les questions générales, rejoins la [communauté WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx).
 
 ## Sécurité
 
-Si tu découvres une faille de sécurité, **ne crée pas d'issue publique**. Envoie un email à `security@laravel-sn.com`. Plus de détails dans [SECURITY.md](SECURITY.md).
+Si tu découvres une faille de sécurité, **ne crée pas d'issue publique**. Envoie un email à `security@laravel.sn`. Plus de détails dans [SECURITY.md](SECURITY.md).
 
 ## Sponsors
 
-Merci aux entreprises qui soutiennent la communauté. Pour devenir sponsor, contacte `partenaires@laravel-sn.com` ou consulte [/sponsors](https://laravel-senegal.com/sponsors).
+Merci aux entreprises qui soutiennent la communauté. Pour devenir sponsor, contacte `partenaires@laravel.sn` ou consulte [/sponsors](https://laravel-senegal.com/sponsors).
 
 ## Licence
 

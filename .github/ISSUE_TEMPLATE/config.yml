@@ -1,14 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Question générale
-    url: https://github.com/laravel-sn/laravel.sn/discussions
-    about: Pour les questions ouvertes, idées, retours, utilise les Discussions GitHub.
   - name: 🇸🇳 Communauté WhatsApp
     url: https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx
     about: Discussions quotidiennes de la communauté Laravel Sénégal.
-  - name: 🎮 Discord
-    url: https://discord.gg/laravel-sn
-    about: Serveur Discord pour le support technique en temps réel.
   - name: 🔒 Faille de sécurité
-    url: https://github.com/laravel-sn/laravel.sn/security/policy
+    url: https://github.com/Laravel-SN-Community/laravel.sn/security/policy
     about: Pour signaler une vulnérabilité, ne crée PAS d'issue publique. Lis notre politique de sécurité.
