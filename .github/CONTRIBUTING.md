@@ -33,7 +33,7 @@ Plusieurs façons d'aider la communauté :
 - **Bugs** : signaler des bugs avec des reproductions claires
 - **Traductions** : aider à maintenir la version anglaise du site
 
-Si c'est ta première contribution open source, regarde les issues taguées [`good-first-issue`](https://github.com/laravel-sn/laravel.sn/issues?q=is%3Aopen+is%3Aissue+label%3Agood-first-issue). Elles sont pensées pour être abordables.
+Si c'est ta première contribution open source, regarde les issues taguées [`good-first-issue`](https://github.com/Laravel-SN-Community/laravel.sn/issues?q=is%3Aopen+is%3Aissue+label%3Agood-first-issue). Elles sont pensées pour être abordables.
 
 ## Setup du projet en local
 
@@ -354,9 +354,8 @@ Si tu veux contribuer à la version anglaise du site, regarde les issues taguée
 
 Si quelque chose n'est pas clair :
 
-- Ouvre une [Discussion](https://github.com/laravel-sn/laravel.sn/discussions) sur le repo
-- Demande sur le [Discord](https://discord.gg/laravel-sn) dans le canal `#contributeurs`
-- Écris à `contact@laravel-sn.com`
+- Rejoins la [communauté WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx)
+- Écris à `contact@laravel.sn`
 
 ---
 

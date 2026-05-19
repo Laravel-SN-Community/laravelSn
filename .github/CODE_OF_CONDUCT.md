@@ -36,7 +36,7 @@ Ce code de conduite s'applique à tous les espaces communautaires, et s'applique
 
 Ces espaces incluent notamment :
 
-- Le dépôt GitHub `laravel-sn/laravel.sn` et tous les autres dépôts de l'organisation
+- Le dépôt GitHub `Laravel-SN-Community/laravel.sn` et tous les autres dépôts de l'organisation
 - Le serveur Discord de la communauté
 - Le groupe WhatsApp de la communauté
 - Les comptes officiels Twitter / X et LinkedIn
@@ -44,7 +44,7 @@ Ces espaces incluent notamment :
 
 ## Application
 
-Les cas de comportements abusifs, harcelants ou inacceptables peuvent être signalés aux responsables de la communauté chargés de l'application du code à `conduite@laravel-sn.com`.
+Les cas de comportements abusifs, harcelants ou inacceptables peuvent être signalés aux responsables de la communauté chargés de l'application du code à `conduite@laravel.sn`.
 
 Toutes les plaintes seront examinées et étudiées rapidement et équitablement.
 
