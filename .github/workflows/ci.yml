@@ -41,6 +41,21 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Audit Composer dependencies
+        run: |
+          composer validate
+          composer audit || {
+            EXIT_CODE=$?
+            echo "⚠️  Composer audit found vulnerabilities."
+            if composer audit 2>&1 | grep -qiE "(severity.*high|severity.*critical)"; then
+              echo "❌ Found high or critical severity vulnerabilities - failing!"
+              exit 1
+            else
+              echo "ℹ️  Only low/moderate severity vulnerabilities found (non-blocking)"
+              exit 0
+            fi
+          }
+
       - name: Copy environment file
         run: cp .env.example .env
 
@@ -59,8 +74,13 @@ jobs:
             node-version: '22'
             cache: 'npm'
 
+      - name: Setup Socket Firewall
+        uses: socketdev/action@ba6de6cc0565af1f42295590380973573297e31f # v1.3.2
+        with:
+          mode: firewall-free
+
       - name: Install Node dependencies
-        run: npm ci
+        run: sfw npm ci
 
       - name: Build assets
         run: npm run build
@@ -105,8 +125,13 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      - name: Setup Socket Firewall
+        uses: socketdev/action@ba6de6cc0565af1f42295590380973573297e31f # v1.3.2
+        with:
+          mode: firewall-free
+
       - name: Install Node dependencies
-        run: npm ci
+        run: sfw npm ci
 
       - name: Run Prettier check
         run: npm run format:check
