@@ -726,7 +726,7 @@ export default function ArticleCreateSheet({
         onOpenChange(next);
     }
 
-    function submit(e: React.FormEvent) {
+    function submit(e: React.SyntheticEvent) {
         e.preventDefault();
 
         if (article) {

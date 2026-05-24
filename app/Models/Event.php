@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\EventFormat;
 use App\Enums\EventRegistrationStatus;
 use App\Enums\PublicationStatus;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -81,24 +82,28 @@ final class Event extends Model
     //            ->withPivot('tier_for_event');
     //    }
 
-    public function scopePublished(Builder $query): Builder
+    #[Scope]
+    protected function published(Builder $query): void
     {
-        return $query->where('status', PublicationStatus::Published);
+        $query->where('status', PublicationStatus::Published);
     }
 
-    public function scopeUpcoming(Builder $query): Builder
+    #[Scope]
+    protected function upcoming(Builder $query): void
     {
-        return $query->where('starts_at', '>', now())->orderBy('starts_at');
+        $query->where('starts_at', '>', now())->orderBy('starts_at');
     }
 
-    public function scopePast(Builder $query): Builder
+    #[Scope]
+    protected function past(Builder $query): void
     {
-        return $query->where('ends_at', '<', now())->orderByDesc('starts_at');
+        $query->where('ends_at', '<', now())->orderByDesc('starts_at');
     }
 
-    public function scopeFeatured(Builder $query): Builder
+    #[Scope]
+    protected function featured(Builder $query): void
     {
-        return $query->where('is_featured', true);
+        $query->where('is_featured', true);
     }
 
     protected function isUpcoming(): Attribute

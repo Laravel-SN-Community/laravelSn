@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
             ArticleSeeder::class,
             VenueSeeder::class,
             EventSeeder::class,
+            ChannelSeeder::class,
+            ThreadSeeder::class,
         ]);
     }
 }
