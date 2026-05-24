@@ -100,15 +100,17 @@ final class EventFactory extends Factory
         ]);
     }
 
-    private function generateAgenda(): string
+    /**
+     * @return array<int, array{time: string, title: string}>
+     */
+    private function generateAgenda(): array
     {
-        return implode("\n\n", [
-            '## Programme',
-            '- 18h00 — Accueil et networking',
-            '- 18h30 — Mot d\'introduction',
-            '- 18h45 — Talk principal',
-            '- 19h30 — Q&A',
-            '- 20h00 — Cocktail networking',
-        ]);
+        return [
+            ['time' => '18h00', 'title' => 'Accueil et networking'],
+            ['time' => '18h30', 'title' => "Mot d'introduction"],
+            ['time' => '18h45', 'title' => 'Talk principal'],
+            ['time' => '19h30', 'title' => 'Q&A'],
+            ['time' => '20h00', 'title' => 'Cocktail networking'],
+        ];
     }
 }

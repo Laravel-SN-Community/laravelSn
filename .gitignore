@@ -31,3 +31,5 @@ yarn-error.log
 /.claude/settings.local.json
 /.codex/config.toml
 /.junie/mcp/
+/graphify-out/
+.node-version

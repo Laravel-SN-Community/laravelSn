@@ -38,7 +38,7 @@ export type EventSummary = {
 };
 
 export type EventFull = EventSummary & {
-    agenda: string | null;
+    agenda: Array<{ time: string; title: string }> | null;
     online_url: string | null;
     replay_url: string | null;
     registration_opens_at: string | null;

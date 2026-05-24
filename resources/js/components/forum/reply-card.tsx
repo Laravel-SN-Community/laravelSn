@@ -1,0 +1,235 @@
+import { router } from '@inertiajs/react';
+import { Check } from 'lucide-react';
+import { useState } from 'react';
+import { ReplyActionsMenu } from '@/components/forum/reply-actions-menu';
+import { useInitials } from '@/hooks/use-initials';
+import { authorTint, timeAgo } from '@/lib/forum';
+import { toUrl } from '@/lib/utils';
+import { update as replyUpdate } from '@/routes/forum/replies';
+import type { Auth, ForumReply, ForumThreadFull } from '@/types';
+
+export function ReplyCard({
+    reply,
+    isSolution,
+    thread,
+    auth,
+}: {
+    reply: ForumReply;
+    isSolution: boolean;
+    thread: ForumThreadFull;
+    auth: Auth;
+}) {
+    const getInitials = useInitials();
+    const [editing, setEditing] = useState(false);
+    const [editBody, setEditBody] = useState(reply.body);
+
+    function saveEdit() {
+        if (editBody.trim() === reply.body) {
+            setEditing(false);
+
+            return;
+        }
+
+        router.patch(
+            toUrl(replyUpdate(reply.id)),
+            { body: editBody },
+            {
+                preserveScroll: true,
+                onSuccess: () => setEditing(false),
+            },
+        );
+    }
+
+    const solutionBadge = (
+        <span
+            className="flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[10.5px] tracking-widest uppercase"
+            style={{
+                background:
+                    'color-mix(in oklch, var(--sn-accent) 18%, transparent)',
+                color: 'var(--sn-accent)',
+            }}
+        >
+            <Check size={10} /> solution
+        </span>
+    );
+
+    const borderStyle = isSolution
+        ? '1.5px solid color-mix(in oklch, var(--sn-accent) 30%, transparent)'
+        : '1px solid var(--sn-border)';
+
+    return (
+        <div
+            className="rounded-xl transition-all"
+            style={
+                isSolution
+                    ? {
+                          background:
+                              'color-mix(in oklch, var(--sn-accent) 7%, var(--sn-surface))',
+                          border: '1.5px solid color-mix(in oklch, var(--sn-accent) 45%, transparent)',
+                      }
+                    : {
+                          background: 'var(--sn-surface)',
+                          border: '1px solid var(--sn-border)',
+                      }
+            }
+        >
+            {/* Mobile header */}
+            <div
+                className="flex items-center gap-2.5 px-5 py-3.5 lg:hidden"
+                style={{ borderBottom: borderStyle }}
+            >
+                <span
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full font-mono text-[10px]"
+                    style={{
+                        background: authorTint(reply.author.id),
+                        color: '#fff',
+                    }}
+                >
+                    {getInitials(reply.author.name)}
+                </span>
+                <div className="min-w-0 flex-1">
+                    <span
+                        className="block truncate text-[13px] font-semibold"
+                        style={{ color: 'var(--sn-fg)' }}
+                    >
+                        {reply.author.name}
+                    </span>
+                    <span
+                        className="block font-mono text-[11px]"
+                        style={{ color: 'var(--sn-muted)' }}
+                    >
+                        {timeAgo(reply.created_at)}
+                        {reply.is_edited && ' · modifié'}
+                    </span>
+                </div>
+                {isSolution && solutionBadge}
+                <ReplyActionsMenu
+                    reply={reply}
+                    thread={thread}
+                    auth={auth}
+                    isSolution={isSolution}
+                    onEditStart={() => setEditing(true)}
+                />
+            </div>
+
+            {/* Desktop header */}
+            <div
+                className="hidden items-center justify-between gap-3 px-5 py-3.5 lg:flex"
+                style={{ borderBottom: borderStyle }}
+            >
+                <div
+                    className="flex items-center gap-2 text-[13px]"
+                    style={{ color: 'var(--sn-muted)' }}
+                >
+                    <span
+                        className="font-semibold"
+                        style={{ color: 'var(--sn-fg)' }}
+                    >
+                        {reply.author.name}
+                    </span>
+                    <span>·</span>
+                    <span>
+                        {timeAgo(reply.created_at)}
+                        {reply.is_edited && ' · modifié'}
+                    </span>
+                </div>
+                <div className="flex items-center gap-2">
+                    {isSolution && solutionBadge}
+                    <ReplyActionsMenu
+                        reply={reply}
+                        thread={thread}
+                        auth={auth}
+                        isSolution={isSolution}
+                        onEditStart={() => setEditing(true)}
+                    />
+                </div>
+            </div>
+
+            <div className="px-5 py-4">
+                {editing ? (
+                    <div className="space-y-2">
+                        <textarea
+                            value={editBody}
+                            onChange={(e) => setEditBody(e.target.value)}
+                            rows={4}
+                            autoFocus
+                            className="w-full resize-none rounded-md px-3 py-2 text-[13.5px]"
+                            style={{
+                                background: 'var(--sn-bg)',
+                                border: '1px solid var(--sn-border)',
+                                color: 'var(--sn-fg)',
+                            }}
+                        />
+                        <div className="flex gap-2">
+                            <button
+                                onClick={saveEdit}
+                                className="sn-btn sn-btn-primary sn-btn-sm"
+                            >
+                                Sauvegarder
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setEditing(false);
+                                    setEditBody(reply.body);
+                                }}
+                                className="sn-btn sn-btn-secondary sn-btn-sm"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        className="text-[14px] leading-[1.8] whitespace-pre-wrap"
+                        style={{ color: 'var(--sn-fg)' }}
+                    >
+                        {reply.body}
+                    </div>
+                )}
+
+                {reply.children.length > 0 && (
+                    <div
+                        className="mt-4 space-y-3 border-l-2 pl-4"
+                        style={{ borderColor: 'var(--sn-border)' }}
+                    >
+                        {reply.children.map((child) => (
+                            <div key={child.id}>
+                                <div className="mb-1 flex items-center gap-2">
+                                    <span
+                                        className="grid h-6 w-6 place-items-center rounded-full font-mono text-[9px]"
+                                        style={{
+                                            background: authorTint(
+                                                child.author.id,
+                                            ),
+                                            color: '#fff',
+                                        }}
+                                    >
+                                        {getInitials(child.author.name)}
+                                    </span>
+                                    <span
+                                        className="text-[13px] font-semibold"
+                                        style={{ color: 'var(--sn-fg)' }}
+                                    >
+                                        {child.author.name}
+                                    </span>
+                                    <span
+                                        className="font-mono text-[11px]"
+                                        style={{ color: 'var(--sn-muted)' }}
+                                    >
+                                        · {timeAgo(child.created_at)}
+                                    </span>
+                                </div>
+                                <p
+                                    className="text-[13.5px] leading-relaxed whitespace-pre-wrap"
+                                    style={{ color: 'var(--sn-fg)' }}
+                                >
+                                    {child.body}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

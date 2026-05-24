@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\Forum\ChannelController;
+use App\Http\Controllers\Forum\ReactionController;
+use App\Http\Controllers\Forum\ReplyController;
+use App\Http\Controllers\Forum\ThreadController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -16,8 +20,30 @@ Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('art
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
-Route::inertia('/forum', 'forum/index')->name('forum');
-Route::get('/forum/{slug}', fn (string $slug) => inertia('forum/show', ['slug' => $slug]))->name('forum.thread');
+Route::prefix('forum')->name('forum.')->group(function (): void {
+    Route::get('/', [ChannelController::class, 'index'])->name('index');
+    Route::get('/channels', [ChannelController::class, 'channels'])->name('channels.index');
+    Route::get('/channels/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
+    Route::get('/threads/{thread:slug}', [ThreadController::class, 'show'])->name('threads.show');
+
+    Route::middleware('auth')->group(function (): void {
+        Route::post('/threads', [ThreadController::class, 'store'])->name('threads.store');
+
+        Route::post('/threads/{thread:slug}/replies', [ReplyController::class, 'store'])->name('replies.store');
+        Route::patch('/replies/{reply}', [ReplyController::class, 'update'])->name('replies.update');
+        Route::delete('/replies/{reply}', [ReplyController::class, 'destroy'])->name('replies.destroy');
+
+        Route::post('/threads/{thread:slug}/solution/{reply}', [ThreadController::class, 'markSolution'])->name('threads.solution');
+        Route::delete('/threads/{thread:slug}/solution', [ThreadController::class, 'revokeSolution'])->name('threads.solution.revoke');
+        Route::post('/threads/{thread:slug}/subscribe', [ThreadController::class, 'subscribe'])->name('threads.subscribe');
+        Route::delete('/threads/{thread:slug}/subscribe', [ThreadController::class, 'unsubscribe'])->name('threads.unsubscribe');
+
+        Route::post('/threads/{thread:slug}/lock', [ThreadController::class, 'lock'])->name('threads.lock');
+        Route::delete('/threads/{thread:slug}/lock', [ThreadController::class, 'unlock'])->name('threads.unlock');
+
+        Route::post('/threads/{thread:slug}/reactions', [ReactionController::class, 'toggle'])->name('reactions.toggle');
+    });
+});
 
 Route::get('/@{username}', [UserController::class, 'show'])->name('profile');
 

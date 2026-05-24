@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\PublicationStatus;
 use Database\Factories\ArticleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -104,26 +105,30 @@ final class Article extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
-    public function scopePublished(Builder $query): Builder
+    #[Scope]
+    protected function published(Builder $query): void
     {
-        return $query->where('status', PublicationStatus::Published)
+        $query->where('status', PublicationStatus::Published)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }
 
-    public function scopeFeatured(Builder $query): Builder
+    #[Scope]
+    protected function featured(Builder $query): void
     {
-        return $query->where('is_featured', true);
+        $query->where('is_featured', true);
     }
 
-    public function scopeInLocale(Builder $query, string $locale): Builder
+    #[Scope]
+    protected function inLocale(Builder $query, string $locale): void
     {
-        return $query->where('locale', $locale);
+        $query->where('locale', $locale);
     }
 
-    public function scopeWithTag(Builder $query, string $tagSlug): Builder
+    #[Scope]
+    protected function withTag(Builder $query, string $tagSlug): void
     {
-        return $query->whereHas('tags', fn (Builder $q) => $q->where('slug', $tagSlug));
+        $query->whereHas('tags', fn (Builder $q) => $q->where('slug', $tagSlug));
     }
 
     protected function excerpt(): Attribute

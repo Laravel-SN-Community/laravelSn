@@ -1,115 +1,73 @@
-import { Head, Link } from '@inertiajs/react';
-import { Check, Eye, MessageSquare, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Head, InfiniteScroll, Link, router, usePage } from '@inertiajs/react';
 import {
-    FORUM_CHANNELS,
-    FORUM_TAG_COLORS,
-    FORUM_THREADS,
-    MEMBERS,
-} from '@/data/community';
+    Bell,
+    Check,
+    Eye,
+    Heart,
+    LayoutGrid,
+    List,
+    Lock,
+    MessageSquare,
+    Pin,
+    Plus,
+    Search,
+    User,
+    X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { ThreadCreateSheet } from '@/components/site/thread-create-sheet';
 import { useInitials } from '@/hooks/use-initials';
+import { authorTint, timeAgo } from '@/lib/forum';
+import { toUrl } from '@/lib/utils';
+import { index as forumIndex } from '@/routes/forum';
+import { index as channelsIndex } from '@/routes/forum/channels';
+import { show as threadShow } from '@/routes/forum/threads';
+import type {
+    Auth,
+    ForumChannel,
+    ForumChannelMin,
+    ForumThreadSummary,
+    PaginatedThreads,
+} from '@/types';
 
-function ChannelIcon({ k }: { k: string }) {
-    const props = {
-        width: 14,
-        height: 14,
-        viewBox: '0 0 24 24',
-        fill: 'none' as const,
-        stroke: 'currentColor' as const,
-        strokeWidth: 1.75,
-        strokeLinecap: 'round' as const,
-        strokeLinejoin: 'round' as const,
-    };
+function ChannelTag({ channel }: { channel: ForumChannelMin }) {
+    const color = channel.color ?? 'var(--sn-accent)';
 
-    if (k === 'list') {
-        return (
-            <svg {...props}>
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-            </svg>
-        );
-    }
-
-    if (k === 'check') {
-        return (
-            <svg {...props}>
-                <polyline points="20 6 9 17 4 12" />
-            </svg>
-        );
-    }
-
-    if (k === 'x') {
-        return (
-            <svg {...props}>
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-        );
-    }
-
-    if (k === 'msg') {
-        return (
-            <svg {...props}>
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-        );
-    }
-
-    if (k === 'heart') {
-        return (
-            <svg {...props}>
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-        );
-    }
-
-    return null;
+    return (
+        <span
+            className="inline-flex items-center gap-1.5 rounded px-2 py-0.5 font-mono text-[10.5px] tracking-[0.1em] uppercase"
+            style={{
+                background: `color-mix(in oklch, ${color} 14%, transparent)`,
+                color,
+            }}
+        >
+            <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ background: color }}
+            />
+            {channel.name}
+        </span>
+    );
 }
 
-function ThreadCard({ thread }: { thread: (typeof FORUM_THREADS)[0] }) {
+function ThreadCard({ thread }: { thread: ForumThreadSummary }) {
     const getInitials = useInitials();
-    const author = MEMBERS.find((m) => m.slug === thread.authorSlug) ?? {
-        init: getInitials(thread.author),
-        tint: '#0f7b4d',
-    };
+    const isResolved = thread.solution_reply_id !== null;
 
     return (
         <Link
-            href={`/forum/${thread.slug}`}
+            href={toUrl(threadShow(thread.slug))}
             className="block rounded-xl p-5 transition-colors"
             style={{
                 background: 'var(--sn-surface)',
                 border: '1px solid var(--sn-border)',
             }}
         >
-            {/* Tags */}
             <div className="mb-2.5 flex flex-wrap items-center gap-2">
-                {thread.tags.map((tag) => {
-                    const cfg =
-                        FORUM_TAG_COLORS[tag] ?? FORUM_TAG_COLORS['divers'];
-
-                    return (
-                        <span
-                            key={tag}
-                            className="inline-flex items-center gap-1.5 rounded px-2 py-0.5 font-mono text-[10.5px] tracking-[0.1em] uppercase"
-                            style={{
-                                background: `color-mix(in oklch, ${cfg.color} 14%, transparent)`,
-                                color: cfg.color,
-                            }}
-                        >
-                            <span
-                                className="h-1.5 w-1.5 rounded-full"
-                                style={{ background: cfg.color }}
-                            />
-                            {tag}
-                        </span>
-                    );
-                })}
-                {thread.resolved && (
+                {thread.channels.map((c) => (
+                    <ChannelTag key={c.id} channel={c} />
+                ))}
+                {isResolved && (
                     <span
                         className="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[10.5px] tracking-[0.1em] uppercase"
                         style={{
@@ -121,9 +79,14 @@ function ThreadCard({ thread }: { thread: (typeof FORUM_THREADS)[0] }) {
                         <Check size={10} /> résolu
                     </span>
                 )}
+                {thread.is_pinned && (
+                    <Pin size={11} style={{ color: 'var(--sn-muted)' }} />
+                )}
+                {thread.is_locked && (
+                    <Lock size={11} style={{ color: 'var(--sn-muted)' }} />
+                )}
             </div>
 
-            {/* Title */}
             <div
                 className="text-[16.5px] leading-snug font-semibold tracking-tight"
                 style={{ color: 'var(--sn-fg)' }}
@@ -131,15 +94,13 @@ function ThreadCard({ thread }: { thread: (typeof FORUM_THREADS)[0] }) {
                 {thread.title}
             </div>
 
-            {/* Excerpt */}
             <p
                 className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed"
                 style={{ color: 'var(--sn-muted)' }}
             >
-                {thread.excerpt}
+                {thread.body}
             </p>
 
-            {/* Footer */}
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <div
                     className="flex items-center gap-2.5 text-[12.5px]"
@@ -147,27 +108,30 @@ function ThreadCard({ thread }: { thread: (typeof FORUM_THREADS)[0] }) {
                 >
                     <span
                         className="grid h-6 w-6 place-items-center rounded-full font-mono text-[10px]"
-                        style={{ background: author.tint, color: '#fff' }}
+                        style={{
+                            background: authorTint(thread.author.id),
+                            color: '#fff',
+                        }}
                     >
-                        {author.init}
+                        {getInitials(thread.author.name)}
                     </span>
                     <span>
                         <span style={{ color: 'var(--sn-fg)' }}>
-                            @{thread.author}
-                        </span>{' '}
-                        a posé{' '}
-                        <span className="font-mono">· {thread.when}</span>
+                            @{thread.author.username}
+                        </span>
+                        {' · '}
+                        <span>{timeAgo(thread.created_at)}</span>
                     </span>
                 </div>
                 <div
-                    className="flex items-center gap-4 font-mono text-[12px]"
+                    className="flex items-center gap-4 text-[12px]"
                     style={{ color: 'var(--sn-muted)' }}
                 >
                     <span className="flex items-center gap-1.5">
-                        <MessageSquare size={13} /> {thread.replies}
+                        <MessageSquare size={13} /> {thread.replies_count}
                     </span>
                     <span className="flex items-center gap-1.5">
-                        <Eye size={13} /> {thread.views}
+                        <Eye size={13} /> {thread.views_count}
                     </span>
                 </div>
             </div>
@@ -175,118 +139,164 @@ function ThreadCard({ thread }: { thread: (typeof FORUM_THREADS)[0] }) {
     );
 }
 
-export default function Forum() {
-    const [channel, setChannel] = useState('tous');
-    const [lang, setLang] = useState('fr');
+type FilterSlug =
+    | 'mine'
+    | 'subscribed'
+    | 'popular'
+    | 'resolved'
+    | 'unresolved'
+    | 'unanswered'
+    | null;
+
+const NAV_FILTERS: {
+    slug: FilterSlug;
+    label: string;
+    Icon: React.ElementType;
+}[] = [
+    { slug: null, label: 'Tous les sujets', Icon: List },
+    { slug: 'mine', label: 'Mes questions', Icon: User },
+    { slug: 'subscribed', label: 'Suivi', Icon: Bell },
+    { slug: 'popular', label: 'Populaire', Icon: Heart },
+    { slug: 'resolved', label: 'Résolu', Icon: Check },
+    { slug: 'unresolved', label: 'Non résolu', Icon: X },
+    { slug: 'unanswered', label: 'Aucune réponse', Icon: MessageSquare },
+];
+
+type Props = {
+    channels: ForumChannel[];
+    threads: PaginatedThreads;
+    filter: FilterSlug;
+};
+
+export default function Forum({ channels, threads, filter }: Props) {
+    const { auth } = usePage<{ auth: Auth }>().props;
+    const [sheetOpen, setSheetOpen] = useState(false);
+    const [lang, setLang] = useState<'fr' | 'en'>('fr');
     const [q, setQ] = useState('');
-    const [sort, setSort] = useState('Toutes');
 
-    const filtered = useMemo(
-        () =>
-            FORUM_THREADS.filter((t) => {
-                if (channel === 'resolu' && !t.resolved) {
-                    return false;
-                }
+    const displayed = q
+        ? threads.data.filter((t) =>
+              t.title.toLowerCase().includes(q.toLowerCase()),
+          )
+        : threads.data;
 
-                if (channel === 'non-resolu' && t.resolved) {
-                    return false;
-                }
-
-                if (channel === 'sans-rep' && t.replies > 0) {
-                    return false;
-                }
-
-                if (channel === 'populaire' && t.views < 100) {
-                    return false;
-                }
-
-                if (q && !t.title.toLowerCase().includes(q.toLowerCase())) {
-                    return false;
-                }
-
-                return true;
-            }),
-        [channel, q],
-    );
+    function applyFilter(slug: FilterSlug) {
+        router.get(toUrl(forumIndex()), slug ? { filter: slug } : {}, {
+            replace: true,
+        });
+    }
 
     return (
         <>
             <Head title="Forum — Laravel Sénégal" />
+            <ThreadCreateSheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                channels={channels}
+            />
 
             <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-16 lg:px-10">
-                {/* Header */}
-                <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-                    <div>
-                        <h1
-                            className="mt-2 text-[34px] font-semibold tracking-tight"
-                            style={{ color: 'var(--sn-fg)' }}
-                        >
-                            Discussions de la communauté
-                        </h1>
-                        <p
-                            className="mt-2 max-w-[60ch] text-[16px] leading-relaxed"
-                            style={{ color: 'var(--sn-muted)' }}
-                        >
-                            Pose ta question, partage un retour d'expérience, ou
-                            aide quelqu'un.
-                        </p>
-                    </div>
+                <div className="mb-8">
+                    <h1
+                        className="mt-2 text-[34px] font-semibold tracking-tight"
+                        style={{ color: 'var(--sn-fg)' }}
+                    >
+                        Discussions de la communauté
+                    </h1>
+                    <p
+                        className="mt-2 max-w-[60ch] text-[16px] leading-relaxed"
+                        style={{ color: 'var(--sn-muted)' }}
+                    >
+                        Pose ta question, partage un retour d'expérience, ou
+                        aide quelqu'un.
+                    </p>
                 </div>
 
                 <div className="grid items-start gap-8 lg:grid-cols-[260px_1fr]">
                     {/* Sidebar */}
-                    <aside className="order-last space-y-2 lg:sticky lg:top-20 lg:order-first">
-                        <button className="sn-btn sn-btn-primary mb-4 w-full justify-center">
-                            Nouveau sujet
+                    <aside className="order-last space-y-1 lg:sticky lg:top-20 lg:order-first">
+                        <button
+                            onClick={() => {
+                                if (auth?.user) {
+                                    setSheetOpen(true);
+                                } else {
+                                    window.location.href = '/login';
+                                }
+                            }}
+                            className="sn-btn sn-btn-primary mb-4 w-full justify-center"
+                        >
+                            <Plus size={13} className="mr-1" /> Nouveau sujet
                         </button>
-                        {FORUM_CHANNELS.map((c) => (
-                            <button
-                                key={c.slug}
-                                onClick={() => setChannel(c.slug)}
-                                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-[13.5px] transition-colors"
-                                style={{
-                                    background:
-                                        channel === c.slug
+
+                        {/* First filter: Tous les sujets */}
+                        {(() => {
+                            const { slug, label, Icon } = NAV_FILTERS[0];
+                            const isActive = slug === filter;
+
+                            return (
+                                <button
+                                    key={label}
+                                    onClick={() => applyFilter(slug)}
+                                    className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-[13.5px] transition-colors"
+                                    style={{
+                                        background: isActive
                                             ? 'var(--sn-surface-2)'
                                             : 'transparent',
-                                    color:
-                                        channel === c.slug
+                                        color: isActive
                                             ? 'var(--sn-fg)'
                                             : 'var(--sn-muted)',
-                                    fontWeight: channel === c.slug ? 600 : 500,
-                                }}
-                            >
-                                <ChannelIcon k={c.icon} />
-                                <span>{c.label}</span>
-                            </button>
-                        ))}
+                                        fontWeight: isActive ? 600 : 500,
+                                    }}
+                                >
+                                    <Icon size={15} />
+                                    <span>{label}</span>
+                                </button>
+                            );
+                        })()}
+
+                        {/* Channels link */}
+                        <Link
+                            href={toUrl(channelsIndex())}
+                            className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
+                            <LayoutGrid size={15} />
+                            <span>Channels</span>
+                        </Link>
+
+                        {NAV_FILTERS.slice(1).map(({ slug, label, Icon }) => {
+                            const isActive = slug === filter;
+
+                            return (
+                                <button
+                                    key={label}
+                                    onClick={() => applyFilter(slug)}
+                                    className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-[13.5px] transition-colors"
+                                    style={{
+                                        background: isActive
+                                            ? 'var(--sn-surface-2)'
+                                            : 'transparent',
+                                        color: isActive
+                                            ? 'var(--sn-fg)'
+                                            : 'var(--sn-muted)',
+                                        fontWeight: isActive ? 600 : 500,
+                                    }}
+                                >
+                                    <Icon size={15} />
+                                    <span>{label}</span>
+                                </button>
+                            );
+                        })}
                     </aside>
 
                     {/* Main */}
                     <div>
-                        {/* Toolbar */}
-                        <div className="mb-5 flex flex-wrap items-center gap-3">
-                            <select
-                                value={sort}
-                                onChange={(e) => setSort(e.target.value)}
-                                className="rounded-md px-3 py-2 font-mono text-[13px]"
-                                style={{
-                                    background: 'var(--sn-surface)',
-                                    border: '1px solid var(--sn-border)',
-                                    color: 'var(--sn-fg)',
-                                }}
-                            >
-                                <option>Toutes</option>
-                                <option>Récents</option>
-                                <option>Plus actifs</option>
-                                <option>Plus vus</option>
-                            </select>
-
+                        <div className="mb-5 flex items-center gap-3">
                             <div
                                 className="flex overflow-hidden rounded-md"
                                 style={{ border: '1px solid var(--sn-border)' }}
                             >
-                                {['fr', 'en'].map((l) => (
+                                {(['fr', 'en'] as const).map((l) => (
                                     <button
                                         key={l}
                                         onClick={() => setLang(l)}
@@ -307,7 +317,7 @@ export default function Forum() {
                                 ))}
                             </div>
 
-                            <div className="relative ml-auto w-full max-w-[280px]">
+                            <div className="relative ml-auto flex-1 lg:max-w-[280px]">
                                 <span
                                     className="absolute top-1/2 left-3 -translate-y-1/2"
                                     style={{ color: 'var(--sn-muted)' }}
@@ -328,12 +338,16 @@ export default function Forum() {
                             </div>
                         </div>
 
-                        {/* Threads */}
-                        <div className="space-y-3">
-                            {filtered.map((t) => (
-                                <ThreadCard key={t.slug} thread={t} />
-                            ))}
-                            {filtered.length === 0 && (
+                        <div>
+                            {displayed.length > 0 ? (
+                                <InfiniteScroll data="threads" buffer={400}>
+                                    <div className="space-y-3">
+                                        {displayed.map((t) => (
+                                            <ThreadCard key={t.id} thread={t} />
+                                        ))}
+                                    </div>
+                                </InfiniteScroll>
+                            ) : (
                                 <div
                                     className="rounded-xl p-12 text-center"
                                     style={{
@@ -341,12 +355,12 @@ export default function Forum() {
                                         border: '1px solid var(--sn-border)',
                                     }}
                                 >
-                                    <div
+                                    <p
                                         className="text-[14px]"
                                         style={{ color: 'var(--sn-muted)' }}
                                     >
                                         Aucun sujet ne correspond.
-                                    </div>
+                                    </p>
                                 </div>
                             )}
                         </div>
