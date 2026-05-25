@@ -23,6 +23,12 @@ final class ArticleSeeder extends Seeder
             ->create()
             ->each(function (Article $article) use ($tags): void {
                 $article->tags()->attach($tags->random(rand(1, 3))->pluck('id'));
+
+                if (rand(0, 1)) {
+                    $article
+                        ->addMediaFromUrl("https://picsum.photos/seed/{$article->slug}/1200/630")
+                        ->toMediaCollection('media');
+                }
             });
 
         Article::factory()

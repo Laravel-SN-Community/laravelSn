@@ -50,12 +50,15 @@ final class ChannelController extends Controller
             ->get();
 
         $filter = $request->query('filter');
+        $locale = $request->string('locale', 'fr')->toString();
 
         return Inertia::render('forum/index', [
             'channels' => $channels,
             'filter' => $filter,
+            'locale' => $locale,
             'threads' => Inertia::scroll(fn () => Thread::query()
-                ->with(['author:id,name,username', 'channels:id,name,slug,color'])
+                ->with(['author:id,name,username', 'author.media', 'channels:id,name,slug,color'])
+                ->inLocale($locale)
                 ->when($filter === 'mine' && auth()->check(), fn ($q) => $q->where('user_id', auth()->id()))
                 ->when($filter === 'subscribed' && auth()->check(), fn ($q) => $q->whereHas(
                     'subscribers', fn ($q) => $q->where('user_id', auth()->id()),
@@ -86,7 +89,7 @@ final class ChannelController extends Controller
 
         $threads = Thread::query()
             ->inChannel($channel->slug)
-            ->with(['author:id,name,username', 'channels:id,name,slug,color'])
+            ->with(['author:id,name,username', 'author.media', 'channels:id,name,slug,color'])
             ->orderedByActivity()
             ->paginate(20)
             ->withQueryString();

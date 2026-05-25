@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Articles\CreateArticle;
+use App\Actions\Articles\DeclineArticle;
 use App\Actions\Articles\DeleteArticle;
 use App\Actions\Articles\IncrementArticleViews;
 use App\Actions\Articles\PublishArticle;
+use App\Actions\Articles\SubmitArticle;
 use App\Actions\Articles\UpdateArticle;
 use App\Enums\PublicationStatus;
 use App\Models\Article;
@@ -39,7 +41,7 @@ final class ArticleController extends Controller
             ->when($sort === 'long', fn ($query) => $query->orderByDesc('reading_time_minutes'))
             ->when($sort === 'short', fn ($query) => $query->orderBy('reading_time_minutes'))
             ->when(! in_array($sort, ['popular', 'long', 'short'], true), fn ($query) => $query->latest('published_at'))
-            ->with(['author:id,name,username,avatar', 'tags:id,name,slug'])
+            ->with(['author:id,name,username', 'author.media', 'tags:id,name,slug'])
             ->paginate(12)
             ->withQueryString();
 
@@ -63,13 +65,13 @@ final class ArticleController extends Controller
 
         ($incrementViews)($article, (string) $request->ip());
 
-        $article->load(['author:id,name,username,avatar,bio,github_handle,location', 'tags:id,name,slug']);
+        $article->load(['author:id,name,username,bio,github_handle,location', 'author.media', 'tags:id,name,slug']);
 
         $relatedArticles = Article::query()
             ->published()
             ->where('id', '!=', $article->id)
             ->whereHas('tags', fn ($q) => $q->whereIn('tags.id', $article->tags->pluck('id')))
-            ->with(['author:id,name,username,avatar', 'tags:id,name,slug'])
+            ->with(['author:id,name,username', 'author.media', 'tags:id,name,slug'])
             ->latest('published_at')
             ->limit(3)
             ->get()
@@ -87,16 +89,24 @@ final class ArticleController extends Controller
 
         $publishedArticles = Article::query()
             ->where('author_id', $user->id)
-            ->published()
-            ->with('tags:id,name,slug')
-            ->latest('published_at')
+            ->where(function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('status', PublicationStatus::Published)
+                        ->whereNotNull('published_at')
+                        ->where('published_at', '<=', now());
+                })
+                    ->orWhere('status', PublicationStatus::Pending)
+                    ->orWhere('status', PublicationStatus::Approved);
+            })
+            ->with(['tags:id,name,slug', 'media'])
+            ->latest('updated_at')
             ->get()
             ->each->makeHidden(['seo_meta', 'submitted_at', 'approved_at', 'declined_at']);
 
         $draftArticles = Article::query()
             ->where('author_id', $user->id)
-            ->where('status', PublicationStatus::Draft)
-            ->with('tags:id,name,slug')
+            ->whereIn('status', [PublicationStatus::Draft, PublicationStatus::Declined])
+            ->with(['tags:id,name,slug', 'media'])
             ->latest('updated_at')
             ->get()
             ->each->makeHidden(['seo_meta']);
@@ -105,6 +115,7 @@ final class ArticleController extends Controller
             'tags' => Tag::query()->orderBy('name')->get(['id', 'name', 'slug']),
             'publishedArticles' => $publishedArticles,
             'draftArticles' => $draftArticles,
+            'canPublish' => Gate::allows('articles:publish'),
         ]);
     }
 
@@ -120,25 +131,33 @@ final class ArticleController extends Controller
             'tags.*' => ['required', 'integer', 'exists:tags,id'],
             'is_draft' => ['boolean'],
             'published_at' => ['nullable', 'date', 'after_or_equal:today'],
+            'cover' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,webp,avif'],
         ]);
 
         $isDraft = (bool) ($validated['is_draft'] ?? true);
+        $canPublish = Gate::allows('articles:publish');
+        $status = $isDraft
+            ? PublicationStatus::Draft
+            : ($canPublish ? PublicationStatus::Published : PublicationStatus::Pending);
 
-        $createArticle(
+        $article = $createArticle(
             author: $request->user(),
             data: [
                 'title' => $validated['title'],
                 'body' => $validated['body'],
                 'locale' => $validated['locale'],
-                'status' => $isDraft
-                    ? PublicationStatus::Draft
-                    : PublicationStatus::Pending,
-                'published_at' => ! $isDraft && isset($validated['published_at'])
-                    ? $validated['published_at']
+                'status' => $status,
+                'published_at' => ! $isDraft
+                    ? ($validated['published_at'] ?? ($canPublish ? now() : null))
                     : null,
+                'submitted_at' => $status === PublicationStatus::Pending ? now() : null,
             ],
             tagIds: array_map('intval', $validated['tags']),
         );
+
+        if ($request->hasFile('cover')) {
+            $article->addMedia($request->file('cover'))->toMediaCollection('media');
+        }
 
         return redirect()->route('dashboard.articles');
     }
@@ -155,9 +174,12 @@ final class ArticleController extends Controller
             'tags.*' => ['required', 'integer', 'exists:tags,id'],
             'is_draft' => ['boolean'],
             'published_at' => ['nullable', 'date'],
+            'cover' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,webp,avif'],
+            'cover_remove' => ['boolean'],
         ]);
 
         $isDraft = (bool) ($validated['is_draft'] ?? true);
+        $canPublish = Gate::allows('articles:publish');
 
         $data = [
             'title' => $validated['title'],
@@ -166,10 +188,18 @@ final class ArticleController extends Controller
         ];
 
         if (! $article->isPublished()) {
-            $data['status'] = $isDraft ? PublicationStatus::Draft : PublicationStatus::Pending;
-            $data['published_at'] = ! $isDraft && isset($validated['published_at'])
-                ? $validated['published_at']
+            $newStatus = $isDraft
+                ? PublicationStatus::Draft
+                : ($canPublish ? PublicationStatus::Published : PublicationStatus::Pending);
+
+            $data['status'] = $newStatus;
+            $data['published_at'] = ! $isDraft
+                ? ($validated['published_at'] ?? ($canPublish ? now() : null))
                 : null;
+
+            if ($newStatus === PublicationStatus::Pending) {
+                $data['submitted_at'] = now();
+            }
         }
 
         $updateArticle(
@@ -177,6 +207,23 @@ final class ArticleController extends Controller
             data: $data,
             tagIds: array_map('intval', $validated['tags']),
         );
+
+        if ($request->hasFile('cover')) {
+            $article->addMedia($request->file('cover'))->toMediaCollection('media');
+        } elseif ($request->boolean('cover_remove')) {
+            $article->clearMediaCollection('media');
+        }
+
+        return redirect()->route('dashboard.articles');
+    }
+
+    public function submit(Article $article, SubmitArticle $submitArticle): RedirectResponse
+    {
+        Gate::authorize('update', $article);
+
+        abort_if($article->isPublished(), 403);
+
+        $submitArticle($article);
 
         return redirect()->route('dashboard.articles');
     }
@@ -194,14 +241,29 @@ final class ArticleController extends Controller
     {
         Gate::authorize('articles:publish');
 
-        $articles = Article::query()
-            ->with(['author:id,name,username,avatar', 'tags:id,name,slug'])
-            ->latest()
-            ->paginate(20)
-            ->withQueryString();
+        $pendingArticles = Article::query()
+            ->where('status', PublicationStatus::Pending)
+            ->with(['author:id,name,username', 'tags:id,name,slug'])
+            ->latest('submitted_at')
+            ->get();
+
+        $approvedArticles = Article::query()
+            ->where('status', PublicationStatus::Approved)
+            ->with(['author:id,name,username', 'tags:id,name,slug'])
+            ->latest('approved_at')
+            ->get();
+
+        $publishedArticles = Article::query()
+            ->where('status', PublicationStatus::Published)
+            ->with(['author:id,name,username', 'tags:id,name,slug'])
+            ->latest('published_at')
+            ->get();
 
         return Inertia::render('dashboard/manage/articles', [
-            'articles' => $articles,
+            'pendingArticles' => $pendingArticles,
+            'approvedArticles' => $approvedArticles,
+            'publishedArticles' => $publishedArticles,
+            'canDelete' => Gate::allows('articles:delete'),
         ]);
     }
 
@@ -210,6 +272,15 @@ final class ArticleController extends Controller
         Gate::authorize('articles:publish');
 
         $publishArticle($article);
+
+        return redirect()->route('manage.articles.index');
+    }
+
+    public function decline(Article $article, DeclineArticle $declineArticle): RedirectResponse
+    {
+        Gate::authorize('articles:publish');
+
+        $declineArticle($article);
 
         return redirect()->route('manage.articles.index');
     }

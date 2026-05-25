@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Info, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ChannelsSelect } from '@/components/forum/channels-select';
 import { MarkdownEditor } from '@/components/forum/markdown-editor';
 import { toUrl } from '@/lib/utils';
@@ -58,16 +58,16 @@ export function ThreadCreateSheet({
     channels,
     defaultChannelId = null,
 }: Props) {
-    const [locale, setLocale] = useState<'fr' | 'en'>('fr');
-
     const { data, setData, post, processing, errors, reset } = useForm<{
         title: string;
         body: string;
         channel_ids: number[];
+        locale: 'fr' | 'en';
     }>({
         title: '',
         body: '',
         channel_ids: defaultChannelId ? [defaultChannelId] : [],
+        locale: 'fr',
     });
 
     useEffect(() => {
@@ -80,7 +80,6 @@ export function ThreadCreateSheet({
     function handleClose(next: boolean) {
         if (!next) {
             reset();
-            setLocale('fr');
         }
 
         onOpenChange(next);
@@ -250,19 +249,21 @@ export function ThreadCreateSheet({
                                             <button
                                                 key={loc}
                                                 type="button"
-                                                onClick={() => setLocale(loc)}
+                                                onClick={() =>
+                                                    setData('locale', loc)
+                                                }
                                                 className="rounded-md px-4 py-2 text-[12.5px] font-semibold transition-all"
                                                 style={{
                                                     background:
-                                                        locale === loc
+                                                        data.locale === loc
                                                             ? 'var(--sn-bg)'
                                                             : 'transparent',
                                                     color:
-                                                        locale === loc
+                                                        data.locale === loc
                                                             ? 'var(--sn-fg)'
                                                             : 'var(--sn-muted)',
                                                     boxShadow:
-                                                        locale === loc
+                                                        data.locale === loc
                                                             ? '0 1px 4px rgba(0,0,0,0.12)'
                                                             : 'none',
                                                 }}

@@ -9,12 +9,6 @@ export default function ArticlesSection({ articles }: Props) {
         <section className="mx-auto mt-24 max-w-350 px-6 lg:px-10">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <div
-                        className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                        style={{ color: 'var(--sn-muted)' }}
-                    >
-                        // à la une
-                    </div>
                     <h2
                         className="mt-2 text-[30px] font-semibold tracking-tight"
                         style={{ color: 'var(--sn-fg)' }}

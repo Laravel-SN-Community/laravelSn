@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @property PublicationStatus $status
@@ -28,14 +31,15 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $available_seats
  * @property-read bool $is_full
  */
-final class Event extends Model
+final class Event extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $guarded = [];
 
-    protected $appends = ['registrations_open', 'available_seats', 'is_full'];
+    protected $appends = ['registrations_open', 'available_seats', 'is_full', 'cover_url'];
 
     protected function casts(): array
     {
@@ -161,6 +165,44 @@ final class Event extends Model
     protected function url(): Attribute
     {
         return Attribute::get(fn (): string => route('events.show', $this->slug));
+    }
+
+    protected function coverUrl(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            $media = $this->getFirstMedia('cover');
+
+            if (! $media instanceof Media) {
+                return null;
+            }
+
+            if ($media->hasGeneratedConversion('webp')) {
+                return $media->getUrl('webp');
+            }
+
+            return $media->getUrl();
+        });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('cover')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/jpg',
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/avif',
+            ]);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('webp')
+            ->performOnCollections('cover')
+            ->format('webp')
+            ->quality(85);
     }
 
     public function getRouteKeyName(): string

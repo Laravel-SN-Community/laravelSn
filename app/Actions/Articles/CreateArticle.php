@@ -29,6 +29,7 @@ final readonly class CreateArticle
                 'locale' => $data['locale'] ?? 'fr',
                 'status' => $data['status'] ?? PublicationStatus::Draft,
                 'published_at' => $data['published_at'] ?? null,
+                'submitted_at' => $data['submitted_at'] ?? null,
                 'reading_time_minutes' => ($this->calculateReadingTime)($data['body']),
                 'is_featured' => $data['is_featured'] ?? false,
                 'seo_meta' => $data['seo_meta'] ?? null,

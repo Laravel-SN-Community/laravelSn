@@ -89,7 +89,7 @@ export default function Articles({ articles, tags, filters }: Props) {
                             <button
                                 key={loc}
                                 onClick={() => go({ locale: loc })}
-                                className="rounded-md px-5 py-2 text-[13px] font-semibold transition-all"
+                                className="rounded-md px-3 py-1.5 text-[12px] font-semibold transition-all"
                                 style={{
                                     background:
                                         filters.locale === loc

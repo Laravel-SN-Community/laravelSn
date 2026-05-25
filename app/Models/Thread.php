@@ -128,6 +128,12 @@ final class Thread extends Model
     }
 
     #[Scope]
+    protected function inLocale(Builder $query, string $locale): void
+    {
+        $query->where('locale', $locale);
+    }
+
+    #[Scope]
     protected function pinned(Builder $query): void
     {
         $query->where('is_pinned', true);

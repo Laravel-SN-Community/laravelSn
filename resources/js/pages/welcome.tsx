@@ -5,7 +5,6 @@ import CommandPalette from '@/components/site/command-palette';
 import CtaSection from '@/components/site/cta-section';
 import EventsSection from '@/components/site/events-section';
 import MobileSheet from '@/components/site/mobile-sheet';
-import OpenSourceSection from '@/components/site/open-source-section';
 import SiteFooter from '@/components/site/site-footer';
 import SiteHero from '@/components/site/site-hero';
 import SiteNavbar from '@/components/site/site-navbar';
@@ -65,7 +64,7 @@ export default function Welcome() {
                     <SponsorsSection />
                     <ArticlesSection articles={latestArticles} />
                     <EventsSection events={upcomingEvents} />
-                    <OpenSourceSection />
+                    {/*<OpenSourceSection />*/}
                     <CtaSection />
                 </main>
 

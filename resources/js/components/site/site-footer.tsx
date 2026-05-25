@@ -132,8 +132,8 @@ export default function SiteFooter() {
                     {footerCols.map((col) => (
                         <div key={col.title}>
                             <div
-                                className="mb-3 text-[10.5px] font-semibold tracking-[0.2em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
+                                className="mb-3 text-[10.5px] font-bold tracking-[0.2em] uppercase"
+                                style={{ color: 'var(--sn-fg)' }}
                             >
                                 {col.title}
                             </div>

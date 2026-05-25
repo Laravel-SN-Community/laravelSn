@@ -82,12 +82,6 @@ export default function SponsorsSection() {
         <section className="mx-auto mt-20 max-w-[1400px] px-6 lg:px-10">
             <div className="mb-6 flex items-end justify-between">
                 <div>
-                    <div
-                        className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                        style={{ color: 'var(--sn-muted)' }}
-                    >
-                        ils soutiennent la communauté
-                    </div>
                     <h2
                         className="mt-2 text-[30px] font-semibold tracking-tight"
                         style={{ color: 'var(--sn-fg)' }}

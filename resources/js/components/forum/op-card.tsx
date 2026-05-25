@@ -65,15 +65,26 @@ export function OpCard({ thread }: { thread: ForumThreadFull }) {
                 </div>
 
                 <div className="mb-3 flex items-center gap-2.5">
-                    <span
-                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full font-mono text-[11px]"
+                    <div
+                        className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full"
                         style={{
-                            background: authorTint(thread.author.id),
-                            color: '#fff',
+                            background: thread.author.avatar
+                                ? 'transparent'
+                                : authorTint(thread.author.id),
                         }}
                     >
-                        {getInitials(thread.author.name)}
-                    </span>
+                        {thread.author.avatar ? (
+                            <img
+                                src={thread.author.avatar}
+                                alt={thread.author.name}
+                                className="h-full w-full object-cover"
+                            />
+                        ) : (
+                            <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] text-white">
+                                {getInitials(thread.author.name)}
+                            </span>
+                        )}
+                    </div>
                     <div className="min-w-0">
                         <span
                             className="block truncate text-[13px] font-semibold"

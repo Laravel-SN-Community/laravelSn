@@ -26,6 +26,7 @@ final readonly class UpdateArticle
                 'locale' => $data['locale'] ?? $article->locale,
                 'status' => $data['status'] ?? $article->status,
                 'published_at' => $data['published_at'] ?? $article->published_at,
+                'submitted_at' => array_key_exists('submitted_at', $data) ? $data['submitted_at'] : $article->submitted_at,
                 'reading_time_minutes' => ($this->calculateReadingTime)($data['body']),
             ]);
 

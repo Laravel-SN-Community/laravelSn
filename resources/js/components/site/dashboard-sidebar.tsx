@@ -212,10 +212,22 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                 >
                     <div className="flex items-center gap-3">
                         <div
-                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold tracking-wide"
-                            style={{ background: tint, color: '#fff' }}
+                            className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                            style={{
+                                background: user.avatar ? 'transparent' : tint,
+                            }}
                         >
-                            {init}
+                            {user.avatar ? (
+                                <img
+                                    src={user.avatar}
+                                    alt={user.name}
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <span className="absolute inset-0 flex items-center justify-center text-[13px] font-bold tracking-wide text-white">
+                                    {init}
+                                </span>
+                            )}
                         </div>
                         <div className="min-w-0">
                             <div

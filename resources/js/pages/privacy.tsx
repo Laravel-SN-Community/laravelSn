@@ -72,10 +72,8 @@ export default function Confidentialite() {
         <>
             <Head title="Confidentialité — Laravel Sénégal" />
             <StaticPage
-                eyebrow="// transparence"
                 title="Confidentialité"
                 updated="01 janvier 2026"
-                breadcrumb="confidentialité"
                 sections={SECTIONS}
             />
         </>

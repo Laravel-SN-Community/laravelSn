@@ -32,7 +32,6 @@ final class RolesAndPermissionsSeeder extends Seeder
         $moderator = Role::firstOrCreate(['name' => 'moderator']);
         $moderator->syncPermissions([
             'articles:publish',
-            'articles:delete',
             'events:manage',
             'forum:moderate',
         ]);

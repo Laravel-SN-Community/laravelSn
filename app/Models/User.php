@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -21,18 +24,53 @@ use Spatie\Permission\Traits\HasRoles;
 #[Fillable(['name', 'username', 'email', 'password', 'bio', 'location', 'github_handle', 'twitter_handle', 'linkedin_handle', 'website_url'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     use HasRoles;
+    use InteractsWithMedia;
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    /** @var list<string> */
+    protected $appends = ['avatar'];
+
     protected function avatar(): Attribute
     {
-        return Attribute::get(fn (): ?string => $this->avatar_path);
+        return Attribute::get(function (): ?string {
+            $media = $this->getFirstMedia('avatar');
+
+            if (! $media instanceof Media) {
+                return null;
+            }
+
+            return $media->hasGeneratedConversion('webp')
+                ? $media->getUrl('webp')
+                : $media->getUrl();
+        });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/jpg',
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/avif',
+            ]);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('webp')
+            ->performOnCollections('avatar')
+            ->format('webp')
+            ->quality(85);
     }
 
     public function isAdmin(): bool

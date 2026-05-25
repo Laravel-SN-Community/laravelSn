@@ -16,7 +16,7 @@ final class HomeController extends Controller
     {
         $latestArticles = Article::query()
             ->published()
-            ->with(['author:id,name,username,avatar', 'tags:id,name,slug'])
+            ->with(['author:id,name,username', 'author.media', 'tags:id,name,slug'])
             ->latest('published_at')
             ->limit(3)
             ->get()
@@ -43,7 +43,7 @@ final class HomeController extends Controller
             ->get();
 
         $upcomingEvents = $featured->concat($others)
-            ->makeHidden(['seo_meta', 'agenda', 'description', 'cover_path', 'online_url', 'replay_url']);
+            ->makeHidden(['seo_meta', 'agenda', 'description', 'online_url', 'replay_url']);
 
         return Inertia::render('welcome', [
             'canRegister' => Features::enabled(Features::registration()),

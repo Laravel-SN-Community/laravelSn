@@ -78,15 +78,26 @@ export function ReplyCard({
                 className="flex items-center gap-2.5 px-5 py-3.5 lg:hidden"
                 style={{ borderBottom: borderStyle }}
             >
-                <span
-                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full font-mono text-[10px]"
+                <div
+                    className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full"
                     style={{
-                        background: authorTint(reply.author.id),
-                        color: '#fff',
+                        background: reply.author.avatar
+                            ? 'transparent'
+                            : authorTint(reply.author.id),
                     }}
                 >
-                    {getInitials(reply.author.name)}
-                </span>
+                    {reply.author.avatar ? (
+                        <img
+                            src={reply.author.avatar}
+                            alt={reply.author.name}
+                            className="h-full w-full object-cover"
+                        />
+                    ) : (
+                        <span className="absolute inset-0 flex items-center justify-center font-mono text-[10px] text-white">
+                            {getInitials(reply.author.name)}
+                        </span>
+                    )}
+                </div>
                 <div className="min-w-0 flex-1">
                     <span
                         className="block truncate text-[13px] font-semibold"
@@ -195,17 +206,26 @@ export function ReplyCard({
                         {reply.children.map((child) => (
                             <div key={child.id}>
                                 <div className="mb-1 flex items-center gap-2">
-                                    <span
-                                        className="grid h-6 w-6 place-items-center rounded-full font-mono text-[9px]"
+                                    <div
+                                        className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full"
                                         style={{
-                                            background: authorTint(
-                                                child.author.id,
-                                            ),
-                                            color: '#fff',
+                                            background: child.author.avatar
+                                                ? 'transparent'
+                                                : authorTint(child.author.id),
                                         }}
                                     >
-                                        {getInitials(child.author.name)}
-                                    </span>
+                                        {child.author.avatar ? (
+                                            <img
+                                                src={child.author.avatar}
+                                                alt={child.author.name}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        ) : (
+                                            <span className="absolute inset-0 flex items-center justify-center font-mono text-[9px] text-white">
+                                                {getInitials(child.author.name)}
+                                            </span>
+                                        )}
+                                    </div>
                                     <span
                                         className="text-[13px] font-semibold"
                                         style={{ color: 'var(--sn-fg)' }}

@@ -1,5 +1,3 @@
-import { Link } from '@inertiajs/react';
-
 type Section = {
     h: string;
     body: string[];
@@ -7,42 +5,19 @@ type Section = {
 };
 
 type StaticPageProps = {
-    eyebrow: string;
     title: string;
     updated: string;
-    breadcrumb: string;
     sections: Section[];
 };
 
 export default function StaticPage({
-    eyebrow,
     title,
     updated,
-    breadcrumb,
     sections,
 }: StaticPageProps) {
     return (
         <>
             <div className="mx-auto max-w-[760px] px-6 pt-10 pb-0 lg:px-10">
-                {/* Breadcrumb */}
-                <div
-                    className="mb-8 flex items-center gap-2 font-mono text-[11.5px]"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    <Link href="/" className="hover:underline">
-                        accueil
-                    </Link>
-                    <span>/</span>
-                    <span>{breadcrumb}</span>
-                </div>
-
-                {/* Header */}
-                <div
-                    className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    {eyebrow}
-                </div>
                 <h1
                     className="mt-2 text-[36px] font-semibold tracking-[-0.02em]"
                     style={{ color: 'var(--sn-fg)' }}

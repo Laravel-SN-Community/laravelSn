@@ -30,12 +30,12 @@ final class UserController extends Controller
 
     public function show(string $username): Response
     {
-        $user = User::where('username', $username)->firstOrFail();
+        $user = User::where('username', $username)->with('media')->firstOrFail();
 
         $articles = Article::query()
             ->where('author_id', $user->id)
             ->published()
-            ->with(['author:id,name,username,avatar', 'tags:id,name,slug'])
+            ->with(['author:id,name,username', 'author.media', 'tags:id,name,slug'])
             ->latest('published_at')
             ->get()
             ->each->makeHidden(['body', 'seo_meta', 'submitted_at', 'approved_at', 'declined_at']);

@@ -1,4 +1,4 @@
-import { ArrowRight, Calendar, Clock, MapPin } from 'lucide-react';
+import { ArrowRight, Clock, MapPin } from 'lucide-react';
 
 interface Venue {
     id: number;
@@ -63,10 +63,6 @@ export default function EventsSection({ events }: Props) {
                     </h2>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="sn-btn sn-btn-ghost sn-btn-sm font-mono">
-                        <Calendar size={13} />
-                        .ics
-                    </button>
                     <a
                         href="/events"
                         className="sn-btn sn-btn-secondary sn-btn-sm"

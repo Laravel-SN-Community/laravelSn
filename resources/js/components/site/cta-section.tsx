@@ -24,26 +24,12 @@ export default function CtaSection() {
                 <div className="relative grid items-center gap-8 lg:grid-cols-12">
                     {/* Copy */}
                     <div className="lg:col-span-8">
-                        <div
-                            className="inline-flex items-center gap-2 rounded-md px-2.5 py-1 font-mono text-[11.5px] tracking-[0.14em] uppercase"
-                            style={{
-                                border: '1px solid rgba(255,255,255,.15)',
-                                color: 'rgba(255,255,255,.7)',
-                            }}
-                        >
-                            <span
-                                className="h-1.5 w-1.5 rounded-full"
-                                style={{ background: 'var(--sn-400)' }}
-                            />
-                            rejoindre · gratuit · sans spam
-                        </div>
-
                         <h2 className="mt-5 max-w-[22ch] text-[34px] leading-[1.05] font-semibold tracking-[-0.02em] sm:text-[42px]">
-                            Du code{' '}
+                            Apprends, partage, construis — avec la{' '}
                             <span style={{ color: 'var(--sn-400)' }}>
-                                Laravel
-                            </span>{' '}
-                            propre, en français, entre voisins.
+                                communauté
+                            </span>
+                            .
                         </h2>
 
                         <p

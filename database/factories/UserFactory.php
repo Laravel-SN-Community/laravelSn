@@ -65,6 +65,9 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user): void {
             $user->assignRole(Role::firstOrCreate(['name' => 'user']));
+
+            $user->addMediaFromUrl("https://i.pravatar.cc/150?u={$user->username}")
+                ->toMediaCollection('avatar');
         });
     }
 
