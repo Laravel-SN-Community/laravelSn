@@ -2,6 +2,7 @@ export type ForumAuthor = {
     id: number;
     name: string;
     username: string;
+    avatar: string | null;
     roles?: Array<{ name: string }>;
 };
 

@@ -73,9 +73,7 @@ export default function Articles({ articles, tags, filters }: Props) {
                             className="mt-4 text-[16px] leading-relaxed lg:text-[17px]"
                             style={{ color: 'var(--sn-muted)' }}
                         >
-                            Retours d'expérience, guides techniques et patterns
-                            éprouvés — en français, ancrés dans notre contexte
-                            ouest-africain.
+                            Guides, retours d'expérience et bonnes pratiques.
                         </p>
                     </div>
                     <div
@@ -89,7 +87,7 @@ export default function Articles({ articles, tags, filters }: Props) {
                             <button
                                 key={loc}
                                 onClick={() => go({ locale: loc })}
-                                className="rounded-md px-5 py-2 text-[13px] font-semibold transition-all"
+                                className="rounded-md px-3 py-1.5 text-[12px] font-semibold transition-all"
                                 style={{
                                     background:
                                         filters.locale === loc

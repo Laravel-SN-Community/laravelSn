@@ -33,7 +33,7 @@ final class EventController extends Controller
                 fn ($q) => $q->past(),
                 fn ($q) => $q->upcoming()
             )
-            ->with(['venue:id,name,district', 'speakers'])
+            ->with(['venue:id,name,district', 'speakers', 'media'])
             ->withCount(['registrations as confirmed_count' => function ($query): void {
                 $query->where('status', EventRegistrationStatus::Confirmed);
             }])
@@ -52,7 +52,7 @@ final class EventController extends Controller
     {
         abort_unless($event->status->isVisible(), 404);
 
-        $event->load(['venue', 'speakers']);
+        $event->load(['venue', 'speakers', 'media']);
 
         $userRegistration = null;
         $user = auth()->user();
@@ -112,7 +112,7 @@ final class EventController extends Controller
         $tab = $request->string('tab', 'all')->toString();
 
         $query = Event::query()
-            ->with(['venue:id,name,district'])
+            ->with(['venue:id,name,district', 'media'])
             ->withCount('confirmedRegistrations');
 
         match ($tab) {
@@ -179,9 +179,14 @@ final class EventController extends Controller
             'is_sponsored' => ['boolean'],
             'replay_url' => ['nullable', 'url'],
             'publish' => ['boolean'],
+            'cover' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,webp,avif'],
         ]);
 
-        $createEvent($data);
+        $event = $createEvent($data);
+
+        if ($request->hasFile('cover')) {
+            $event->addMedia($request->file('cover'))->toMediaCollection('cover');
+        }
 
         return redirect()->route('manage.events.index');
     }
@@ -210,9 +215,17 @@ final class EventController extends Controller
             'is_sponsored' => ['boolean'],
             'replay_url' => ['nullable', 'url'],
             'publish' => ['boolean'],
+            'cover' => ['nullable', 'image', 'max:2048', 'mimes:jpg,jpeg,png,webp,avif'],
+            'cover_remove' => ['boolean'],
         ]);
 
-        $updateEvent($event, $data);
+        $updatedEvent = $updateEvent($event, $data);
+
+        if ($request->hasFile('cover')) {
+            $updatedEvent->addMedia($request->file('cover'))->toMediaCollection('cover');
+        } elseif ($request->boolean('cover_remove')) {
+            $updatedEvent->clearMediaCollection('cover');
+        }
 
         return redirect()->route('manage.events.index');
     }

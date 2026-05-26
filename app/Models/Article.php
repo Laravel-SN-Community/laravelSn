@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @property PublicationStatus $status
@@ -46,15 +49,16 @@ use Illuminate\Support\Str;
     'is_featured',
     'seo_meta',
 ])]
-final class Article extends Model
+final class Article extends Model implements HasMedia
 {
     /** @use HasFactory<ArticleFactory> */
     use HasFactory;
 
+    use InteractsWithMedia;
     use SoftDeletes;
 
     /** @var list<string> */
-    protected $appends = ['excerpt'];
+    protected $appends = ['excerpt', 'cover_url'];
 
     protected static function boot(): void
     {
@@ -144,7 +148,47 @@ final class Article extends Model
 
     protected function coverUrl(): Attribute
     {
-        return Attribute::get(fn (): ?string => null);
+        return Attribute::get(function (): ?string {
+            $url = $this->getCoverImageUrl();
+
+            return $url !== '' ? $url : null;
+        });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('media')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/jpg',
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/avif',
+            ]);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('webp')
+            ->performOnCollections('media')
+            ->format('webp')
+            ->quality(85);
+    }
+
+    public function getCoverImageUrl(): string
+    {
+        $media = $this->getFirstMedia('media');
+
+        if (! $media instanceof Media) {
+            return '';
+        }
+
+        if ($media->hasGeneratedConversion('webp')) {
+            return $media->getUrl('webp');
+        }
+
+        return $media->getUrl();
     }
 
     protected function url(): Attribute

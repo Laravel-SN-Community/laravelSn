@@ -1,7 +1,8 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Github, Link2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Check, Link2 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ArticleCard from '@/components/site/article-card';
+import { useClipboard } from '@/hooks/use-clipboard';
 import { useInitials } from '@/hooks/use-initials';
 import type { ArticleFull, ArticleSummary } from '@/types/article';
 
@@ -102,123 +103,135 @@ function tagTint(slug: string): string {
     return palette[h % palette.length];
 }
 
-function Comments() {
-    const [list, setList] = useState([
-        {
-            id: 1,
-            author: 'Khady Ndiaye',
-            init: 'KN',
-            tint: '#3ea777',
-            when: 'il y a 2h',
-            body: 'Excellent article 👏 Merci pour le partage !',
-        },
-        {
-            id: 2,
-            author: 'Ibrahima Ba',
-            init: 'IB',
-            tint: '#0f7b4d',
-            when: 'il y a 5h',
-            body: 'Très utile, je vais appliquer ça sur mon prochain projet.',
-        },
-    ]);
-    const [val, setVal] = useState('');
+const SHARE_TARGETS = [
+    {
+        label: 'X / Twitter',
+        color: '#000',
+        darkColor: '#e7e9ea',
+        icon: (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.629L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+            </svg>
+        ),
+        href: (title: string, url: string) =>
+            `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+    },
+    {
+        label: 'LinkedIn',
+        color: '#0A66C2',
+        darkColor: '#0A66C2',
+        icon: (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+            </svg>
+        ),
+        href: (_: string, url: string) =>
+            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    },
+    {
+        label: 'WhatsApp',
+        color: '#25D366',
+        darkColor: '#25D366',
+        icon: (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+        ),
+        href: (title: string, url: string) =>
+            `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
+    },
+];
 
-    const submit = (e: React.SyntheticEvent) => {
-        e.preventDefault();
+function ShareCard({ title, slug }: { title: string; slug: string }) {
+    const url = `${window.location.origin}/articles/${slug}`;
+    const [, copy] = useClipboard();
+    const [copied, setCopied] = useState(false);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-        if (!val.trim()) {
-            return;
+    const handleCopy = async () => {
+        const ok = await copy(url);
+
+        if (ok) {
+            setCopied(true);
+
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+
+            timerRef.current = setTimeout(() => setCopied(false), 2000);
         }
-
-        setList((l) => [
-            ...l,
-            {
-                id: Date.now(),
-                author: 'Toi',
-                init: 'TO',
-                tint: 'var(--sn-accent)',
-                when: "à l'instant",
-                body: val,
-            },
-        ]);
-        setVal('');
     };
 
+    useEffect(
+        () => () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        },
+        [],
+    );
+
     return (
-        <div className="mt-12">
-            <h3
-                className="mb-4 text-[20px] font-semibold tracking-tight"
-                style={{ color: 'var(--sn-fg)' }}
+        <div className="mt-8">
+            <p
+                className="mb-2 text-[10px] font-semibold tracking-[0.18em] uppercase"
+                style={{ color: 'var(--sn-muted)' }}
             >
-                Commentaires · {list.length}
-            </h3>
+                Partager
+            </p>
 
-            <form onSubmit={submit} className="sn-card mb-5 p-4">
-                <textarea
-                    value={val}
-                    onChange={(e) => setVal(e.target.value)}
-                    rows={3}
-                    placeholder="Partage ton retour, ton expérience, ta question…"
-                    className="w-full rounded-md px-3 py-2.5 text-[14px] outline-none"
-                    style={{
-                        background: 'var(--sn-bg)',
-                        border: '1px solid var(--sn-border)',
-                        color: 'var(--sn-fg)',
-                        resize: 'vertical',
-                    }}
-                />
-                <div className="mt-3 flex items-center justify-between">
-                    <span
-                        className="font-mono text-[11.5px]"
+            <div className="flex items-center gap-1">
+                {SHARE_TARGETS.map(({ label, color, icon, href }) => (
+                    <a
+                        key={label}
+                        href={href(title, url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={label}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-150"
                         style={{ color: 'var(--sn-muted)' }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = `color-mix(in oklch, ${color} 14%, transparent)`;
+                            e.currentTarget.style.color = color;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = 'var(--sn-muted)';
+                        }}
                     >
-                        supporte <code>markdown</code> basique
-                    </span>
-                    <button
-                        className="sn-btn sn-btn-primary sn-btn-sm"
-                        type="submit"
-                    >
-                        Publier →
-                    </button>
-                </div>
-            </form>
-
-            <div className="space-y-3">
-                {list.map((c) => (
-                    <div key={c.id} className="sn-card p-5">
-                        <div className="flex items-center gap-3">
-                            <span
-                                className="grid h-9 w-9 place-items-center rounded-full font-mono text-[12px]"
-                                style={{ background: c.tint, color: '#fff' }}
-                            >
-                                {c.init}
-                            </span>
-                            <div className="flex-1">
-                                <div
-                                    className="text-[14px] font-medium"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
-                                    {c.author}
-                                </div>
-                                <div
-                                    className="font-mono text-[11px]"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    {c.when}
-                                </div>
-                            </div>
-                            <button className="sn-btn sn-btn-ghost sn-btn-sm font-mono text-[11px]">
-                                répondre
-                            </button>
-                        </div>
-                        <p
-                            className="mt-3 text-[14px] leading-relaxed"
-                            style={{ color: 'var(--sn-fg)' }}
-                        >
-                            {c.body}
-                        </p>
-                    </div>
+                        {icon}
+                    </a>
                 ))}
+
+                <div
+                    className="mx-1.5 h-4 w-px shrink-0"
+                    style={{ background: 'var(--sn-border)' }}
+                />
+
+                <button
+                    onClick={handleCopy}
+                    title="Copier le lien"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-150"
+                    style={{
+                        color: copied ? 'var(--sn-accent)' : 'var(--sn-muted)',
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!copied) {
+                            e.currentTarget.style.color = 'var(--sn-fg)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (!copied) {
+                            e.currentTarget.style.color = 'var(--sn-muted)';
+                        }
+                    }}
+                >
+                    {copied ? (
+                        <Check size={13} strokeWidth={2.5} />
+                    ) : (
+                        <Link2 size={14} />
+                    )}
+                </button>
             </div>
         </div>
     );
@@ -277,10 +290,6 @@ export default function ArticleShow() {
                 className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-2 px-6 pt-6 text-[12px] lg:px-10"
                 style={{ color: 'var(--sn-muted)' }}
             >
-                <Link href="/" className="hover:underline">
-                    Accueil
-                </Link>
-                <span>/</span>
                 <Link href="/articles" className="hover:underline">
                     Articles
                 </Link>
@@ -317,12 +326,24 @@ export default function ArticleShow() {
                         {article.title}
                     </h1>
 
+                    {/* Desktop: excerpt */}
                     <p
-                        className="mt-5 max-w-[60ch] text-[18px] leading-[1.6]"
+                        className="mt-5 hidden max-w-[60ch] text-[18px] leading-[1.6] sm:block"
                         style={{ color: 'var(--sn-muted)' }}
                     >
                         {article.excerpt}
                     </p>
+
+                    {/* Mobile: cover image if available */}
+                    {article.cover_url && (
+                        <div className="mt-5 overflow-hidden rounded-xl sm:hidden">
+                            <img
+                                src={article.cover_url}
+                                alt={article.title}
+                                className="w-full object-cover"
+                            />
+                        </div>
+                    )}
 
                     {/* Author strip */}
                     <div
@@ -362,7 +383,7 @@ export default function ArticleShow() {
                                 <div>{fmtDate(article.published_at)}</div>
                                 {new Date(article.updated_at).getTime() -
                                     new Date(article.published_at).getTime() >
-                                    86_400_000 && (
+                                    300_000 && (
                                     <div
                                         className="mt-0.5"
                                         style={{ color: 'var(--sn-accent)' }}
@@ -376,26 +397,44 @@ export default function ArticleShow() {
                     </div>
 
                     {/* Hero */}
-                    <div
-                        className="relative mt-8 overflow-hidden rounded-xl"
-                        style={{
-                            aspectRatio: '16/8',
-                            background: `linear-gradient(135deg, ${tint}, var(--sn-500))`,
-                        }}
-                    >
-                        <div className="bg-sn-grid absolute inset-0 opacity-30" />
-                        {firstTag && (
-                            <div
-                                className="absolute bottom-6 left-6 font-mono text-[13px]"
-                                style={{ color: 'rgba(255,255,255,.85)' }}
-                            >
-                                #{firstTag.name}
-                                {article.published_at && (
-                                    <> · {article.published_at.slice(0, 10)}</>
-                                )}
-                            </div>
-                        )}
-                    </div>
+                    {article.cover_url && (
+                        <div
+                            className="relative mt-8 hidden overflow-hidden rounded-xl sm:block"
+                            style={{ aspectRatio: '16/8' }}
+                        >
+                            {article.cover_url ? (
+                                <img
+                                    src={article.cover_url}
+                                    alt={article.title}
+                                    className="absolute inset-0 h-full w-full object-cover"
+                                />
+                            ) : (
+                                <>
+                                    <div className="bg-sn-grid absolute inset-0 opacity-30" />
+                                    {firstTag && (
+                                        <div
+                                            className="absolute bottom-6 left-6 font-mono text-[13px]"
+                                            style={{
+                                                color: 'rgba(255,255,255,.85)',
+                                            }}
+                                        >
+                                            #{firstTag.name}
+                                            {article.published_at && (
+                                                <>
+                                                    {' '}
+                                                    ·{' '}
+                                                    {article.published_at.slice(
+                                                        0,
+                                                        10,
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    )}
 
                     {/* Article body */}
                     <style>{`
@@ -462,81 +501,6 @@ export default function ArticleShow() {
                             </button>
                         </div>
                     </div>
-
-                    {/* Author box */}
-                    <div className="sn-card mt-10 flex gap-5 p-6">
-                        <Link
-                            href={`/@${article.author.username}`}
-                            className="shrink-0"
-                        >
-                            {article.author.avatar ? (
-                                <img
-                                    src={article.author.avatar}
-                                    alt={article.author.name}
-                                    className="h-16 w-16 rounded-full object-cover"
-                                />
-                            ) : (
-                                <span
-                                    className="grid h-16 w-16 place-items-center rounded-full font-mono text-[18px]"
-                                    style={{ background: tint, color: '#fff' }}
-                                >
-                                    {getInitials(article.author.name)}
-                                </span>
-                            )}
-                        </Link>
-                        <div className="min-w-0 flex-1">
-                            <div
-                                className="font-mono text-[10.5px] tracking-[0.18em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                écrit par
-                            </div>
-                            <Link
-                                href={`/@${article.author.username}`}
-                                className="mt-0.5 block text-[18px] font-semibold tracking-tight"
-                                style={{ color: 'var(--sn-fg)' }}
-                            >
-                                {article.author.name}
-                            </Link>
-                            {article.author.location && (
-                                <div
-                                    className="mt-0.5 text-[13.5px]"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    {article.author.location}
-                                </div>
-                            )}
-                            {article.author.bio && (
-                                <p
-                                    className="mt-3 text-[14px] leading-relaxed"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    {article.author.bio}
-                                </p>
-                            )}
-                            <div className="mt-4 flex gap-2">
-                                <Link
-                                    href={`/@${article.author.username}`}
-                                    className="sn-btn sn-btn-secondary sn-btn-sm"
-                                >
-                                    Voir le profil
-                                </Link>
-                                {article.author.github_handle && (
-                                    <a
-                                        href={`https://github.com/${article.author.github_handle}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="sn-btn sn-btn-ghost sn-btn-sm"
-                                    >
-                                        <Github size={13} />{' '}
-                                        {article.author.github_handle}
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <Comments />
 
                     {/* Related */}
                     {relatedArticles.length > 0 && (
@@ -609,44 +573,7 @@ export default function ArticleShow() {
                             </>
                         )}
 
-                        {/* Newsletter */}
-                        <div className="sn-card mt-8 p-5">
-                            <div
-                                className="text-[11px] font-semibold tracking-wide uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                Newsletter
-                            </div>
-                            <div
-                                className="mt-2 text-[15px] font-semibold tracking-tight"
-                                style={{ color: 'var(--sn-fg)' }}
-                            >
-                                Les prochains articles dans ta boîte mail.
-                            </div>
-                            <p
-                                className="mt-2 text-[12.5px]"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                1 email / mois, zéro spam.
-                            </p>
-                            <form
-                                onSubmit={(e) => e.preventDefault()}
-                                className="mt-3 flex gap-2"
-                            >
-                                <input
-                                    className="flex-1 rounded-md border px-3 py-2 text-[13px] outline-none"
-                                    placeholder="ton@email.com"
-                                    style={{
-                                        background: 'var(--sn-bg)',
-                                        border: '1px solid var(--sn-border)',
-                                        color: 'var(--sn-fg)',
-                                    }}
-                                />
-                                <button className="sn-btn sn-btn-primary sn-btn-sm">
-                                    OK
-                                </button>
-                            </form>
-                        </div>
+                        <ShareCard title={article.title} slug={article.slug} />
                     </div>
                 </aside>
             </article>

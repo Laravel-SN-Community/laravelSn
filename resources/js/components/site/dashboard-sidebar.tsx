@@ -6,8 +6,9 @@ import {
     LayoutDashboard,
     LogOut,
     Settings,
-    Shield,
+    ShieldCheck,
     UserCircle,
+    UserCog,
 } from 'lucide-react';
 import { useInitials } from '@/hooks/use-initials';
 import { logout } from '@/routes';
@@ -81,18 +82,6 @@ function getTint(name: string): string {
     }
 
     return TINTS[Math.abs(hash) % TINTS.length];
-}
-
-function roleLabel(role: string): string {
-    if (role === 'admin') {
-        return 'Admin';
-    }
-
-    if (role === 'moderator') {
-        return 'Modérateur';
-    }
-
-    return role;
 }
 
 function NavLink({
@@ -185,18 +174,6 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                             </Link>
                         );
                     })}
-                    <button
-                        onClick={handleLogout}
-                        className="flex shrink-0 items-center gap-1.5 px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-opacity hover:opacity-70"
-                        style={{ color: 'var(--destructive)' }}
-                    >
-                        <LogOut
-                            size={14}
-                            strokeWidth={1.5}
-                            style={{ flexShrink: 0 }}
-                        />
-                        Déconnexion
-                    </button>
                 </div>
             </div>
 
@@ -212,17 +189,55 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                 >
                     <div className="flex items-center gap-3">
                         <div
-                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold tracking-wide"
-                            style={{ background: tint, color: '#fff' }}
+                            className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                            style={{
+                                background: user.avatar ? 'transparent' : tint,
+                            }}
                         >
-                            {init}
+                            {user.avatar ? (
+                                <img
+                                    src={user.avatar}
+                                    alt={user.name}
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <span className="absolute inset-0 flex items-center justify-center text-[13px] font-bold tracking-wide text-white">
+                                    {init}
+                                </span>
+                            )}
                         </div>
                         <div className="min-w-0">
                             <div
-                                className="truncate text-[14px] font-semibold"
+                                className="flex items-center gap-1.5 text-[14px] font-semibold"
                                 style={{ color: 'var(--sn-fg)' }}
                             >
-                                {user.name}
+                                <span className="truncate">{user.name}</span>
+                                {role === 'admin' && (
+                                    <span
+                                        title="Administrateur"
+                                        className="inline-flex shrink-0"
+                                    >
+                                        <ShieldCheck
+                                            size={13}
+                                            style={{
+                                                color: 'var(--sn-accent)',
+                                            }}
+                                        />
+                                    </span>
+                                )}
+                                {role === 'moderator' && (
+                                    <span
+                                        title="Modérateur"
+                                        className="inline-flex shrink-0"
+                                    >
+                                        <UserCog
+                                            size={13}
+                                            style={{
+                                                color: 'var(--sn-accent)',
+                                            }}
+                                        />
+                                    </span>
+                                )}
                             </div>
                             <div
                                 className="truncate text-[11.5px]"
@@ -232,21 +247,6 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                             </div>
                         </div>
                     </div>
-
-                    {isMod && (
-                        <div className="mt-3">
-                            <span
-                                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase"
-                                style={{
-                                    background: 'var(--sn-accent)',
-                                    color: 'var(--sn-accent-fg)',
-                                }}
-                            >
-                                <Shield size={11} strokeWidth={2} />
-                                {roleLabel(role!)}
-                            </span>
-                        </div>
-                    )}
                 </div>
 
                 {/* Mon espace */}

@@ -1,4 +1,4 @@
-import { ArrowRight, ExternalLink, Link2 } from 'lucide-react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 
 interface Repo {
     name: string;
@@ -80,14 +80,6 @@ function RepoCard({ name, desc, href }: Repo) {
             >
                 {desc}
             </p>
-
-            <div
-                className="mt-6 flex items-center gap-2 text-[12.5px]"
-                style={{ color: 'var(--sn-muted)' }}
-            >
-                <Link2 size={14} />
-                <span>{href}</span>
-            </div>
         </a>
     );
 }
@@ -96,12 +88,6 @@ export default function OpenSourceSection() {
     return (
         <section className="mx-auto mt-24 max-w-[1400px] px-6 lg:px-10">
             <div className="mb-10 max-w-[56ch]">
-                <div
-                    className="font-mono text-[11.5px] tracking-[0.2em] uppercase"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    // écosystème
-                </div>
                 <h2
                     className="mt-2 text-[30px] font-semibold tracking-tight"
                     style={{ color: 'var(--sn-fg)' }}
@@ -152,16 +138,9 @@ export default function OpenSourceSection() {
                 </div>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-                <div
-                    className="font-mono text-[13px]"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    github.com/
-                    <span style={{ color: 'var(--sn-fg)' }}>laravel-sn</span>
-                </div>
+            <div className="mt-6 flex justify-end">
                 <a
-                    href="https://github.com/laravel-sn"
+                    href="https://github.com/Laravel-SN-Community"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="sn-btn sn-btn-ghost sn-btn-sm"

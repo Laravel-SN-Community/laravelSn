@@ -14,13 +14,14 @@ final readonly class CreateThread
     /**
      * @param  array<int, int>  $channelIds
      */
-    public function __invoke(User $author, string $title, string $body, array $channelIds): Thread
+    public function __invoke(User $author, string $title, string $body, array $channelIds, string $locale = 'fr'): Thread
     {
-        return DB::transaction(function () use ($author, $title, $body, $channelIds): Thread {
+        return DB::transaction(function () use ($author, $title, $body, $channelIds, $locale): Thread {
             $thread = Thread::create([
                 'user_id' => $author->id,
                 'title' => $title,
                 'body' => $body,
+                'locale' => $locale,
                 'last_posted_at' => now(),
             ]);
 

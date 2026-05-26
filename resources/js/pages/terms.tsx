@@ -61,10 +61,8 @@ export default function Conditions() {
         <>
             <Head title="Conditions d'utilisation — Laravel Sénégal" />
             <StaticPage
-                eyebrow="// transparence"
                 title="Conditions d'utilisation"
                 updated="01 janvier 2026"
-                breadcrumb="conditions d'utilisation"
                 sections={SECTIONS}
             />
         </>

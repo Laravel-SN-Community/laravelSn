@@ -22,9 +22,9 @@ final class ThreadController extends Controller
     public function show(Request $request, Thread $thread, IncrementThreadViews $incrementViews): Response
     {
         $thread->load([
-            'author' => fn ($q) => $q->select('id', 'name', 'username')->with('roles:name'),
+            'author' => fn ($q) => $q->select('id', 'name', 'username')->with(['roles:name', 'media']),
             'channels:id,name,slug,color',
-            'solution.author' => fn ($q) => $q->select('id', 'name', 'username')->with('roles:name'),
+            'solution.author' => fn ($q) => $q->select('id', 'name', 'username')->with(['roles:name', 'media']),
         ]);
 
         $thread->loadCount(['reactions as likes_count' => fn ($q) => $q->where('type', 'like')]);
@@ -44,7 +44,7 @@ final class ThreadController extends Controller
             'isSubscribed' => $isSubscribed,
             'replies' => Inertia::scroll(fn () => $thread->replies()
                 ->with([
-                    'author' => fn ($q) => $q->select('id', 'name', 'username')->with('roles:name'),
+                    'author' => fn ($q) => $q->select('id', 'name', 'username')->with(['roles:name', 'media']),
                     'children' => fn ($q) => $q->with([
                         'author' => fn ($qq) => $qq->select('id', 'name', 'username')->with('roles:name'),
                     ]),
@@ -63,9 +63,10 @@ final class ThreadController extends Controller
             'body' => ['required', 'string', 'min:20'],
             'channel_ids' => ['required', 'array', 'min:1', 'max:3'],
             'channel_ids.*' => ['integer', 'exists:channels,id'],
+            'locale' => ['required', 'string', 'in:fr,en'],
         ]);
 
-        $thread = $createThread($request->user(), $data['title'], $data['body'], $data['channel_ids']);
+        $thread = $createThread($request->user(), $data['title'], $data['body'], $data['channel_ids'], $data['locale']);
 
         return redirect()->route('forum.threads.show', $thread->slug)
             ->with('success', 'Discussion créée avec succès.');

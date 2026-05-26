@@ -8,8 +8,18 @@ import SiteNavbar from '@/components/site/site-navbar';
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
     const page = usePage();
-    const auth = (page.props as { auth?: { user: { name: string } | null } })
-        .auth;
+    const auth = (
+        page.props as {
+            auth?: {
+                user: {
+                    name: string;
+                    email: string;
+                    avatar?: string;
+                } | null;
+                role?: string | null;
+            };
+        }
+    ).auth;
     const url: string = (page as unknown as { url: string }).url;
 
     const [cmdOpen, setCmdOpen] = useState(false);
@@ -42,13 +52,14 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
                 onOpenCmd={() => setCmdOpen(true)}
                 onOpenMenu={() => setMenuOpen(true)}
             />
-            <main>{children}</main>
+            <main className="pt-16">{children}</main>
             <SiteFooter />
             <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
             <MobileSheet
                 open={menuOpen}
                 onClose={() => setMenuOpen(false)}
-                isLoggedIn={!!auth?.user}
+                user={auth?.user ?? null}
+                role={auth?.role ?? null}
             />
         </div>
     );

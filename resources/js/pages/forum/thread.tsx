@@ -42,20 +42,37 @@ const NAV_FILTERS: {
     { slug: 'unanswered', label: 'Aucune réponse', Icon: MessageSquare },
 ];
 
-function Avatar({ id, name }: { id: number; name: string }) {
+function Avatar({
+    id,
+    name,
+    avatar,
+}: {
+    id: number;
+    name: string;
+    avatar: string | null;
+}) {
     const getInitials = useInitials();
 
     return (
-        <span
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full font-mono text-[11px]"
+        <div
+            className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full"
             style={{
-                background: authorTint(id),
-                color: '#fff',
+                background: avatar ? 'transparent' : authorTint(id),
                 boxShadow: '0 0 0 4px var(--sn-bg)',
             }}
         >
-            {getInitials(name)}
-        </span>
+            {avatar ? (
+                <img
+                    src={avatar}
+                    alt={name}
+                    className="h-full w-full object-cover"
+                />
+            ) : (
+                <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] text-white">
+                    {getInitials(name)}
+                </span>
+            )}
+        </div>
     );
 }
 
@@ -263,6 +280,9 @@ export default function Thread({ thread, replies, isSubscribed }: Props) {
                                                     <Avatar
                                                         id={reply.author.id}
                                                         name={reply.author.name}
+                                                        avatar={
+                                                            reply.author.avatar
+                                                        }
                                                     />
                                                 </div>
                                             </div>

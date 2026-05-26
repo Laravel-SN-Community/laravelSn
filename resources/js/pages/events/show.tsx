@@ -106,7 +106,7 @@ export default function EventShow({
                 <div className="relative mx-auto max-w-350 px-6 py-12 lg:px-10">
                     <div
                         className={
-                            event.cover_path
+                            event.cover_url
                                 ? 'grid items-center gap-10 lg:grid-cols-[1fr_420px]'
                                 : undefined
                         }
@@ -240,10 +240,10 @@ export default function EventShow({
                         </div>
 
                         {/* Right: cover image */}
-                        {event.cover_path && (
+                        {event.cover_url && (
                             <div className="hidden lg:block">
                                 <img
-                                    src={event.cover_path}
+                                    src={event.cover_url}
                                     alt={event.title}
                                     className="w-full rounded-xl object-cover"
                                     style={{

@@ -52,7 +52,7 @@ export default function Login({
 
             {status && (
                 <div
-                    className="mb-5 rounded-md p-3 font-mono text-[12.5px]"
+                    className="mb-5 rounded-md p-3 text-[12.5px]"
                     style={{
                         background:
                             'color-mix(in oklch, var(--sn-accent) 12%, transparent)',
@@ -86,7 +86,7 @@ export default function Login({
                     style={{ background: 'var(--sn-border)' }}
                 />
                 <span
-                    className="font-mono text-[11.5px]"
+                    className="text-[11.5px]"
                     style={{ color: 'var(--sn-muted)' }}
                 >
                     ou
@@ -136,7 +136,7 @@ export default function Login({
                                 {canResetPassword && (
                                     <Link
                                         href={request()}
-                                        className="font-mono text-[11.5px] hover:underline"
+                                        className="text-[11.5px] hover:underline"
                                         style={{ color: 'var(--sn-muted)' }}
                                     >
                                         Oublié ?
@@ -184,7 +184,7 @@ export default function Login({
                         {/* Switch link */}
                         {canRegister && (
                             <p
-                                className="mt-1 text-center font-mono text-[12px]"
+                                className="mt-1 text-center text-[12px]"
                                 style={{ color: 'var(--sn-muted)' }}
                             >
                                 Pas encore membre ?{' '}
@@ -207,5 +207,5 @@ export default function Login({
 Login.layout = {
     title: 'Connexion',
     description: 'Heureux de te revoir dans la communauté.',
-    eyebrow: '// retour parmi nous',
+    eyebrow: 'retour parmi nous',
 };

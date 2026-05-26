@@ -1,12 +1,14 @@
 import type { FormEvent } from 'react';
+import SiteWordmark from '@/components/site/site-wordmark';
 
-const footerCols = [
+type FooterItem = [label: string, href: string, soon?: boolean];
+
+const footerCols: { title: string; items: FooterItem[] }[] = [
     {
         title: 'Ressources',
         items: [
-            ['A propos', '/a-propos'],
-            ['Changelog', '/changelog'],
-            ['Sponsors', '/sponsors'],
+            ['Changelog', '/changelog', true],
+            ['Sponsors', '/sponsors', true],
         ],
     },
     {
@@ -74,21 +76,8 @@ export default function SiteFooter() {
             <div className="mx-auto grid max-w-350 gap-10 px-6 pt-14 pb-10 md:grid-cols-12 lg:px-10">
                 {/* Brand column */}
                 <div className="md:col-span-5">
-                    <a
-                        href="/"
-                        className="flex items-center gap-2 font-semibold tracking-tight"
-                        style={{ color: 'var(--sn-fg)' }}
-                    >
-                        <img
-                            src="/logo.png"
-                            alt="Laravel SN"
-                            className="h-9 w-9 object-contain"
-                        />
-                        <span>
-                            laravel
-                            <span style={{ color: 'var(--sn-accent)' }}>.</span>
-                            sn
-                        </span>
+                    <a href="/">
+                        <SiteWordmark logoSize="lg" />
                     </a>
 
                     <p
@@ -132,30 +121,53 @@ export default function SiteFooter() {
                     {footerCols.map((col) => (
                         <div key={col.title}>
                             <div
-                                className="mb-3 text-[10.5px] font-semibold tracking-[0.2em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
+                                className="mb-3 text-[10.5px] font-bold tracking-[0.2em] uppercase"
+                                style={{ color: 'var(--sn-fg)' }}
                             >
                                 {col.title}
                             </div>
                             <ul className="space-y-2">
-                                {col.items.map(([label, href]) => (
+                                {col.items.map(([label, href, soon]) => (
                                     <li key={label}>
-                                        <a
-                                            href={href}
-                                            className="sn-navlink text-[13.5px]"
-                                            target={
-                                                href.startsWith('http')
-                                                    ? '_blank'
-                                                    : undefined
-                                            }
-                                            rel={
-                                                href.startsWith('http')
-                                                    ? 'noopener noreferrer'
-                                                    : undefined
-                                            }
-                                        >
-                                            {label}
-                                        </a>
+                                        {soon ? (
+                                            <span
+                                                className="inline-flex items-center gap-2 text-[13.5px]"
+                                                style={{
+                                                    color: 'var(--sn-muted)',
+                                                    opacity: 0.5,
+                                                    cursor: 'default',
+                                                }}
+                                            >
+                                                {label}
+                                                <span
+                                                    className="rounded px-1.5 py-0.5 text-[9.5px] font-bold tracking-wide uppercase"
+                                                    style={{
+                                                        background:
+                                                            'color-mix(in oklch, var(--sn-accent) 12%, transparent)',
+                                                        color: 'var(--sn-accent)',
+                                                    }}
+                                                >
+                                                    soon
+                                                </span>
+                                            </span>
+                                        ) : (
+                                            <a
+                                                href={href}
+                                                className="sn-navlink text-[13.5px]"
+                                                target={
+                                                    href.startsWith('http')
+                                                        ? '_blank'
+                                                        : undefined
+                                                }
+                                                rel={
+                                                    href.startsWith('http')
+                                                        ? 'noopener noreferrer'
+                                                        : undefined
+                                                }
+                                            >
+                                                {label}
+                                            </a>
+                                        )}
                                     </li>
                                 ))}
                             </ul>

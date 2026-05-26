@@ -4,6 +4,7 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import { CalendarDays, Check, ChevronDown, Minus, Plus, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import EventController from '@/actions/App/Http/Controllers/EventController';
+import { CoverImageUpload } from '@/components/site/cover-image-upload';
 
 type Venue = { id: number; name: string; district: string };
 
@@ -27,6 +28,7 @@ export type EditableEvent = {
     is_featured: boolean;
     is_sponsored: boolean;
     replay_url: string | null;
+    cover_url: string | null;
     status: string;
 };
 
@@ -79,8 +81,8 @@ function toDatetimeLocal(iso: string | null | undefined): string {
 function Label({ children }: { children: React.ReactNode }) {
     return (
         <div
-            className="mb-1.5 font-mono text-[10.5px] tracking-[0.15em] uppercase"
-            style={{ color: 'var(--sn-muted)' }}
+            className="mb-1.5 text-[12.5px] font-medium"
+            style={{ color: 'var(--sn-fg)' }}
         >
             {children}
         </div>
@@ -299,6 +301,8 @@ export default function EventCreateSheet({
     const [form, setForm] = useState(EMPTY_FORM);
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [coverFile, setCoverFile] = useState<File | null>(null);
+    const [coverRemovedFromServer, setCoverRemovedFromServer] = useState(false);
 
     const isEditing = event !== undefined;
 
@@ -332,6 +336,9 @@ export default function EventCreateSheet({
         } else {
             setForm(EMPTY_FORM);
         }
+
+        setCoverFile(null);
+        setCoverRemovedFromServer(false);
     }, [event?.slug, open]); // eslint-disable-line react-hooks/exhaustive-deps
     /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -369,6 +376,8 @@ export default function EventCreateSheet({
     function handleClose() {
         setForm(EMPTY_FORM);
         setErrors({});
+        setCoverFile(null);
+        setCoverRemovedFromServer(false);
         onOpenChange(false);
     }
 
@@ -403,7 +412,18 @@ export default function EventCreateSheet({
     function submit(publish: boolean) {
         setSubmitting(true);
         setErrors({});
+
+        const hasCoverChange =
+            coverFile !== null || (coverRemovedFromServer && !coverFile);
+        const payload = {
+            ...buildPayload(publish),
+            ...(hasCoverChange && {
+                cover: coverFile,
+                cover_remove: coverRemovedFromServer && !coverFile,
+            }),
+        };
         const options = {
+            forceFormData: hasCoverChange,
             onSuccess: () => handleClose(),
             onFinish: () => setSubmitting(false),
             onError: (errs: Record<string, string>) => setErrors(errs),
@@ -412,15 +432,11 @@ export default function EventCreateSheet({
         if (isEditing && event) {
             router.patch(
                 EventController.update.url({ event: event.slug }),
-                buildPayload(publish),
+                payload,
                 options,
             );
         } else {
-            router.post(
-                EventController.store.url(),
-                buildPayload(publish),
-                options,
-            );
+            router.post(EventController.store.url(), payload, options);
         }
     }
 
@@ -569,6 +585,29 @@ export default function EventCreateSheet({
                                 />
                                 <FieldError message={errors.description} />
                             </div>
+
+                            {!locked && (
+                                <CoverImageUpload
+                                    value={coverFile}
+                                    existingUrl={
+                                        coverRemovedFromServer
+                                            ? null
+                                            : (event?.cover_url ?? null)
+                                    }
+                                    onChange={(file) => {
+                                        setCoverFile(file);
+
+                                        if (file) {
+                                            setCoverRemovedFromServer(false);
+                                        }
+                                    }}
+                                    onRemoveExisting={() => {
+                                        setCoverFile(null);
+                                        setCoverRemovedFromServer(true);
+                                    }}
+                                    error={errors.cover}
+                                />
+                            )}
                         </section>
 
                         <Divider />

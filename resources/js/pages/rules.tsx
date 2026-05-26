@@ -63,10 +63,8 @@ export default function Rules() {
         <>
             <Head title="Code de conduite — Laravel Sénégal" />
             <StaticPage
-                eyebrow="// communauté"
                 title="Code de conduite"
                 updated="01 janvier 2026"
-                breadcrumb="code de conduite"
                 sections={SECTIONS}
             />
         </>

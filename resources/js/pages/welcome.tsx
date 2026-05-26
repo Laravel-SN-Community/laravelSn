@@ -5,7 +5,6 @@ import CommandPalette from '@/components/site/command-palette';
 import CtaSection from '@/components/site/cta-section';
 import EventsSection from '@/components/site/events-section';
 import MobileSheet from '@/components/site/mobile-sheet';
-import OpenSourceSection from '@/components/site/open-source-section';
 import SiteFooter from '@/components/site/site-footer';
 import SiteHero from '@/components/site/site-hero';
 import SiteNavbar from '@/components/site/site-navbar';
@@ -15,7 +14,10 @@ import type { ArticleSummary } from '@/types/article';
 export default function Welcome() {
     const { auth, latestArticles, upcomingEvents } = usePage()
         .props as unknown as {
-        auth: { user: { name: string } | null };
+        auth: {
+            user: { name: string; email: string; avatar?: string } | null;
+            role?: string | null;
+        };
         latestArticles: ArticleSummary[];
         upcomingEvents: Parameters<typeof EventsSection>[0]['events'];
     };
@@ -60,12 +62,12 @@ export default function Welcome() {
                     active="home"
                 />
 
-                <main>
+                <main className="pt-16">
                     <SiteHero onOpenCmd={() => setCmdOpen(true)} />
                     <SponsorsSection />
                     <ArticlesSection articles={latestArticles} />
                     <EventsSection events={upcomingEvents} />
-                    <OpenSourceSection />
+                    {/*<OpenSourceSection />*/}
                     <CtaSection />
                 </main>
 
@@ -78,7 +80,8 @@ export default function Welcome() {
                 <MobileSheet
                     open={menuOpen}
                     onClose={() => setMenuOpen(false)}
-                    isLoggedIn={!!auth?.user}
+                    user={auth?.user ?? null}
+                    role={auth?.role ?? null}
                 />
             </div>
         </>

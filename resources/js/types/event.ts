@@ -31,7 +31,7 @@ export type EventSummary = {
     is_featured: boolean;
     is_online: boolean;
     is_sponsored: boolean;
-    cover_path: string | null;
+    cover_url: string | null;
     confirmed_count: number;
     venue: EventVenue | null;
     speakers: EventSpeaker[];

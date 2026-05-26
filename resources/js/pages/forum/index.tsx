@@ -106,15 +106,26 @@ function ThreadCard({ thread }: { thread: ForumThreadSummary }) {
                     className="flex items-center gap-2.5 text-[12.5px]"
                     style={{ color: 'var(--sn-muted)' }}
                 >
-                    <span
-                        className="grid h-6 w-6 place-items-center rounded-full font-mono text-[10px]"
+                    <div
+                        className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full"
                         style={{
-                            background: authorTint(thread.author.id),
-                            color: '#fff',
+                            background: thread.author.avatar
+                                ? 'transparent'
+                                : authorTint(thread.author.id),
                         }}
                     >
-                        {getInitials(thread.author.name)}
-                    </span>
+                        {thread.author.avatar ? (
+                            <img
+                                src={thread.author.avatar}
+                                alt={thread.author.name}
+                                className="h-full w-full object-cover"
+                            />
+                        ) : (
+                            <span className="absolute inset-0 flex items-center justify-center font-mono text-[10px] text-white">
+                                {getInitials(thread.author.name)}
+                            </span>
+                        )}
+                    </div>
                     <span>
                         <span style={{ color: 'var(--sn-fg)' }}>
                             @{thread.author.username}
@@ -166,12 +177,12 @@ type Props = {
     channels: ForumChannel[];
     threads: PaginatedThreads;
     filter: FilterSlug;
+    locale: 'fr' | 'en';
 };
 
-export default function Forum({ channels, threads, filter }: Props) {
+export default function Forum({ channels, threads, filter, locale }: Props) {
     const { auth } = usePage<{ auth: Auth }>().props;
     const [sheetOpen, setSheetOpen] = useState(false);
-    const [lang, setLang] = useState<'fr' | 'en'>('fr');
     const [q, setQ] = useState('');
 
     const displayed = q
@@ -181,9 +192,25 @@ export default function Forum({ channels, threads, filter }: Props) {
         : threads.data;
 
     function applyFilter(slug: FilterSlug) {
-        router.get(toUrl(forumIndex()), slug ? { filter: slug } : {}, {
-            replace: true,
-        });
+        router.get(
+            toUrl(forumIndex()),
+            {
+                ...(slug ? { filter: slug } : {}),
+                ...(locale !== 'fr' ? { locale } : {}),
+            },
+            { replace: true },
+        );
+    }
+
+    function applyLocale(l: 'fr' | 'en') {
+        router.get(
+            toUrl(forumIndex()),
+            {
+                ...(filter ? { filter } : {}),
+                ...(l !== 'fr' ? { locale: l } : {}),
+            },
+            { replace: true },
+        );
     }
 
     return (
@@ -293,26 +320,29 @@ export default function Forum({ channels, threads, filter }: Props) {
                     <div>
                         <div className="mb-5 flex items-center gap-3">
                             <div
-                                className="flex overflow-hidden rounded-md"
-                                style={{ border: '1px solid var(--sn-border)' }}
+                                className="flex gap-0.5 rounded-lg p-0.5"
+                                style={{
+                                    background: 'var(--sn-surface)',
+                                    border: '1px solid var(--sn-border)',
+                                }}
                             >
                                 {(['fr', 'en'] as const).map((l) => (
                                     <button
                                         key={l}
-                                        onClick={() => setLang(l)}
-                                        className="px-3 py-2 font-mono text-[12.5px] uppercase transition-colors"
+                                        onClick={() => applyLocale(l)}
+                                        className="rounded-md px-3 py-1.5 text-[12px] font-semibold transition-all"
                                         style={{
                                             background:
-                                                lang === l
+                                                locale === l
                                                     ? 'var(--sn-accent)'
-                                                    : 'var(--sn-surface)',
+                                                    : 'transparent',
                                             color:
-                                                lang === l
+                                                locale === l
                                                     ? 'var(--sn-accent-fg)'
                                                     : 'var(--sn-muted)',
                                         }}
                                     >
-                                        {l}
+                                        {l.toUpperCase()}
                                     </button>
                                 ))}
                             </div>

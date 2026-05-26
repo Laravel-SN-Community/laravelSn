@@ -15,6 +15,7 @@ export type ArticleSummary = {
     slug: string;
     title: string;
     excerpt: string;
+    cover_url: string | null;
     locale: string;
     published_at: string | null;
     reading_time_minutes: number;

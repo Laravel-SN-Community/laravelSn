@@ -30,6 +30,7 @@ type ManageEvent = {
     waitlist_capacity: number;
     agenda: Array<{ time: string; title: string }> | null;
     replay_url: string | null;
+    cover_url: string | null;
     confirmed_registrations_count: number;
     venue: Venue | null;
 };

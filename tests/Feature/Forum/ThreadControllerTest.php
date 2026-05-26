@@ -76,6 +76,7 @@ describe('Thread store', function () {
                 'title' => 'Comment faire X avec Laravel ?',
                 'body' => 'Je cherche à faire quelque chose de spécifique avec Laravel.',
                 'channel_ids' => [$channel->id],
+                'locale' => 'fr',
             ])
             ->assertRedirect();
 
@@ -94,6 +95,7 @@ describe('Thread store', function () {
             'title' => 'Comment faire X avec Laravel ?',
             'body' => 'Je cherche à faire quelque chose de spécifique avec Laravel.',
             'channel_ids' => [$channel->id],
+            'locale' => 'fr',
         ]);
 
         $thread = Thread::first();
@@ -109,6 +111,7 @@ describe('Thread store', function () {
             'title' => 'Comment faire X avec Laravel ?',
             'body' => 'Je cherche à faire quelque chose de spécifique avec Laravel.',
             'channel_ids' => [$channel->id],
+            'locale' => 'fr',
         ]);
 
         expect($channel->fresh()->threads_count)->toBe(1);

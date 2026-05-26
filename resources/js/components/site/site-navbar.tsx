@@ -3,12 +3,14 @@ import {
     ArrowRight,
     LayoutDashboard,
     LogOut,
-    Menu,
     Search,
     Settings,
+    ShieldCheck,
     UserCircle,
+    UserCog,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import SiteWordmark from '@/components/site/site-wordmark';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -48,14 +50,40 @@ export default function SiteNavbar({
     onOpenMenu,
     active = 'home',
 }: SiteNavbarProps) {
-    const [scrolled, setScrolled] = useState(false);
+    const headerRef = useRef<HTMLElement>(null);
     const getInitials = useInitials();
     const { auth } = usePage().props as {
-        auth: { user: { name: string; email: string; avatar?: string } | null };
+        auth: {
+            user: {
+                name: string;
+                email: string;
+                avatar?: string;
+            } | null;
+            role?: string | null;
+        };
     };
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 4);
+        const el = headerRef.current;
+
+        if (!el) {
+            return;
+        }
+
+        const onScroll = () => {
+            const s = window.scrollY > 4;
+            el.style.background = s
+                ? 'color-mix(in oklch, var(--sn-bg) 78%, transparent)'
+                : 'transparent';
+            el.style.backdropFilter = s ? 'blur(14px) saturate(1.2)' : 'none';
+            (
+                el.style as CSSStyleDeclaration & {
+                    WebkitBackdropFilter: string;
+                }
+            ).WebkitBackdropFilter = s ? 'blur(14px) saturate(1.2)' : 'none';
+            el.style.borderBottom = `1px solid ${s ? 'var(--sn-border)' : 'transparent'}`;
+        };
+
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -64,44 +92,25 @@ export default function SiteNavbar({
 
     return (
         <header
-            className="sticky top-0 z-30"
-            style={{
-                background: scrolled
-                    ? 'color-mix(in oklch, var(--sn-bg) 78%, transparent)'
-                    : 'transparent',
-                backdropFilter: scrolled ? 'blur(14px) saturate(1.2)' : 'none',
-                WebkitBackdropFilter: scrolled
-                    ? 'blur(14px) saturate(1.2)'
-                    : 'none',
-                borderBottom: `1px solid ${scrolled ? 'var(--sn-border)' : 'transparent'}`,
-                transition: 'background 200ms, border-color 200ms',
-            }}
+            ref={headerRef}
+            className="fixed inset-x-0 top-0 z-30"
+            style={{ transition: 'background 200ms, border-color 200ms' }}
         >
             <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-4 px-6 lg:px-10">
                 {/* Left: logo + nav */}
                 <div className="flex min-w-0 items-center gap-8">
-                    <a
-                        href="/"
-                        className="flex shrink-0 items-center gap-2 font-semibold tracking-tight"
-                        style={{ color: 'var(--sn-fg)' }}
-                    >
-                        <img
-                            src="/logo.png"
-                            alt="Laravel SN"
-                            className="h-7 w-7 object-contain"
-                        />
-                        <span>
-                            laravel
-                            <span style={{ color: 'var(--sn-accent)' }}>.</span>
-                            sn
-                        </span>
+                    <a href="/" className="shrink-0">
+                        <SiteWordmark />
                     </a>
                     <nav className="hidden items-center gap-6 md:flex">
                         {navLinks.map((l) => (
                             <Link
                                 key={l.key}
                                 href={l.href}
-                                className={`sn-navlink${active === l.key ? 'active' : ''}`}
+                                className={[
+                                    'sn-navlink',
+                                    active === l.key ? 'active' : '',
+                                ].join(' ')}
                             >
                                 {l.label}
                             </Link>
@@ -163,10 +172,38 @@ export default function SiteNavbar({
                             <DropdownMenuContent align="end" className="w-56">
                                 <div className="px-2 py-1.5">
                                     <p
-                                        className="text-[13px] font-medium"
+                                        className="flex items-center gap-1.5 text-[13px] font-medium"
                                         style={{ color: 'var(--sn-fg)' }}
                                     >
-                                        {auth.user.name}
+                                        <span className="truncate">
+                                            {auth.user.name}
+                                        </span>
+                                        {auth.role === 'admin' && (
+                                            <span
+                                                title="Administrateur"
+                                                className="inline-flex shrink-0"
+                                            >
+                                                <ShieldCheck
+                                                    size={13}
+                                                    style={{
+                                                        color: 'var(--sn-accent)',
+                                                    }}
+                                                />
+                                            </span>
+                                        )}
+                                        {auth.role === 'moderator' && (
+                                            <span
+                                                title="Modérateur"
+                                                className="inline-flex shrink-0"
+                                            >
+                                                <UserCog
+                                                    size={13}
+                                                    style={{
+                                                        color: 'var(--sn-accent)',
+                                                    }}
+                                                />
+                                            </span>
+                                        )}
                                     </p>
                                     <p
                                         className="truncate text-[11.5px]"
@@ -215,21 +252,34 @@ export default function SiteNavbar({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <Link
-                            href={login()}
-                            className="sn-btn sn-btn-sm sn-btn-primary hidden sm:inline-flex"
-                        >
-                            Se connecter <ArrowRight size={13} />
-                        </Link>
+                        <div className="hidden sm:block">
+                            <Link
+                                href={login()}
+                                className="sn-btn sn-btn-sm sn-btn-primary"
+                            >
+                                Se connecter <ArrowRight size={13} />
+                            </Link>
+                        </div>
                     )}
 
                     <div className="md:hidden">
                         <button
-                            className="sn-btn sn-btn-sm sn-btn-secondary"
                             onClick={onOpenMenu}
                             aria-label="Menu"
+                            className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-full transition-colors hover:bg-[color:var(--sn-surface-2)]"
                         >
-                            <Menu size={15} />
+                            <span
+                                className="block h-[1.5px] w-[18px] rounded-full transition-all"
+                                style={{ background: 'var(--sn-fg)' }}
+                            />
+                            <span
+                                className="ml-[5px] block h-[1.5px] w-[11px] self-start rounded-full transition-all"
+                                style={{ background: 'var(--sn-fg)' }}
+                            />
+                            <span
+                                className="block h-[1.5px] w-[18px] rounded-full transition-all"
+                                style={{ background: 'var(--sn-fg)' }}
+                            />
                         </button>
                     </div>
                 </div>

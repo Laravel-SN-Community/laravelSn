@@ -8,6 +8,7 @@ enum PublicationStatus: string
 {
     case Draft = 'draft';
     case Pending = 'pending';
+    case Approved = 'approved';
     case Published = 'published';
     case Declined = 'declined';
     case Archived = 'archived';
@@ -17,6 +18,7 @@ enum PublicationStatus: string
         return match ($this) {
             self::Draft => 'Brouillon',
             self::Pending => 'En attente',
+            self::Approved => 'Approuvé',
             self::Published => 'Publié',
             self::Declined => 'Refusé',
             self::Archived => 'Archivé',
