@@ -56,7 +56,7 @@ export default function Register() {
                             </label>
                             <div className="relative">
                                 <span
-                                    className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 font-mono text-[13px]"
+                                    className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[13px]"
                                     style={{ color: 'var(--sn-muted)' }}
                                 >
                                     @
@@ -68,7 +68,7 @@ export default function Register() {
                                     required
                                     autoComplete="username"
                                     placeholder="aminata_dev"
-                                    className="w-full rounded-md py-2.5 pr-3 pl-7 font-mono text-[14px] outline-none"
+                                    className="w-full rounded-md py-2.5 pr-3 pl-7 text-[14px] outline-none"
                                     style={inputStyle}
                                 />
                             </div>
@@ -153,7 +153,7 @@ export default function Register() {
 
                         {/* Switch link */}
                         <p
-                            className="mt-1 text-center font-mono text-[12px]"
+                            className="mt-1 text-center text-[12px]"
                             style={{ color: 'var(--sn-muted)' }}
                         >
                             Déjà membre ?{' '}
@@ -175,5 +175,5 @@ export default function Register() {
 Register.layout = {
     title: 'Créer un compte',
     description: 'Rejoins la communauté des développeurs Laravel au Sénégal.',
-    eyebrow: '// nouveau compte',
+    eyebrow: 'nouveau compte',
 };

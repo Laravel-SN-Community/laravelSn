@@ -14,7 +14,10 @@ import type { ArticleSummary } from '@/types/article';
 export default function Welcome() {
     const { auth, latestArticles, upcomingEvents } = usePage()
         .props as unknown as {
-        auth: { user: { name: string } | null };
+        auth: {
+            user: { name: string; email: string; avatar?: string } | null;
+            role?: string | null;
+        };
         latestArticles: ArticleSummary[];
         upcomingEvents: Parameters<typeof EventsSection>[0]['events'];
     };
@@ -59,7 +62,7 @@ export default function Welcome() {
                     active="home"
                 />
 
-                <main>
+                <main className="pt-16">
                     <SiteHero onOpenCmd={() => setCmdOpen(true)} />
                     <SponsorsSection />
                     <ArticlesSection articles={latestArticles} />
@@ -77,7 +80,8 @@ export default function Welcome() {
                 <MobileSheet
                     open={menuOpen}
                     onClose={() => setMenuOpen(false)}
-                    isLoggedIn={!!auth?.user}
+                    user={auth?.user ?? null}
+                    role={auth?.role ?? null}
                 />
             </div>
         </>

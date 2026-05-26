@@ -6,8 +6,9 @@ import {
     LayoutDashboard,
     LogOut,
     Settings,
-    Shield,
+    ShieldCheck,
     UserCircle,
+    UserCog,
 } from 'lucide-react';
 import { useInitials } from '@/hooks/use-initials';
 import { logout } from '@/routes';
@@ -81,18 +82,6 @@ function getTint(name: string): string {
     }
 
     return TINTS[Math.abs(hash) % TINTS.length];
-}
-
-function roleLabel(role: string): string {
-    if (role === 'admin') {
-        return 'Admin';
-    }
-
-    if (role === 'moderator') {
-        return 'Modérateur';
-    }
-
-    return role;
 }
 
 function NavLink({
@@ -231,10 +220,36 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                         </div>
                         <div className="min-w-0">
                             <div
-                                className="truncate text-[14px] font-semibold"
+                                className="flex items-center gap-1.5 text-[14px] font-semibold"
                                 style={{ color: 'var(--sn-fg)' }}
                             >
-                                {user.name}
+                                <span className="truncate">{user.name}</span>
+                                {role === 'admin' && (
+                                    <span
+                                        title="Administrateur"
+                                        className="inline-flex shrink-0"
+                                    >
+                                        <ShieldCheck
+                                            size={13}
+                                            style={{
+                                                color: 'var(--sn-accent)',
+                                            }}
+                                        />
+                                    </span>
+                                )}
+                                {role === 'moderator' && (
+                                    <span
+                                        title="Modérateur"
+                                        className="inline-flex shrink-0"
+                                    >
+                                        <UserCog
+                                            size={13}
+                                            style={{
+                                                color: 'var(--sn-accent)',
+                                            }}
+                                        />
+                                    </span>
+                                )}
                             </div>
                             <div
                                 className="truncate text-[11.5px]"
@@ -244,21 +259,6 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                             </div>
                         </div>
                     </div>
-
-                    {isMod && (
-                        <div className="mt-3">
-                            <span
-                                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] uppercase"
-                                style={{
-                                    background: 'var(--sn-accent)',
-                                    color: 'var(--sn-accent-fg)',
-                                }}
-                            >
-                                <Shield size={11} strokeWidth={2} />
-                                {roleLabel(role!)}
-                            </span>
-                        </div>
-                    )}
                 </div>
 
                 {/* Mon espace */}

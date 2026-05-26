@@ -1,29 +1,79 @@
-import { Link } from '@inertiajs/react';
-import { ArrowRight, X } from 'lucide-react';
-import { login } from '@/routes';
-import ThemeToggle from './theme-toggle';
+import { Link, router, usePage } from '@inertiajs/react';
+import {
+    ArrowRight,
+    LayoutDashboard,
+    LogOut,
+    ShieldCheck,
+    UserCog,
+    X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useInitials } from '@/hooks/use-initials';
+import { login, logout } from '@/routes';
+import SiteWordmark from '@/components/site/site-wordmark';
+
+interface User {
+    name: string;
+    email: string;
+    avatar?: string;
+}
 
 interface MobileSheetProps {
     open: boolean;
     onClose: () => void;
-    isLoggedIn?: boolean;
+    user?: User | null;
+    role?: string | null;
 }
 
 const links = [
     { label: 'Articles', href: '/articles' },
     { label: 'Forum', href: '/forum' },
     { label: 'Événements', href: '/events' },
-    { label: 'Rejoindre', href: '/rejoindre' },
 ];
+
+const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
+
+function getTint(name: string): string {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return TINTS[Math.abs(hash) % TINTS.length];
+}
 
 export default function MobileSheet({
     open,
     onClose,
-    isLoggedIn = false,
+    user = null,
+    role = null,
 }: MobileSheetProps) {
-    if (!open) {
-        return null;
-    }
+    const getInitials = useInitials();
+    const { url } = usePage();
+    const [rendered, setRendered] = useState(open);
+    const [closing, setClosing] = useState(false);
+
+    useEffect(() => {
+        if (open) {
+            setRendered(true);
+            setClosing(false);
+        } else if (rendered) {
+            setClosing(true);
+            const t = setTimeout(() => {
+                setRendered(false);
+                setClosing(false);
+            }, 260);
+            return () => clearTimeout(t);
+        }
+    }, [open]);
+
+    useEffect(() => {
+        document.body.style.overflow = open ? 'hidden' : '';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [open]);
+
+    if (!rendered) return null;
 
     return (
         <div
@@ -35,83 +85,182 @@ export default function MobileSheet({
             <div
                 className="absolute inset-0"
                 style={{
-                    background: 'rgba(12,20,18,.6)',
-                    animation: 'sn-overlay-in .2s var(--sn-ease) both',
+                    background: 'rgba(8,16,14,.55)',
+                    backdropFilter: 'blur(4px)',
+                    WebkitBackdropFilter: 'blur(4px)',
+                    animation: closing
+                        ? 'sn-overlay-out .26s var(--sn-ease) both'
+                        : 'sn-overlay-in .2s var(--sn-ease) both',
                 }}
                 onClick={onClose}
             />
 
-            {/* Sheet */}
-            <aside
-                className="absolute top-0 right-0 bottom-0 w-[86%] max-w-sm p-6"
+            {/* Floating card */}
+            <div
+                className="absolute top-0 right-0 left-0 px-4 pt-4"
                 style={{
-                    background: 'var(--sn-bg)',
-                    borderLeft: '1px solid var(--sn-border)',
-                    animation: 'sn-dialog-in .25s var(--sn-ease) both',
+                    animation: closing
+                        ? 'sn-sheet-up-out .26s var(--sn-ease) both'
+                        : 'sn-sheet-down .28s var(--sn-ease) both',
                 }}
             >
-                <div className="mb-8 flex items-center justify-between">
-                    <span
-                        className="font-semibold"
-                        style={{ color: 'var(--sn-fg)' }}
+                <div
+                    className="overflow-hidden rounded-2xl"
+                    style={{
+                        background: 'var(--sn-bg)',
+                        border: '1px solid var(--sn-border)',
+                        boxShadow:
+                            '0 24px 64px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.1)',
+                    }}
+                >
+                    {/* Header: logo + close */}
+                    <div
+                        className="flex items-center justify-between px-5 pt-5 pb-4"
+                        style={{ borderBottom: '1px solid var(--sn-border)' }}
                     >
-                        laravel
-                        <span style={{ color: 'var(--sn-accent)' }}>.</span>sn
-                    </span>
-                    <button
-                        className="sn-btn sn-btn-sm sn-btn-ghost"
-                        onClick={onClose}
-                        aria-label="Fermer"
-                    >
-                        <X size={16} />
-                    </button>
-                </div>
-
-                <nav className="flex flex-col gap-1">
-                    {links.map((l) => (
-                        <Link
-                            key={l.href}
-                            href={l.href}
+                        <a href="/" onClick={onClose}>
+                            <SiteWordmark />
+                        </a>
+                        <button
+                            className="sn-btn sn-btn-sm sn-btn-ghost"
                             onClick={onClose}
-                            className="border-b py-2.5 text-[16px] font-medium"
-                            style={{
-                                borderColor: 'var(--sn-border)',
-                                color: 'var(--sn-fg)',
-                            }}
+                            aria-label="Fermer"
                         >
-                            {l.label}
-                        </Link>
-                    ))}
-                </nav>
+                            <X size={16} />
+                        </button>
+                    </div>
 
-                <div className="mt-8 flex items-center justify-between">
-                    <span
-                        className="text-[12px] tracking-wider uppercase"
-                        style={{ color: 'var(--sn-muted)' }}
+                    {/* Nav links */}
+                    <nav className="px-2 py-2">
+                        {links.map((l) => {
+                            const isActive = url.startsWith(l.href);
+                            return (
+                                <Link
+                                    key={l.href}
+                                    href={l.href}
+                                    onClick={onClose}
+                                    className="flex items-center rounded-xl px-3 py-3 text-[16px] font-medium transition-all"
+                                    style={{
+                                        color: isActive
+                                            ? 'var(--sn-accent)'
+                                            : 'var(--sn-fg)',
+                                        background: isActive
+                                            ? 'color-mix(in oklch, var(--sn-accent) 8%, transparent)'
+                                            : 'transparent',
+                                    }}
+                                >
+                                    {l.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
+
+                    {/* Footer: auth */}
+                    <div
+                        className="px-4 pt-1 pb-4"
+                        style={{ borderTop: '1px solid var(--sn-border)' }}
                     >
-                        Thème
-                    </span>
-                    <ThemeToggle />
+                        {user ? (
+                            <div className="mt-3">
+                                {/* User row */}
+                                <div className="mb-3 flex items-center gap-3">
+                                    <div
+                                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white"
+                                        style={{
+                                            background: user.avatar
+                                                ? undefined
+                                                : getTint(user.name),
+                                        }}
+                                    >
+                                        {user.avatar ? (
+                                            <img
+                                                src={user.avatar}
+                                                alt={user.name}
+                                                className="h-full w-full rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            getInitials(user.name)
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div
+                                            className="flex items-center gap-1.5 text-[13px] font-semibold"
+                                            style={{ color: 'var(--sn-fg)' }}
+                                        >
+                                            <span className="truncate">
+                                                {user.name}
+                                            </span>
+                                            {role === 'admin' && (
+                                                <span
+                                                    title="Administrateur"
+                                                    className="inline-flex shrink-0"
+                                                >
+                                                    <ShieldCheck
+                                                        size={13}
+                                                        style={{
+                                                            color: 'var(--sn-accent)',
+                                                        }}
+                                                    />
+                                                </span>
+                                            )}
+                                            {role === 'moderator' && (
+                                                <span
+                                                    title="Modérateur"
+                                                    className="inline-flex shrink-0"
+                                                >
+                                                    <UserCog
+                                                        size={13}
+                                                        style={{
+                                                            color: 'var(--sn-accent)',
+                                                        }}
+                                                    />
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div
+                                            className="truncate text-[11px]"
+                                            style={{ color: 'var(--sn-muted)' }}
+                                        >
+                                            {user.email}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Action buttons */}
+                                <div className="flex gap-2">
+                                    <Link
+                                        href="/dashboard"
+                                        onClick={onClose}
+                                        className="sn-btn sn-btn-sm sn-btn-secondary flex-1 justify-center"
+                                    >
+                                        <LayoutDashboard size={13} />
+                                        Dashboard
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            onClose();
+                                            router.post(logout());
+                                        }}
+                                        className="sn-btn sn-btn-sm sn-btn-ghost"
+                                        style={{ color: 'var(--destructive)' }}
+                                        aria-label="Se déconnecter"
+                                    >
+                                        <LogOut size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <Link
+                                href={login()}
+                                onClick={onClose}
+                                className="sn-btn sn-btn-primary mt-3 w-full justify-center"
+                            >
+                                Se connecter <ArrowRight size={14} />
+                            </Link>
+                        )}
+                    </div>
                 </div>
-
-                {isLoggedIn ? (
-                    <Link
-                        href="/dashboard"
-                        onClick={onClose}
-                        className="sn-btn sn-btn-primary mt-6 w-full justify-center"
-                    >
-                        Mon dashboard <ArrowRight size={14} />
-                    </Link>
-                ) : (
-                    <Link
-                        href={login()}
-                        onClick={onClose}
-                        className="sn-btn sn-btn-primary mt-6 w-full justify-center"
-                    >
-                        Se connecter <ArrowRight size={14} />
-                    </Link>
-                )}
-            </aside>
+            </div>
         </div>
     );
 }

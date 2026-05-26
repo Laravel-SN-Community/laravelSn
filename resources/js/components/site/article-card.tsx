@@ -48,7 +48,7 @@ export default function ArticleCard({
     return (
         <a
             href={`/articles/${slug}`}
-            className="sn-card sn-card-hover block overflow-hidden"
+            className="sn-card sn-card-hover block overflow-hidden sm:flex sm:flex-col"
         >
             {/* Desktop only: full-width cover (image or gradient placeholder) */}
             <div
@@ -83,9 +83,9 @@ export default function ArticleCard({
             </div>
 
             {/* Content — horizontal on mobile, stacked on desktop */}
-            <div className="flex gap-3 p-4 sm:block sm:p-5">
+            <div className="flex gap-3 p-4 sm:flex sm:flex-1 sm:flex-col sm:p-5">
                 {/* Text content */}
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 sm:flex sm:flex-1 sm:flex-col">
                     <div className="mb-2 flex flex-wrap gap-2">
                         {tags.slice(0, 2).map((tag) => (
                             <span
@@ -101,30 +101,27 @@ export default function ArticleCard({
                     </div>
 
                     <div
-                        className="text-[17px] leading-snug font-semibold tracking-tight"
+                        className="truncate text-[17px] leading-snug font-semibold tracking-tight"
                         style={{ color: 'var(--sn-fg)' }}
                     >
                         {title}
                     </div>
 
-                    {/* Excerpt: desktop only */}
-                    <div className="hidden sm:block">
-                        <p
-                            className="mt-2 text-[13.5px] leading-relaxed"
-                            style={{
-                                color: 'var(--sn-muted)',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                            }}
-                        >
-                            {excerpt}
-                        </p>
-                    </div>
+                    <p
+                        className="mt-2 text-[13.5px] leading-relaxed"
+                        style={{
+                            color: 'var(--sn-muted)',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {excerpt}
+                    </p>
 
                     <div
-                        className="mt-3 flex items-center gap-2 text-[12px]"
+                        className="mt-3 flex items-center gap-2 text-[12px] sm:mt-auto sm:pt-3"
                         style={{ color: 'var(--sn-muted)' }}
                     >
                         {author.avatar ? (
