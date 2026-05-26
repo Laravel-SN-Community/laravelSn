@@ -200,7 +200,7 @@ export default function EventsSection({ events }: Props) {
 
                                 {/* Arrow */}
                                 <div
-                                    className={`flex justify-end ${e.capacity !== null ? 'col-span-4 md:col-span-1' : 'col-span-12 md:col-span-4'}`}
+                                    className={`flex justify-end ${e.capacity !== null ? 'col-span-4 md:col-span-1' : 'col-span-9 col-start-4 md:col-span-4 md:col-start-auto'}`}
                                 >
                                     <div
                                         className="grid h-9 w-9 place-items-center rounded-full transition-all group-hover:bg-[color:var(--sn-accent)] group-hover:text-[color:var(--sn-accent-fg)]"

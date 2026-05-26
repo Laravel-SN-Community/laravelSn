@@ -96,35 +96,49 @@ export default function SponsorsSection() {
 
             <div className="sn-card overflow-hidden">
                 <div className="grid grid-cols-2 md:grid-cols-4">
-                    {sponsors.map((s, i) => (
-                        <div
-                            key={s.name}
-                            className="relative flex h-[120px] flex-col items-center justify-center gap-2 transition-colors hover:bg-[color:var(--sn-surface-2)]"
-                            style={{
-                                borderRight:
-                                    i % 4 !== 3
-                                        ? '1px solid var(--sn-border)'
-                                        : 'none',
-                                borderBottom:
-                                    i < sponsors.length - 4
-                                        ? '1px solid var(--sn-border)'
-                                        : 'none',
-                            }}
-                        >
+                    {sponsors.map((s, i) => {
+                        const n = sponsors.length;
+                        const hasRightMobile = i % 2 !== 1;
+                        const hasRightDesktop = i % 4 !== 3;
+                        const hasBottomMobile = i < n - 2;
+                        const hasBottomDesktop = i < n - 4;
+
+                        return (
                             <div
-                                className="text-[22px]"
-                                style={{ color: 'var(--sn-fg)', opacity: 0.85 }}
+                                key={s.name}
+                                className={[
+                                    'relative flex h-[120px] flex-col items-center justify-center gap-2 transition-colors hover:bg-[color:var(--sn-surface-2)]',
+                                    hasRightMobile ? 'border-r' : '',
+                                    hasRightDesktop
+                                        ? 'md:border-r'
+                                        : 'md:border-r-0',
+                                    hasBottomMobile ? 'border-b' : '',
+                                    hasBottomDesktop
+                                        ? 'md:border-b'
+                                        : 'md:border-b-0',
+                                ]
+                                    .filter(Boolean)
+                                    .join(' ')}
+                                style={{ borderColor: 'var(--sn-border)' }}
                             >
-                                {s.mark}
+                                <div
+                                    className="text-[22px]"
+                                    style={{
+                                        color: 'var(--sn-fg)',
+                                        opacity: 0.85,
+                                    }}
+                                >
+                                    {s.mark}
+                                </div>
+                                <div
+                                    className="font-mono text-[10px] tracking-[0.18em] uppercase"
+                                    style={{ color: 'var(--sn-muted)' }}
+                                >
+                                    {tierLabels[s.tier]}
+                                </div>
                             </div>
-                            <div
-                                className="font-mono text-[10px] tracking-[0.18em] uppercase"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                {tierLabels[s.tier]}
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>
