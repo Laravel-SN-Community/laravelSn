@@ -10,6 +10,7 @@ import {
     UserCog,
 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import SiteWordmark from '@/components/site/site-wordmark';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,7 +20,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useInitials } from '@/hooks/use-initials';
 import { login, logout } from '@/routes';
-import SiteWordmark from '@/components/site/site-wordmark';
 
 interface SiteNavbarProps {
     onOpenCmd: () => void;
@@ -65,7 +65,10 @@ export default function SiteNavbar({
 
     useEffect(() => {
         const el = headerRef.current;
-        if (!el) return;
+
+        if (!el) {
+            return;
+        }
 
         const onScroll = () => {
             const s = window.scrollY > 4;
@@ -83,6 +86,7 @@ export default function SiteNavbar({
 
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
+
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 

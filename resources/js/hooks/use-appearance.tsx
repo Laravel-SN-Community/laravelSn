@@ -93,6 +93,7 @@ export function initializeTheme(): void {
         const appearance = (
             event.detail.page.props as { auth?: { appearance?: string | null } }
         )?.auth?.appearance as Appearance | undefined;
+
         if (appearance && appearance !== currentAppearance) {
             currentAppearance = appearance;
             localStorage.setItem('appearance', appearance);
@@ -125,6 +126,7 @@ export function useAppearance(): UseAppearanceReturn {
         // Persist to DB for logged-in users (fire-and-forget)
         try {
             const xsrf = document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1];
+
             if (xsrf) {
                 fetch('/dashboard/settings/appearance', {
                     method: 'PATCH',

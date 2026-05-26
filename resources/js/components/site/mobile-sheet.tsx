@@ -8,9 +8,9 @@ import {
     X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import SiteWordmark from '@/components/site/site-wordmark';
 import { useInitials } from '@/hooks/use-initials';
 import { login, logout } from '@/routes';
-import SiteWordmark from '@/components/site/site-wordmark';
 
 interface User {
     name: string;
@@ -35,9 +35,11 @@ const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 
 function getTint(name: string): string {
     let hash = 0;
+
     for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
+
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
@@ -49,31 +51,45 @@ export default function MobileSheet({
 }: MobileSheetProps) {
     const getInitials = useInitials();
     const { url } = usePage();
+    const [prevOpen, setPrevOpen] = useState(open);
     const [rendered, setRendered] = useState(open);
     const [closing, setClosing] = useState(false);
 
-    useEffect(() => {
+    if (prevOpen !== open) {
+        setPrevOpen(open);
+
         if (open) {
             setRendered(true);
             setClosing(false);
         } else if (rendered) {
             setClosing(true);
-            const t = setTimeout(() => {
-                setRendered(false);
-                setClosing(false);
-            }, 260);
-            return () => clearTimeout(t);
         }
-    }, [open]);
+    }
+
+    useEffect(() => {
+        if (!closing) {
+            return;
+        }
+
+        const t = setTimeout(() => {
+            setRendered(false);
+            setClosing(false);
+        }, 260);
+
+        return () => clearTimeout(t);
+    }, [closing]);
 
     useEffect(() => {
         document.body.style.overflow = open ? 'hidden' : '';
+
         return () => {
             document.body.style.overflow = '';
         };
     }, [open]);
 
-    if (!rendered) return null;
+    if (!rendered) {
+        return null;
+    }
 
     return (
         <div
@@ -134,6 +150,7 @@ export default function MobileSheet({
                     <nav className="px-2 py-2">
                         {links.map((l) => {
                             const isActive = url.startsWith(l.href);
+
                             return (
                                 <Link
                                     key={l.href}
