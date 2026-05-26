@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/react';
 import { useSyncExternalStore } from 'react';
 
 export type ResolvedAppearance = 'light' | 'dark';
@@ -86,8 +87,20 @@ export function initializeTheme(): void {
     currentAppearance = getStoredAppearance();
     applyTheme(currentAppearance);
 
-    // Set up system theme change listener
     mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+
+    router.on('navigate', (event) => {
+        const appearance = (
+            event.detail.page.props as { auth?: { appearance?: string | null } }
+        )?.auth?.appearance as Appearance | undefined;
+        if (appearance && appearance !== currentAppearance) {
+            currentAppearance = appearance;
+            localStorage.setItem('appearance', appearance);
+            setCookie('appearance', appearance);
+            applyTheme(appearance);
+            notify();
+        }
+    });
 }
 
 export function useAppearance(): UseAppearanceReturn {
@@ -104,14 +117,28 @@ export function useAppearance(): UseAppearanceReturn {
     const updateAppearance = (mode: Appearance): void => {
         currentAppearance = mode;
 
-        // Store in localStorage for client-side persistence...
         localStorage.setItem('appearance', mode);
-
-        // Store in cookie for SSR...
         setCookie('appearance', mode);
-
         applyTheme(mode);
         notify();
+
+        // Persist to DB for logged-in users (fire-and-forget)
+        try {
+            const xsrf = document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1];
+            if (xsrf) {
+                fetch('/dashboard/settings/appearance', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ appearance: mode }),
+                }).catch(() => {});
+            }
+        } catch {
+            // Guest or fetch unavailable — localStorage is the fallback
+        }
     };
 
     return { appearance, resolvedAppearance, updateAppearance } as const;

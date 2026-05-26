@@ -7,10 +7,20 @@
         {{-- Inline script to detect theme preference and apply it before any paint --}}
         <script>
             (function() {
-                // localStorage is the source of truth for initializeTheme(); read it first
-                // to avoid a flash when cookie and localStorage are out of sync.
-                const stored = localStorage.getItem('appearance');
-                const appearance = stored || '{{ $appearance ?? "system" }}';
+                const serverAppearance = '{{ $appearance ?? "system" }}';
+                const syncFromServer = {{ ($syncAppearanceFromServer ?? false) ? 'true' : 'false' }};
+                let appearance;
+                if (syncFromServer) {
+                    // Logged-in user has a DB preference — it wins, sync localStorage
+                    appearance = serverAppearance;
+                    try {
+                        localStorage.setItem('appearance', appearance);
+                        document.cookie = 'appearance=' + appearance + ';path=/;max-age=' + (365 * 24 * 60 * 60) + ';SameSite=Lax';
+                    } catch (e) {}
+                } else {
+                    // Guest or no DB preference — localStorage wins
+                    appearance = localStorage.getItem('appearance') || serverAppearance;
+                }
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 const isDark = appearance === 'dark' || (appearance === 'system' && prefersDark);
                 document.documentElement.classList.toggle('dark', isDark);

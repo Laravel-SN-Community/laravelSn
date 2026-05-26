@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user()?->loadMissing('media'),
                 'role' => $request->user()?->getRoleNames()->first(),
+                'appearance' => data_get($request->user()?->settings, 'appearance'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

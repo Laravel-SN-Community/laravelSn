@@ -18,7 +18,16 @@ class HandleAppearance
      */
     public function handle(Request $request, Closure $next): Response
     {
-        View::share('appearance', $request->cookie('appearance') ?? 'system');
+        $user = $request->user();
+        $dbAppearance = $user ? data_get($user->settings, 'appearance') : null;
+
+        if ($dbAppearance) {
+            View::share('appearance', $dbAppearance);
+            View::share('syncAppearanceFromServer', true);
+        } else {
+            View::share('appearance', $request->cookie('appearance') ?? 'system');
+            View::share('syncAppearanceFromServer', false);
+        }
 
         return $next($request);
     }
