@@ -174,18 +174,6 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                             </Link>
                         );
                     })}
-                    <button
-                        onClick={handleLogout}
-                        className="flex shrink-0 items-center gap-1.5 px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-opacity hover:opacity-70"
-                        style={{ color: 'var(--destructive)' }}
-                    >
-                        <LogOut
-                            size={14}
-                            strokeWidth={1.5}
-                            style={{ flexShrink: 0 }}
-                        />
-                        Déconnexion
-                    </button>
                 </div>
             </div>
 

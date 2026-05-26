@@ -73,9 +73,7 @@ export default function Articles({ articles, tags, filters }: Props) {
                             className="mt-4 text-[16px] leading-relaxed lg:text-[17px]"
                             style={{ color: 'var(--sn-muted)' }}
                         >
-                            Retours d'expérience, guides techniques et patterns
-                            éprouvés — en français, ancrés dans notre contexte
-                            ouest-africain.
+                            Guides, retours d'expérience et bonnes pratiques.
                         </p>
                     </div>
                     <div
