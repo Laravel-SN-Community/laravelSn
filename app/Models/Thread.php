@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 /**
  * @property int $id
@@ -48,6 +49,7 @@ final class Thread extends Model
     /** @use HasFactory<ThreadFactory> */
     use HasFactory;
 
+    use Searchable;
     use SoftDeletes;
 
     protected $guarded = [];
@@ -87,6 +89,7 @@ final class Thread extends Model
         });
     }
 
+    /** @return BelongsTo<User, $this> */
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -194,5 +197,24 @@ final class Thread extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing('author', 'channels');
+
+        return [
+            'id' => (string) $this->id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'body' => $this->body,
+            'author' => $this->author->name,
+            'channels' => $this->channels->pluck('name')->all(),
+            'is_solved' => $this->resolved_at !== null,
+            'created_at' => $this->created_at->timestamp,
+        ];
     }
 }

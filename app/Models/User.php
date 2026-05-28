@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -32,6 +33,7 @@ class User extends Authenticatable implements HasMedia
     use HasRoles;
     use InteractsWithMedia;
     use Notifiable;
+    use Searchable;
     use TwoFactorAuthenticatable;
 
     /** @var list<string> */
@@ -95,6 +97,20 @@ class User extends Authenticatable implements HasMedia
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'settings' => 'array',
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (string) $this->id,
+            'name' => $this->name,
+            'username' => $this->username,
+            'bio' => $this->bio,
+            'location' => $this->location,
         ];
     }
 }
