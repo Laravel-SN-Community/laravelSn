@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -55,6 +56,7 @@ final class Article extends Model implements HasMedia
     use HasFactory;
 
     use InteractsWithMedia;
+    use Searchable;
     use SoftDeletes;
 
     /** @var list<string> */
@@ -99,6 +101,7 @@ final class Article extends Model implements HasMedia
         ];
     }
 
+    /** @return BelongsTo<User, $this> */
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
@@ -206,5 +209,28 @@ final class Article extends Model implements HasMedia
         return $this->status === PublicationStatus::Published
             && $this->published_at !== null
             && $this->published_at->isPast();
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return $this->isPublished();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing('author', 'tags');
+
+        return [
+            'id' => (string) $this->id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'body' => $this->body,
+            'author' => $this->author->name,
+            'tags' => $this->tags->pluck('name')->all(),
+            'published_at' => $this->published_at->timestamp,
+        ];
     }
 }

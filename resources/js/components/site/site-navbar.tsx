@@ -262,7 +262,15 @@ export default function SiteNavbar({
                         </div>
                     )}
 
-                    <div className="md:hidden">
+                    <div className="flex items-center gap-1 md:hidden">
+                        <button
+                            onClick={onOpenCmd}
+                            aria-label="Recherche"
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[color:var(--sn-surface-2)]"
+                            style={{ color: 'var(--sn-muted)' }}
+                        >
+                            <Search size={18} />
+                        </button>
                         <button
                             onClick={onOpenMenu}
                             aria-label="Menu"

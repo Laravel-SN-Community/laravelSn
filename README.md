@@ -8,7 +8,7 @@ Le portail de la communauté des développeurs PHP & Laravel au Sénégal.
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4)](https://php.net)
+[![PHP](https://img.shields.io/badge/PHP-8.5+-777BB4)](https://php.net)
 
 [Site](https://laravel-senegal.com) · [WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx) · [Contribuer](.github/CONTRIBUTING.md)
 
@@ -24,20 +24,22 @@ Le projet est **open source** et entretenu par la communauté. Toute contributio
 
 ## Stack
 
-- **Backend** : Laravel 13, PHP 8.3
+- **Backend** : Laravel 13, PHP 8.5
 - **Frontend** : Inertia.js 3, React 19, TypeScript
 - **Styling** : Tailwind CSS v4, shadcn/ui
-- **Base de données** : MySQL 8 (production), SQLite (dev)
+- **Base de données** : PostgreSQL 17 (production), SQLite (tests)
+- **Cache / Files** : Redis 7
+- **Recherche** : Typesense 26
 - **Tests** : Pest 4
 - **CI/CD** : GitHub Actions, Laravel Forge
 
 ## Pré-requis
 
-- PHP 8.3+
+- PHP 8.5+
 - Composer 2.7+
 - Node 22+ (LTS)
 - npm 10+
-- SQLite ou MySQL 8+
+- Docker 25+ (pour les services locaux)
 
 ## Installation
 
@@ -62,11 +64,22 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Crée la base et les données de test :
+Lance les services (PostgreSQL, Redis, Typesense) :
 
 ```bash
-touch database/database.sqlite
+docker compose up -d
+```
+
+Crée les tables et les données de test :
+
+```bash
 php artisan migrate --seed
+```
+
+Configure les index de recherche :
+
+```bash
+php artisan scout:sync-index-settings
 ```
 
 Lance le serveur de développement :
