@@ -13,12 +13,12 @@ Route::redirect('settings/profile', '/dashboard/profile');
 Route::redirect('settings/security', '/dashboard/settings');
 Route::redirect('settings/appearance', '/dashboard/settings');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function (): void {
     Route::get('dashboard/profile', [ProfileController::class, 'edit'])->name('dashboard.profile');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('dashboard/settings', [SecurityController::class, 'edit'])->name('dashboard.settings');

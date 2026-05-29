@@ -89,8 +89,8 @@ final class ArticleController extends Controller
 
         $publishedArticles = Article::query()
             ->where('author_id', $user->id)
-            ->where(function ($q) {
-                $q->where(function ($sub) {
+            ->where(function ($q): void {
+                $q->where(function ($sub): void {
                     $sub->where('status', PublicationStatus::Published)
                         ->whereNotNull('published_at')
                         ->where('published_at', '<=', now());
@@ -147,12 +147,12 @@ final class ArticleController extends Controller
                 'body' => $validated['body'],
                 'locale' => $validated['locale'],
                 'status' => $status,
-                'published_at' => ! $isDraft
-                    ? ($validated['published_at'] ?? ($canPublish ? now() : null))
-                    : null,
+                'published_at' => $isDraft
+                    ? (null)
+                    : $validated['published_at'] ?? ($canPublish ? now() : null),
                 'submitted_at' => $status === PublicationStatus::Pending ? now() : null,
             ],
-            tagIds: array_map('intval', $validated['tags']),
+            tagIds: array_map(intval(...), $validated['tags']),
         );
 
         if ($request->hasFile('cover')) {
@@ -193,9 +193,9 @@ final class ArticleController extends Controller
                 : ($canPublish ? PublicationStatus::Published : PublicationStatus::Pending);
 
             $data['status'] = $newStatus;
-            $data['published_at'] = ! $isDraft
-                ? ($validated['published_at'] ?? ($canPublish ? now() : null))
-                : null;
+            $data['published_at'] = $isDraft
+                ? (null)
+                : $validated['published_at'] ?? ($canPublish ? now() : null);
 
             if ($newStatus === PublicationStatus::Pending) {
                 $data['submitted_at'] = now();
@@ -205,7 +205,7 @@ final class ArticleController extends Controller
         $updateArticle(
             article: $article,
             data: $data,
-            tagIds: array_map('intval', $validated['tags']),
+            tagIds: array_map(intval(...), $validated['tags']),
         );
 
         if ($request->hasFile('cover')) {

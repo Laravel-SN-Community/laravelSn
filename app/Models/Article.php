@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Override;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -62,6 +63,7 @@ final class Article extends Model implements HasMedia
     /** @var list<string> */
     protected $appends = ['excerpt', 'cover_url'];
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();
@@ -72,7 +74,7 @@ final class Article extends Model implements HasMedia
                 $slug = $base;
                 $count = 1;
 
-                while (static::withTrashed()->where('slug', $slug)->exists()) {
+                while (self::withTrashed()->where('slug', $slug)->exists()) {
                     $slug = "{$base}-{$count}";
                     $count++;
                 }
@@ -85,6 +87,7 @@ final class Article extends Model implements HasMedia
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -199,6 +202,7 @@ final class Article extends Model implements HasMedia
         return Attribute::get(fn (): string => route('article', $this->slug));
     }
 
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'slug';

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Override;
 
 /**
  * @property int $id
@@ -41,6 +42,7 @@ final class Channel extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -50,6 +52,7 @@ final class Channel extends Model
         ];
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();
@@ -116,6 +119,7 @@ final class Channel extends Model
         $query->whereNull('parent_id');
     }
 
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'slug';

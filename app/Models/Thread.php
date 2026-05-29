@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Override;
 
 /**
  * @property int $id
@@ -57,6 +58,7 @@ final class Thread extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -69,6 +71,7 @@ final class Thread extends Model
         ];
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();
@@ -79,7 +82,7 @@ final class Thread extends Model
                 $slug = $base;
                 $count = 1;
 
-                while (static::withTrashed()->where('slug', $slug)->exists()) {
+                while (self::withTrashed()->where('slug', $slug)->exists()) {
                     $slug = "{$base}-{$count}";
                     $count++;
                 }
@@ -194,6 +197,7 @@ final class Thread extends Model
         ]);
     }
 
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'slug';

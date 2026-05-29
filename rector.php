@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 
@@ -18,6 +19,9 @@ return RectorConfig::configure()
         __DIR__.'/bootstrap/cache',
         __DIR__.'/storage',
         __DIR__.'/vendor',
+        RemoveUnusedPublicMethodParameterRector::class => [
+            __DIR__.'/app/Policies',
+        ],
     ])
     ->withSets([
         LevelSetList::UP_TO_PHP_84,

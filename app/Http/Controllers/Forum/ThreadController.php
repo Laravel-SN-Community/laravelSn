@@ -28,16 +28,12 @@ final class ThreadController extends Controller
         ]);
 
         $thread->loadCount(['reactions as likes_count' => fn ($q) => $q->where('type', 'like')]);
-        $thread->setAttribute('user_liked', auth()->check()
-            ? $thread->reactions()->where('user_id', auth()->id())->where('type', 'like')->exists()
-            : false
+        $thread->setAttribute('user_liked', auth()->check() && $thread->reactions()->where('user_id', auth()->id())->where('type', 'like')->exists()
         );
 
         defer(fn () => ($incrementViews)($thread, (string) $request->ip()));
 
-        $isSubscribed = auth()->check()
-            ? $thread->subscribers()->where('user_id', auth()->id())->exists()
-            : false;
+        $isSubscribed = auth()->check() && $thread->subscribers()->where('user_id', auth()->id())->exists();
 
         return Inertia::render('forum/thread', [
             'thread' => $thread,

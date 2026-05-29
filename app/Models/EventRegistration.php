@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @property EventRegistrationStatus $status
@@ -26,6 +27,7 @@ final class EventRegistration extends Model
 
     protected $appends = ['status_label'];
 
+    #[Override]
     protected function casts(): array
     {
         return [

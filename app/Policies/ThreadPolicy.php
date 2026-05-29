@@ -9,17 +9,17 @@ use App\Models\User;
 
 final class ThreadPolicy
 {
-    public function viewAny(?User $user): bool
+    public function viewAny(): bool
     {
         return true;
     }
 
-    public function view(?User $user, Thread $thread): bool
+    public function view(): bool
     {
         return true;
     }
 
-    public function create(User $user): bool
+    public function create(): bool
     {
         return true;
     }
@@ -44,12 +44,12 @@ final class ThreadPolicy
         return $user->id === $thread->user_id || $user->isAdmin();
     }
 
-    public function lock(User $user, Thread $thread): bool
+    public function lock(User $user): bool
     {
         return $user->isAdmin() || $user->isModerator();
     }
 
-    public function pin(User $user, Thread $thread): bool
+    public function pin(User $user): bool
     {
         return $user->isAdmin() || $user->isModerator();
     }

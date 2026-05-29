@@ -18,7 +18,7 @@ final readonly class RegisterUserToEvent
         return DB::transaction(function () use ($event, $user, $notes): EventRegistration {
             $event = Event::query()->lockForUpdate()->find($event->id);
 
-            $this->validateRegistration($event, $user);
+            $this->validateRegistration($event);
 
             $existing = EventRegistration::query()
                 ->where('event_id', $event->id)
@@ -37,7 +37,7 @@ final readonly class RegisterUserToEvent
         });
     }
 
-    private function validateRegistration(Event $event, User $user): void
+    private function validateRegistration(Event $event): void
     {
         if (! $event->status->isVisible()) {
             throw EventRegistrationException::eventNotPublished();

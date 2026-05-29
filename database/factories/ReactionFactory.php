@@ -16,7 +16,7 @@ final class ReactionFactory extends Factory
 {
     protected $model = Reaction::class;
 
-    public const TYPES = ['like', 'heart', 'fire', 'clap', 'rocket'];
+    public const array TYPES = ['like', 'heart', 'fire', 'clap', 'rocket'];
 
     public function definition(): array
     {
@@ -30,6 +30,6 @@ final class ReactionFactory extends Factory
 
     public function ofType(string $type): self
     {
-        return $this->state(fn () => ['type' => $type]);
+        return $this->state(fn (): array => ['type' => $type]);
     }
 }

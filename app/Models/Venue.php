@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 final class Venue extends Model
 {
@@ -15,6 +16,7 @@ final class Venue extends Model
 
     protected $guarded = [];
 
+    #[Override]
     protected function casts(): array
     {
         return [

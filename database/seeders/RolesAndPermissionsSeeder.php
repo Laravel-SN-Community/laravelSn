@@ -27,7 +27,7 @@ final class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => $name]);
         }
 
-        $userRole = Role::firstOrCreate(['name' => 'user']);
+        Role::firstOrCreate(['name' => 'user']);
 
         $moderator = Role::firstOrCreate(['name' => 'moderator']);
         $moderator->syncPermissions([

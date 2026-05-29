@@ -35,101 +35,62 @@ Le projet est **open source** et entretenu par la communauté. Toute contributio
 
 ## Pré-requis
 
-- PHP 8.5+
-- Composer 2.7+
-- Node 22+ (LTS)
-- npm 10+
-- Docker 25+ (pour les services locaux)
+- **Docker** (c'est tout)
 
 ## Installation
-
-Clone le dépôt :
 
 ```bash
 git clone git@github.com:Laravel-SN-Community/laravel.sn.git
 cd laravel.sn
-```
-
-Installe les dépendances :
-
-```bash
-composer install
-npm install
-```
-
-Configure l'environnement :
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-Lance les services (PostgreSQL, Redis, Typesense) :
-
-```bash
-docker compose up -d
-```
-
-Crée les tables et les données de test :
-
-```bash
-php artisan migrate --seed
-```
-
-Configure les index de recherche :
-
-```bash
-php artisan scout:sync-index-settings
+make up
 ```
 
 Lance le serveur de développement :
 
 ```bash
-composer run dev
+make dev
 ```
 
 Ouvre [http://localhost:8000](http://localhost:8000).
 
 Compte de test créé par le seeder :
-- Email : `admin@admin.com`
+- Email : `admin@laravel.sn`
 - Mot de passe : `password`
 
-## Tests
+## Commandes utiles
+
+| Commande | Description |
+|----------|-------------|
+| `make up` | Premier démarrage — build, install, migrate:fresh, seed, index Scout |
+| `make dev` | Lance le serveur de dev (Laravel + Vite + queue + logs) |
+| `make down` | Arrête tous les conteneurs |
+| `make fresh` | Réinitialise la base de données et re-indexe Scout |
+| `make test` | Lance la suite CI complète (pint, phpstan, rector, eslint, prettier, tsc, tests) |
+| `make shell` | Ouvre un terminal dans le conteneur |
+| `make artisan cmd="..."` | Exemple : `make artisan cmd="migrate"` |
+| `make composer cmd="..."` | Exemple : `make composer cmd="require pkg/name"` |
+| `make npm cmd="..."` | Exemple : `make npm cmd="run build"` |
+
+## Tests et qualité du code
 
 ```bash
-# Tous les tests
-php artisan test
+# Suite CI complète (pint, phpstan, rector, eslint, prettier, tsc, tests)
+make test
 
-# En parallèle (plus rapide)
-./vendor/bin/pest --parallel
-
-# Avec coverage
-./vendor/bin/pest --coverage
-
-# Un fichier spécifique
-./vendor/bin/pest tests/Feature/HomeTest.php
+# Un test spécifique
+make artisan cmd="test --compact --filter=NomDuTest"
 ```
 
-## Qualité du code
+Pour lancer les outils individuellement depuis le conteneur :
 
 ```bash
-# Formatage PHP
-./vendor/bin/pint
+make shell
 
-# Analyse statique PHP
-./vendor/bin/phpstan analyse
-
-# Lint TypeScript
-npm run lint
-
-# Type-check TypeScript
-npm run types:check
-
-# Format JS/TS
-npm run format
-
-# Tout vérifier en une commande
-npm run check
+./vendor/bin/pint               # Formatage PHP
+./vendor/bin/phpstan analyse    # Analyse statique
+./vendor/bin/rector process     # Refactoring automatique
+npm run lint                    # Lint TypeScript
+npm run types:check             # Type-check TypeScript
 ```
 
 ## Structure du projet

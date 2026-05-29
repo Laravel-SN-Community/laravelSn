@@ -11,7 +11,7 @@ beforeEach(fn () => $this->seed(RolesAndPermissionsSeeder::class));
 
 // ── empty query ────────────────────────────────────────────────────────────
 
-test('returns empty results for blank query', function () {
+test('returns empty results for blank query', function (): void {
     $this->getJson(route('search'))
         ->assertOk()
         ->assertJson([
@@ -21,7 +21,7 @@ test('returns empty results for blank query', function () {
         ]);
 });
 
-test('returns empty results for whitespace-only query', function () {
+test('returns empty results for whitespace-only query', function (): void {
     $this->getJson(route('search', ['q' => '   ']))
         ->assertOk()
         ->assertJson([
@@ -33,7 +33,7 @@ test('returns empty results for whitespace-only query', function () {
 
 // ── articles ───────────────────────────────────────────────────────────────
 
-test('returns published articles matching query', function () {
+test('returns published articles matching query', function (): void {
     $article = Article::factory()->create(['title' => 'Laravel Tips and Tricks']);
     Article::factory()->create(['title' => 'Vue.js Guide']);
 
@@ -46,7 +46,7 @@ test('returns published articles matching query', function () {
         ->assertJsonStructure(['articles' => [['id', 'title', 'author', 'url']]]);
 });
 
-test('does not return draft articles in search results', function () {
+test('does not return draft articles in search results', function (): void {
     Article::factory()->draft()->create(['title' => 'Laravel Draft Post']);
 
     $this->getJson(route('search', ['q' => 'Laravel']))
@@ -56,7 +56,7 @@ test('does not return draft articles in search results', function () {
 
 // ── threads ────────────────────────────────────────────────────────────────
 
-test('returns threads matching query', function () {
+test('returns threads matching query', function (): void {
     $thread = Thread::factory()->create(['title' => 'How to use Eloquent relationships']);
     Thread::factory()->create(['title' => 'Getting started with React']);
 
@@ -71,7 +71,7 @@ test('returns threads matching query', function () {
 
 // ── members ────────────────────────────────────────────────────────────────
 
-test('returns members matching query', function () {
+test('returns members matching query', function (): void {
     $user = User::factory()->create(['name' => 'Amadou Diallo', 'username' => 'amadou']);
     User::factory()->create(['name' => 'Fatou Ndiaye', 'username' => 'fatou']);
 
@@ -86,7 +86,7 @@ test('returns members matching query', function () {
 
 // ── response structure ─────────────────────────────────────────────────────
 
-test('search response always contains all three groups', function () {
+test('search response always contains all three groups', function (): void {
     $this->getJson(route('search', ['q' => 'laravel']))
         ->assertOk()
         ->assertJsonStructure(['articles', 'threads', 'members']);

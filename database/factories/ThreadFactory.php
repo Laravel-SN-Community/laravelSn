@@ -15,7 +15,7 @@ final class ThreadFactory extends Factory
 {
     protected $model = Thread::class;
 
-    private const TITLES = [
+    private const array TITLES = [
         'Comment optimiser ses requêtes Eloquent ?',
         'Erreur 500 sur mon déploiement Forge',
         'Inertia v3 : shared data et TypeScript',
@@ -48,17 +48,17 @@ final class ThreadFactory extends Factory
 
     public function locked(): self
     {
-        return $this->state(fn () => ['is_locked' => true]);
+        return $this->state(fn (): array => ['is_locked' => true]);
     }
 
     public function pinned(): self
     {
-        return $this->state(fn () => ['is_pinned' => true]);
+        return $this->state(fn (): array => ['is_pinned' => true]);
     }
 
     public function resolved(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'resolved_by' => $attributes['user_id'] ?? User::factory(),
             'resolved_at' => now(),
         ]);
