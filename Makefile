@@ -5,7 +5,7 @@ up:
 	docker compose up -d --build
 	docker compose exec app composer install --no-interaction
 	docker compose exec app php artisan key:generate --ansi
-	docker compose exec app php artisan migrate:fresh --seed
+	docker compose exec -e SCOUT_DRIVER=null -e SCOUT_QUEUE=false app php artisan migrate:fresh --seed
 	docker compose exec app php artisan storage:link
 	docker compose exec -e SCOUT_QUEUE=false app php artisan scout:import "App\Models\Article"
 	docker compose exec -e SCOUT_QUEUE=false app php artisan scout:import "App\Models\Thread"
@@ -24,7 +24,7 @@ fresh:
 	docker compose exec app php artisan scout:flush "App\Models\Article"
 	docker compose exec app php artisan scout:flush "App\Models\Thread"
 	docker compose exec app php artisan scout:flush "App\Models\User"
-	docker compose exec app php artisan migrate:fresh --seed
+	docker compose exec -e SCOUT_DRIVER=null -e SCOUT_QUEUE=false app php artisan migrate:fresh --seed
 	docker compose exec -e SCOUT_QUEUE=false app php artisan scout:import "App\Models\Article"
 	docker compose exec -e SCOUT_QUEUE=false app php artisan scout:import "App\Models\Thread"
 	docker compose exec -e SCOUT_QUEUE=false app php artisan scout:import "App\Models\User"

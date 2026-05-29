@@ -48,10 +48,10 @@ return [
     |
     */
 
-    'queue' => [
+    'queue' => env('SCOUT_QUEUE', true) ? [
         'connection' => env('QUEUE_CONNECTION', 'redis'),
         'queue' => 'search',
-    ],
+    ] : false,
 
     /*
     |--------------------------------------------------------------------------

@@ -30,6 +30,7 @@ Le projet est **open source** et entretenu par la communauté. Toute contributio
 - **Base de données** : PostgreSQL 17 (production), SQLite (tests)
 - **Cache / Files** : Redis 7
 - **Recherche** : Typesense 26
+- **Emails (dev)** : Mailpit
 - **Tests** : Pest 4
 - **CI/CD** : GitHub Actions, Laravel Forge
 
@@ -56,6 +57,8 @@ Ouvre [http://localhost:8000](http://localhost:8000).
 Compte de test créé par le seeder :
 - Email : `admin@laravel.sn`
 - Mot de passe : `password`
+
+Les emails envoyés par l'application sont capturés par Mailpit : [http://localhost:8025](http://localhost:8025).
 
 ## Commandes utiles
 

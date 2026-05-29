@@ -51,6 +51,13 @@ services:
     volumes:
       - typesense_data:/data
 
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+
 volumes:
   postgres_data:
   redis_data:
