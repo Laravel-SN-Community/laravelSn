@@ -27,6 +27,7 @@ Route::prefix('forum')->name('forum.')->group(function (): void {
     Route::get('/', [ChannelController::class, 'index'])->name('index');
     Route::get('/channels', [ChannelController::class, 'channels'])->name('channels.index');
     Route::get('/channels/{channel:slug}', [ChannelController::class, 'show'])->name('channels.show');
+    Route::redirect('/threads', '/forum')->name('threads.index');
     Route::get('/threads/{thread:slug}', [ThreadController::class, 'show'])->name('threads.show');
 
     Route::middleware('auth')->group(function (): void {
