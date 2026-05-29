@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
+use Override;
 
 #[Fillable(['name', 'slug', 'description'])]
 final class Tag extends Model
@@ -17,6 +18,7 @@ final class Tag extends Model
     /** @use HasFactory<TagFactory> */
     use HasFactory;
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();
@@ -40,6 +42,7 @@ final class Tag extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -53,6 +56,7 @@ final class Tag extends Model
         return $this->morphedByMany(Article::class, 'taggable');
     }
 
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'slug';

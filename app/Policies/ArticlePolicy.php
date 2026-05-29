@@ -9,7 +9,7 @@ use App\Models\User;
 
 final class ArticlePolicy
 {
-    public function viewAny(?User $user): bool
+    public function viewAny(): bool
     {
         return true;
     }
@@ -20,14 +20,14 @@ final class ArticlePolicy
             return true;
         }
 
-        if ($user === null) {
+        if (! $user instanceof User) {
             return false;
         }
 
         return $user->isAdmin() || $user->id === $article->author_id;
     }
 
-    public function create(User $user): bool
+    public function create(): bool
     {
         return true;
     }
@@ -51,12 +51,12 @@ final class ArticlePolicy
         return $this->update($user, $article);
     }
 
-    public function restore(User $user, Article $article): bool
+    public function restore(User $user): bool
     {
         return $user->isAdmin();
     }
 
-    public function forceDelete(User $user, Article $article): bool
+    public function forceDelete(User $user): bool
     {
         return $user->isAdmin();
     }

@@ -22,9 +22,9 @@ final class ArticleSeeder extends Seeder
             ->recycle($authors)
             ->create()
             ->each(function (Article $article) use ($tags): void {
-                $article->tags()->attach($tags->random(rand(1, 3))->pluck('id'));
+                $article->tags()->attach($tags->random(random_int(1, 3))->pluck('id'));
 
-                if (rand(0, 1)) {
+                if (random_int(0, 1) !== 0) {
                     $article
                         ->addMediaFromUrl("https://picsum.photos/seed/{$article->slug}/1200/630")
                         ->toMediaCollection('media');
@@ -37,7 +37,7 @@ final class ArticleSeeder extends Seeder
             ->recycle($authors)
             ->create()
             ->each(function (Article $article) use ($tags): void {
-                $article->tags()->attach($tags->random(rand(1, 2))->pluck('id'));
+                $article->tags()->attach($tags->random(random_int(1, 2))->pluck('id'));
             });
     }
 }

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Override;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -41,6 +42,7 @@ final class Event extends Model implements HasMedia
 
     protected $appends = ['registrations_open', 'available_seats', 'is_full', 'cover_url'];
 
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -205,6 +207,7 @@ final class Event extends Model implements HasMedia
             ->quality(85);
     }
 
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'slug';

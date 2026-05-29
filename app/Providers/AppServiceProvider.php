@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Override;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
+    #[Override]
     public function register(): void
     {
         //
@@ -33,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
     protected function configureGates(): void
     {
         // Admins bypass all gates
-        Gate::before(fn ($user) => $user->hasRole('admin') ? true : null);
+        Gate::before(fn ($user): ?true => $user->hasRole('admin') ? true : null);
 
         Gate::define('articles:publish', fn ($user) => $user->hasPermissionTo('articles:publish'));
         Gate::define('articles:delete', fn ($user) => $user->hasPermissionTo('articles:delete'));

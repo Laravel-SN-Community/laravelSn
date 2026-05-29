@@ -7,15 +7,15 @@ use App\Models\Thread;
 use App\Models\User;
 use Database\Factories\ReactionFactory;
 
-describe('Reaction toggle', function () {
-    it('requires authentication', function () {
+describe('Reaction toggle', function (): void {
+    it('requires authentication', function (): void {
         $thread = Thread::factory()->create();
 
         $this->post(route('forum.reactions.toggle', $thread), ['type' => 'like'])
             ->assertRedirect(route('login'));
     });
 
-    it('adds a reaction when none exists', function () {
+    it('adds a reaction when none exists', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
 
@@ -32,7 +32,7 @@ describe('Reaction toggle', function () {
         )->toBeTrue();
     });
 
-    it('removes a reaction when it already exists', function () {
+    it('removes a reaction when it already exists', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
 
@@ -54,7 +54,7 @@ describe('Reaction toggle', function () {
         )->toBeFalse();
     });
 
-    it('allows different reaction types on the same thread', function () {
+    it('allows different reaction types on the same thread', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
 
@@ -66,7 +66,7 @@ describe('Reaction toggle', function () {
         )->toBe(2);
     });
 
-    it('validates reaction type', function () {
+    it('validates reaction type', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
 
@@ -75,7 +75,7 @@ describe('Reaction toggle', function () {
             ->assertSessionHasErrors('type');
     });
 
-    it('only accepts known reaction types', function () {
+    it('only accepts known reaction types', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
 

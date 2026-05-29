@@ -6,7 +6,7 @@ namespace App\Actions\Articles;
 
 final readonly class CalculateReadingTime
 {
-    private const WORDS_PER_MINUTE = 200;
+    private const int WORDS_PER_MINUTE = 200;
 
     public function __invoke(string $body): int
     {

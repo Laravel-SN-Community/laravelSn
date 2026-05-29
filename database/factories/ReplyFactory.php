@@ -29,7 +29,7 @@ final class ReplyFactory extends Factory
 
     public function edited(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'is_edited' => true,
             'edited_at' => fake()->dateTimeBetween('-1 month', 'now'),
         ]);
@@ -37,7 +37,7 @@ final class ReplyFactory extends Factory
 
     public function asChildOf(Reply $parent): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'thread_id' => $parent->thread_id,
             'parent_id' => $parent->id,
         ]);

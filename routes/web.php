@@ -58,7 +58,7 @@ Route::inertia('/rules', 'rules')->name('rules');
 Route::inertia('/terms', 'terms')->name('terms');
 Route::inertia('/privacy', 'privacy')->name('privacy');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');
     Route::get('/dashboard/articles', [ArticleController::class, 'dashboardIndex'])->name('dashboard.articles');
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
@@ -71,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/dashboard/notifications', 'dashboard/notifications')->name('dashboard.notifications');
 
     // Management routes — admin or moderator only
-    Route::middleware(['role:admin|moderator'])->prefix('dashboard/manage')->name('manage.')->group(function () {
+    Route::middleware(['role:admin|moderator'])->prefix('dashboard/manage')->name('manage.')->group(function (): void {
         Route::get('/articles', [ArticleController::class, 'manageIndex'])->name('articles.index');
         Route::post('/articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
         Route::post('/articles/{article}/decline', [ArticleController::class, 'decline'])->name('articles.decline');

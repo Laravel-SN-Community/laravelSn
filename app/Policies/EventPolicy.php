@@ -9,7 +9,7 @@ use App\Models\User;
 
 final class EventPolicy
 {
-    public function viewAny(?User $user): bool
+    public function viewAny(): bool
     {
         return true;
     }
@@ -20,7 +20,7 @@ final class EventPolicy
             return true;
         }
 
-        if ($user === null) {
+        if (! $user instanceof User) {
             return false;
         }
 
@@ -32,14 +32,14 @@ final class EventPolicy
         return $user->isAdmin();
     }
 
-    public function update(User $user, Event $event): bool
+    public function update(User $user): bool
     {
         return $user->isAdmin();
     }
 
     public function delete(User $user, Event $event): bool
     {
-        return $this->update($user, $event);
+        return $this->update($user);
     }
 
     public function register(User $user, Event $event): bool
@@ -49,6 +49,6 @@ final class EventPolicy
 
     public function manageRegistrations(User $user, Event $event): bool
     {
-        return $this->update($user, $event);
+        return $this->update($user);
     }
 }

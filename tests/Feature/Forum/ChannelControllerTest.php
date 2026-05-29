@@ -6,14 +6,14 @@ use App\Models\Channel;
 use App\Models\Thread;
 use Inertia\Testing\AssertableInertia as Assert;
 
-describe('Forum index', function () {
-    it('renders forum/index with channels and threads', function () {
+describe('Forum index', function (): void {
+    it('renders forum/index with channels and threads', function (): void {
         Channel::factory()->count(3)->create();
         Thread::factory()->count(2)->create();
 
         $this->get(route('forum.index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('forum/index')
                 ->has('channels')
                 ->has('threads')
@@ -21,7 +21,7 @@ describe('Forum index', function () {
             );
     });
 
-    it('only shows active root channels', function () {
+    it('only shows active root channels', function (): void {
         $active = Channel::factory()->create(['is_active' => true]);
         Channel::factory()->inactive()->create();
 
@@ -29,40 +29,40 @@ describe('Forum index', function () {
         Channel::factory()->withParent($parent)->create();
 
         $this->get(route('forum.index'))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('forum/index')
                 ->has('channels', 2)
             );
     });
 
-    it('includes children on root channels', function () {
+    it('includes children on root channels', function (): void {
         $parent = Channel::factory()->create();
         Channel::factory()->withParent($parent)->create();
 
         $this->get(route('forum.index'))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('forum/index')
                 ->has('channels.0.children', 1)
             );
     });
 });
 
-describe('Channel show', function () {
-    it('renders forum/channel with channel and threads', function () {
+describe('Channel show', function (): void {
+    it('renders forum/channel with channel and threads', function (): void {
         $channel = Channel::factory()->create();
         $thread = Thread::factory()->create();
         $thread->channels()->attach($channel);
 
         $this->get(route('forum.channels.show', $channel))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('forum/channel')
                 ->has('channel')
                 ->has('threads.data', 1)
             );
     });
 
-    it('only shows threads belonging to the channel', function () {
+    it('only shows threads belonging to the channel', function (): void {
         $channel = Channel::factory()->create();
         $other = Channel::factory()->create();
 
@@ -73,7 +73,7 @@ describe('Channel show', function () {
         $threadNotInChannel->channels()->attach($other);
 
         $this->get(route('forum.channels.show', $channel))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->has('threads.data', 1)
             );
     });

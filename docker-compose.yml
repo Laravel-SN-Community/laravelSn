@@ -1,5 +1,20 @@
-# Local development services — start with: docker compose up -d
+# Local development services — start with: make up
 services:
+  app:
+    build: .
+    volumes:
+      - .:/var/www/html
+    ports:
+      - '8000:8000'
+      - '5173:5173'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      typesense:
+        condition: service_started
+
   postgres:
     image: docker.io/postgis/postgis:17-3.6-alpine
     restart: unless-stopped
@@ -35,6 +50,13 @@ services:
       - '8108:8108'
     volumes:
       - typesense_data:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - '8025:8025'
+      - '1025:1025'
 
 volumes:
   postgres_data:

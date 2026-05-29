@@ -54,7 +54,7 @@ final class ArticleFactory extends Factory
 
     public function draft(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'status' => PublicationStatus::Draft,
             'published_at' => null,
         ]);
@@ -62,12 +62,12 @@ final class ArticleFactory extends Factory
 
     public function featured(): self
     {
-        return $this->state(fn () => ['is_featured' => true]);
+        return $this->state(fn (): array => ['is_featured' => true]);
     }
 
     public function inEnglish(): self
     {
-        return $this->state(fn () => ['locale' => 'en']);
+        return $this->state(fn (): array => ['locale' => 'en']);
     }
 
     private function generateMarkdownBody(): string

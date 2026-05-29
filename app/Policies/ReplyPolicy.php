@@ -9,7 +9,7 @@ use App\Models\User;
 
 final class ReplyPolicy
 {
-    public function create(User $user): bool
+    public function create(): bool
     {
         return true;
     }

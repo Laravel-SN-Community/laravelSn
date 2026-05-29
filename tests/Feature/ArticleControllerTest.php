@@ -12,13 +12,13 @@ beforeEach(fn () => $this->seed(RolesAndPermissionsSeeder::class));
 
 // ── index ──────────────────────────────────────────────────────────────────
 
-test('guests can view the articles index', function () {
+test('guests can view the articles index', function (): void {
     Article::factory()->count(3)->create();
 
     $this->get(route('articles'))->assertOk();
 });
 
-test('articles index only shows published articles', function () {
+test('articles index only shows published articles', function (): void {
     Article::factory()->create();
     Article::factory()->draft()->create();
 
@@ -30,7 +30,7 @@ test('articles index only shows published articles', function () {
         );
 });
 
-test('articles index filters by tag', function () {
+test('articles index filters by tag', function (): void {
     $tag = Tag::factory()->create();
     $tagged = Article::factory()->create();
     $tagged->tags()->attach($tag);
@@ -41,7 +41,7 @@ test('articles index filters by tag', function () {
         ->assertInertia(fn ($page) => $page->where('articles.total', 1));
 });
 
-test('articles index filters by locale', function () {
+test('articles index filters by locale', function (): void {
     Article::factory()->create(['locale' => 'fr']);
     Article::factory()->inEnglish()->create();
 
@@ -50,7 +50,7 @@ test('articles index filters by locale', function () {
         ->assertInertia(fn ($page) => $page->where('articles.total', 1));
 });
 
-test('articles index searches by title', function () {
+test('articles index searches by title', function (): void {
     Article::factory()->create(['title' => 'Unique findable title']);
     Article::factory()->create(['title' => 'Something else entirely']);
 
@@ -61,19 +61,19 @@ test('articles index searches by title', function () {
 
 // ── show ───────────────────────────────────────────────────────────────────
 
-test('guests can view a published article', function () {
+test('guests can view a published article', function (): void {
     $article = Article::factory()->create();
 
     $this->get(route('article', $article))->assertOk();
 });
 
-test('guests get 404 for a draft article', function () {
+test('guests get 404 for a draft article', function (): void {
     $article = Article::factory()->draft()->create();
 
     $this->get(route('article', $article))->assertNotFound();
 });
 
-test('author can preview their own draft article', function () {
+test('author can preview their own draft article', function (): void {
     $author = User::factory()->create();
     $draft = Article::factory()->draft()->for($author, 'author')->create();
 
@@ -82,7 +82,7 @@ test('author can preview their own draft article', function () {
         ->assertOk();
 });
 
-test('other users cannot view a draft article', function () {
+test('other users cannot view a draft article', function (): void {
     $draft = Article::factory()->draft()->create();
     $other = User::factory()->create();
 
@@ -93,11 +93,11 @@ test('other users cannot view a draft article', function () {
 
 // ── dashboardIndex ─────────────────────────────────────────────────────────
 
-test('guests are redirected from the articles dashboard', function () {
+test('guests are redirected from the articles dashboard', function (): void {
     $this->get(route('dashboard.articles'))->assertRedirect(route('login'));
 });
 
-test('authenticated users can view their articles dashboard', function () {
+test('authenticated users can view their articles dashboard', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -106,7 +106,7 @@ test('authenticated users can view their articles dashboard', function () {
         ->assertInertia(fn ($page) => $page->component('dashboard/articles'));
 });
 
-test('articles dashboard only shows the authenticated user\'s articles', function () {
+test('articles dashboard only shows the authenticated user\'s articles', function (): void {
     $user = User::factory()->create();
     $own = Article::factory()->for($user, 'author')->create();
     Article::factory()->create();
@@ -122,11 +122,11 @@ test('articles dashboard only shows the authenticated user\'s articles', functio
 
 // ── store ──────────────────────────────────────────────────────────────────
 
-test('guests cannot create articles', function () {
+test('guests cannot create articles', function (): void {
     $this->post(route('articles.store'))->assertRedirect(route('login'));
 });
 
-test('authenticated users can create a draft article', function () {
+test('authenticated users can create a draft article', function (): void {
     $user = User::factory()->create();
     $tag = Tag::factory()->create();
 
@@ -145,7 +145,7 @@ test('authenticated users can create a draft article', function () {
     ]);
 });
 
-test('authenticated users can submit an article for review', function () {
+test('authenticated users can submit an article for review', function (): void {
     $user = User::factory()->create();
     $tag = Tag::factory()->create();
 
@@ -164,7 +164,7 @@ test('authenticated users can submit an article for review', function () {
     ]);
 });
 
-test('store validates required fields', function () {
+test('store validates required fields', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -174,13 +174,13 @@ test('store validates required fields', function () {
 
 // ── update ─────────────────────────────────────────────────────────────────
 
-test('guests cannot update articles', function () {
+test('guests cannot update articles', function (): void {
     $article = Article::factory()->draft()->create();
 
     $this->patch(route('articles.update', $article))->assertRedirect(route('login'));
 });
 
-test('author can update their own draft article', function () {
+test('author can update their own draft article', function (): void {
     $user = User::factory()->create();
     $tag = Tag::factory()->create();
     $article = Article::factory()->draft()->for($user, 'author')->create();
@@ -199,7 +199,7 @@ test('author can update their own draft article', function () {
     ]);
 });
 
-test('other users cannot update an article', function () {
+test('other users cannot update an article', function (): void {
     $tag = Tag::factory()->create();
     $article = Article::factory()->draft()->create();
     $other = User::factory()->create();
@@ -212,7 +212,7 @@ test('other users cannot update an article', function () {
     ])->assertForbidden();
 });
 
-test('updating a published article keeps it published', function () {
+test('updating a published article keeps it published', function (): void {
     $user = User::factory()->create();
     $tag = Tag::factory()->create();
     $article = Article::factory()->for($user, 'author')->create();
@@ -232,7 +232,7 @@ test('updating a published article keeps it published', function () {
     ]);
 });
 
-test('update validates required fields', function () {
+test('update validates required fields', function (): void {
     $user = User::factory()->create();
     $article = Article::factory()->draft()->for($user, 'author')->create();
 
@@ -243,13 +243,13 @@ test('update validates required fields', function () {
 
 // ── destroy ────────────────────────────────────────────────────────────────
 
-test('guests cannot delete articles', function () {
+test('guests cannot delete articles', function (): void {
     $article = Article::factory()->draft()->create();
 
     $this->delete(route('articles.destroy', $article))->assertRedirect(route('login'));
 });
 
-test('author can delete their own draft article', function () {
+test('author can delete their own draft article', function (): void {
     $user = User::factory()->create();
     $article = Article::factory()->draft()->for($user, 'author')->create();
 
@@ -260,7 +260,7 @@ test('author can delete their own draft article', function () {
     $this->assertSoftDeleted('articles', ['id' => $article->id]);
 });
 
-test('other users cannot delete an article', function () {
+test('other users cannot delete an article', function (): void {
     $article = Article::factory()->draft()->create();
     $other = User::factory()->create();
 
@@ -271,13 +271,13 @@ test('other users cannot delete an article', function () {
 
 // ── publish ────────────────────────────────────────────────────────────────
 
-test('guests cannot publish articles', function () {
+test('guests cannot publish articles', function (): void {
     $article = Article::factory()->draft()->create();
 
     $this->post(route('manage.articles.publish', $article))->assertRedirect(route('login'));
 });
 
-test('moderator can publish a draft article', function () {
+test('moderator can publish a draft article', function (): void {
     $moderator = User::factory()->moderator()->create();
     $article = Article::factory()->draft()->create();
 
@@ -291,7 +291,7 @@ test('moderator can publish a draft article', function () {
     ]);
 });
 
-test('regular users cannot publish an article', function () {
+test('regular users cannot publish an article', function (): void {
     $article = Article::factory()->draft()->create();
     $user = User::factory()->asUser()->create();
 

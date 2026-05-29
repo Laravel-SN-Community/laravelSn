@@ -88,12 +88,12 @@ final class EventFactory extends Factory
 
     public function featured(): self
     {
-        return $this->state(fn () => ['is_featured' => true]);
+        return $this->state(fn (): array => ['is_featured' => true]);
     }
 
     public function online(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'is_online' => true,
             'online_url' => fake()->url(),
             'venue_id' => null,

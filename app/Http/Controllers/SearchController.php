@@ -31,7 +31,7 @@ final class SearchController extends Controller
 
         if ($scope === '' || $scope === 'articles') {
             $articles = Article::search($query)->take(5)->get()
-                ->map(fn (Article $article) => [
+                ->map(fn (Article $article): array => [
                     'id' => $article->id,
                     'title' => $article->title,
                     'author' => $article->author->name,
@@ -41,7 +41,7 @@ final class SearchController extends Controller
 
         if ($scope === '' || $scope === 'threads') {
             $threads = Thread::search($query)->take(5)->get()
-                ->map(fn (Thread $thread) => [
+                ->map(fn (Thread $thread): array => [
                     'id' => $thread->id,
                     'title' => $thread->title,
                     'author' => $thread->author->name,
@@ -51,7 +51,7 @@ final class SearchController extends Controller
 
         if ($scope === '' || $scope === 'members') {
             $members = User::search($query)->take(5)->get()
-                ->map(fn (User $user) => [
+                ->map(fn (User $user): array => [
                     'id' => $user->id,
                     'name' => $user->name,
                     'username' => $user->username,
@@ -60,6 +60,6 @@ final class SearchController extends Controller
                 ])->all();
         }
 
-        return response()->json(compact('articles', 'threads', 'members'));
+        return response()->json(['articles' => $articles, 'threads' => $threads, 'members' => $members]);
     }
 }

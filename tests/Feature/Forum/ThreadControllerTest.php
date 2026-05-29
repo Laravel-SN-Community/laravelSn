@@ -8,14 +8,14 @@ use App\Models\Thread;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
-describe('Thread show', function () {
-    it('renders forum/thread with thread and replies', function () {
+describe('Thread show', function (): void {
+    it('renders forum/thread with thread and replies', function (): void {
         $thread = Thread::factory()->create();
         Reply::factory()->for($thread)->count(3)->create();
 
         $this->get(route('forum.threads.show', $thread))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('forum/thread')
                 ->has('thread')
                 ->has('replies.data', 3)
@@ -23,41 +23,41 @@ describe('Thread show', function () {
             );
     });
 
-    it('shows isSubscribed as false for guests', function () {
+    it('shows isSubscribed as false for guests', function (): void {
         $thread = Thread::factory()->create();
 
         $this->get(route('forum.threads.show', $thread))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('isSubscribed', false)
             );
     });
 
-    it('shows isSubscribed as true for subscribed user', function () {
+    it('shows isSubscribed as true for subscribed user', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
         $thread->subscribers()->attach($user->id);
 
         $this->actingAs($user)
             ->get(route('forum.threads.show', $thread))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('isSubscribed', true)
             );
     });
 
-    it('only returns top-level replies, not nested ones', function () {
+    it('only returns top-level replies, not nested ones', function (): void {
         $thread = Thread::factory()->create();
         $parent = Reply::factory()->for($thread)->create();
         Reply::factory()->asChildOf($parent)->create();
 
         $this->get(route('forum.threads.show', $thread))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->has('replies.data', 1)
             );
     });
 });
 
-describe('Thread store', function () {
-    it('requires authentication', function () {
+describe('Thread store', function (): void {
+    it('requires authentication', function (): void {
         $channel = Channel::factory()->create();
 
         $this->post(route('forum.threads.store'), [
@@ -67,7 +67,7 @@ describe('Thread store', function () {
         ])->assertRedirect(route('login'));
     });
 
-    it('creates a thread and attaches channels', function () {
+    it('creates a thread and attaches channels', function (): void {
         $user = User::factory()->create();
         $channel = Channel::factory()->create();
 
@@ -87,7 +87,7 @@ describe('Thread store', function () {
         expect($thread->channels)->toHaveCount(1);
     });
 
-    it('auto-subscribes the author', function () {
+    it('auto-subscribes the author', function (): void {
         $user = User::factory()->create();
         $channel = Channel::factory()->create();
 
@@ -103,7 +103,7 @@ describe('Thread store', function () {
         expect($thread->subscribers()->where('user_id', $user->id)->exists())->toBeTrue();
     });
 
-    it('increments channel threads_count', function () {
+    it('increments channel threads_count', function (): void {
         $user = User::factory()->create();
         $channel = Channel::factory()->create(['threads_count' => 0]);
 
@@ -117,7 +117,7 @@ describe('Thread store', function () {
         expect($channel->fresh()->threads_count)->toBe(1);
     });
 
-    it('validates required fields', function () {
+    it('validates required fields', function (): void {
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -125,7 +125,7 @@ describe('Thread store', function () {
             ->assertSessionHasErrors(['title', 'body', 'channel_ids']);
     });
 
-    it('requires at least 10 characters in title', function () {
+    it('requires at least 10 characters in title', function (): void {
         $user = User::factory()->create();
         $channel = Channel::factory()->create();
 
@@ -139,8 +139,8 @@ describe('Thread store', function () {
     });
 });
 
-describe('Thread markSolution', function () {
-    it('allows thread owner to mark a reply as solution', function () {
+describe('Thread markSolution', function (): void {
+    it('allows thread owner to mark a reply as solution', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->for($user, 'author')->create();
         $reply = Reply::factory()->for($thread)->create();
@@ -152,7 +152,7 @@ describe('Thread markSolution', function () {
         expect($thread->fresh()->solution_reply_id)->toBe($reply->id);
     });
 
-    it('denies non-owner from marking solution', function () {
+    it('denies non-owner from marking solution', function (): void {
         $owner = User::factory()->create();
         $other = User::factory()->create();
         $thread = Thread::factory()->for($owner, 'author')->create();
@@ -163,7 +163,7 @@ describe('Thread markSolution', function () {
             ->assertForbidden();
     });
 
-    it('returns error if reply does not belong to thread', function () {
+    it('returns error if reply does not belong to thread', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->for($user, 'author')->create();
         $otherThread = Thread::factory()->create();
@@ -175,15 +175,15 @@ describe('Thread markSolution', function () {
     });
 });
 
-describe('Thread subscribe / unsubscribe', function () {
-    it('requires authentication', function () {
+describe('Thread subscribe / unsubscribe', function (): void {
+    it('requires authentication', function (): void {
         $thread = Thread::factory()->create();
 
         $this->post(route('forum.threads.subscribe', $thread))
             ->assertRedirect(route('login'));
     });
 
-    it('subscribes user to thread', function () {
+    it('subscribes user to thread', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
 
@@ -193,7 +193,7 @@ describe('Thread subscribe / unsubscribe', function () {
         expect($thread->subscribers()->where('user_id', $user->id)->exists())->toBeTrue();
     });
 
-    it('unsubscribes user from thread', function () {
+    it('unsubscribes user from thread', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create();
         $thread->subscribers()->attach($user->id);
@@ -205,8 +205,8 @@ describe('Thread subscribe / unsubscribe', function () {
     });
 });
 
-describe('Thread lock', function () {
-    it('allows admin to lock a thread', function () {
+describe('Thread lock', function (): void {
+    it('allows admin to lock a thread', function (): void {
         $admin = User::factory()->admin()->create();
         $thread = Thread::factory()->create(['is_locked' => false]);
 
@@ -217,7 +217,7 @@ describe('Thread lock', function () {
         expect($thread->fresh()->is_locked)->toBeTrue();
     });
 
-    it('allows moderator to lock a thread', function () {
+    it('allows moderator to lock a thread', function (): void {
         $mod = User::factory()->moderator()->create();
         $thread = Thread::factory()->create(['is_locked' => false]);
 
@@ -228,7 +228,7 @@ describe('Thread lock', function () {
         expect($thread->fresh()->is_locked)->toBeTrue();
     });
 
-    it('denies regular user from locking a thread', function () {
+    it('denies regular user from locking a thread', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create(['is_locked' => false]);
 
@@ -237,7 +237,7 @@ describe('Thread lock', function () {
             ->assertForbidden();
     });
 
-    it('allows admin to unlock a thread', function () {
+    it('allows admin to unlock a thread', function (): void {
         $admin = User::factory()->admin()->create();
         $thread = Thread::factory()->create(['is_locked' => true]);
 
@@ -248,7 +248,7 @@ describe('Thread lock', function () {
         expect($thread->fresh()->is_locked)->toBeFalse();
     });
 
-    it('allows moderator to unlock a thread', function () {
+    it('allows moderator to unlock a thread', function (): void {
         $mod = User::factory()->moderator()->create();
         $thread = Thread::factory()->create(['is_locked' => true]);
 
@@ -259,7 +259,7 @@ describe('Thread lock', function () {
         expect($thread->fresh()->is_locked)->toBeFalse();
     });
 
-    it('denies regular user from unlocking a thread', function () {
+    it('denies regular user from unlocking a thread', function (): void {
         $user = User::factory()->create();
         $thread = Thread::factory()->create(['is_locked' => true]);
 

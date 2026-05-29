@@ -10,8 +10,8 @@ use App\Notifications\Forum\NewReplyNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 
-describe('NotifyThreadSubscribersJob dispatch', function () {
-    it('dispatches the job when a reply is posted', function () {
+describe('NotifyThreadSubscribersJob dispatch', function (): void {
+    it('dispatches the job when a reply is posted', function (): void {
         Queue::fake();
 
         $user = User::factory()->create();
@@ -26,8 +26,8 @@ describe('NotifyThreadSubscribersJob dispatch', function () {
     });
 });
 
-describe('NotifyThreadSubscribersJob handle', function () {
-    it('notifies thread subscribers', function () {
+describe('NotifyThreadSubscribersJob handle', function (): void {
+    it('notifies thread subscribers', function (): void {
         Notification::fake();
 
         $subscriber = User::factory()->create();
@@ -41,7 +41,7 @@ describe('NotifyThreadSubscribersJob handle', function () {
         Notification::assertSentTo($subscriber, NewReplyNotification::class);
     });
 
-    it('does not notify the reply author', function () {
+    it('does not notify the reply author', function (): void {
         Notification::fake();
 
         $author = User::factory()->create();
@@ -54,7 +54,7 @@ describe('NotifyThreadSubscribersJob handle', function () {
         Notification::assertNotSentTo($author, NewReplyNotification::class);
     });
 
-    it('does not notify when there are no other subscribers', function () {
+    it('does not notify when there are no other subscribers', function (): void {
         Notification::fake();
 
         $author = User::factory()->create();
@@ -66,7 +66,7 @@ describe('NotifyThreadSubscribersJob handle', function () {
         Notification::assertNothingSent();
     });
 
-    it('notifies multiple subscribers', function () {
+    it('notifies multiple subscribers', function (): void {
         Notification::fake();
 
         $subscribers = User::factory()->count(3)->create();
@@ -80,7 +80,7 @@ describe('NotifyThreadSubscribersJob handle', function () {
         Notification::assertSentTo($subscribers, NewReplyNotification::class);
     });
 
-    it('sends notification with correct thread and author data', function () {
+    it('sends notification with correct thread and author data', function (): void {
         Notification::fake();
 
         $subscriber = User::factory()->create();
@@ -94,7 +94,7 @@ describe('NotifyThreadSubscribersJob handle', function () {
         Notification::assertSentTo(
             $subscriber,
             NewReplyNotification::class,
-            fn (NewReplyNotification $notification) => $notification->thread->id === $thread->id
+            fn (NewReplyNotification $notification): bool => $notification->thread->id === $thread->id
                 && $notification->author->id === $author->id,
         );
     });

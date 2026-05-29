@@ -8,31 +8,31 @@ use App\Models\EventRegistration;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
-describe('Events index', function () {
-    it('shows upcoming events by default', function () {
+describe('Events index', function (): void {
+    it('shows upcoming events by default', function (): void {
         Event::factory()->upcoming()->create(['status' => 'published']);
         Event::factory()->past()->create(['status' => 'published']);
 
         $this->get(route('events.index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('events/index')
                 ->has('events.data', 1)
             );
     });
 
-    it('shows past events when tab=past', function () {
+    it('shows past events when tab=past', function (): void {
         Event::factory()->upcoming()->create(['status' => 'published']);
         Event::factory()->past()->create(['status' => 'published']);
 
         $this->get(route('events.index', ['tab' => 'past']))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->has('events.data', 1));
+            ->assertInertia(fn (Assert $page): Assert => $page->has('events.data', 1));
     });
 });
 
-describe('Event registration', function () {
-    it('allows authenticated user to register', function () {
+describe('Event registration', function (): void {
+    it('allows authenticated user to register', function (): void {
         $user = User::factory()->create();
         $event = Event::factory()->upcoming()->create([
             'status' => 'published',
@@ -50,7 +50,7 @@ describe('Event registration', function () {
         ]);
     });
 
-    it('puts user on waitlist when event is full', function () {
+    it('puts user on waitlist when event is full', function (): void {
         $event = Event::factory()->upcoming()->create([
             'status' => 'published',
             'capacity' => 2,
@@ -75,7 +75,7 @@ describe('Event registration', function () {
         ]);
     });
 
-    it('prevents duplicate registration', function () {
+    it('prevents duplicate registration', function (): void {
         $user = User::factory()->create();
         $event = Event::factory()->upcoming()->create([
             'status' => 'published',
@@ -91,14 +91,14 @@ describe('Event registration', function () {
             ->toBe(1);
     });
 
-    it('requires authentication to register', function () {
+    it('requires authentication to register', function (): void {
         $event = Event::factory()->upcoming()->create(['status' => 'published']);
 
         $this->post(route('events.register', $event))
             ->assertRedirect(route('login'));
     });
 
-    it('cancels registration and promotes from waitlist', function () {
+    it('cancels registration and promotes from waitlist', function (): void {
         $event = Event::factory()->upcoming()->create([
             'status' => 'published',
             'capacity' => 2,
