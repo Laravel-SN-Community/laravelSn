@@ -1,4 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
+import { useEffect, useRef } from 'react';
 import {
     Bell,
     CalendarDays,
@@ -122,6 +123,19 @@ export default function DashSidebar({ section }: { section: SectionId }) {
     const user = auth?.user ?? null;
     const role = auth?.role ?? null;
     const getInitials = useInitials();
+    const activeItemRef = useRef<HTMLSpanElement>(null);
+    const isMountRef = useRef(true);
+
+    useEffect(() => {
+        const behavior = isMountRef.current ? 'smooth' : 'instant';
+        isMountRef.current = false;
+
+        activeItemRef.current?.scrollIntoView({
+            behavior,
+            inline: 'center',
+            block: 'nearest',
+        });
+    }, [section]);
 
     if (!user) {
         return null;
@@ -152,26 +166,30 @@ export default function DashSidebar({ section }: { section: SectionId }) {
                         const active = s.id === section;
 
                         return (
-                            <Link
+                            <span
                                 key={s.id}
-                                href={s.href}
-                                className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors"
-                                style={{
-                                    background: active
-                                        ? 'color-mix(in srgb, var(--sn-600) 12%, transparent)'
-                                        : 'transparent',
-                                    color: active
-                                        ? 'var(--sn-600)'
-                                        : 'var(--sn-muted)',
-                                }}
+                                ref={active ? activeItemRef : undefined}
                             >
-                                <s.Icon
-                                    size={14}
-                                    strokeWidth={active ? 2 : 1.5}
-                                    style={{ flexShrink: 0 }}
-                                />
-                                {s.label}
-                            </Link>
+                                <Link
+                                    href={s.href}
+                                    className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors"
+                                    style={{
+                                        background: active
+                                            ? 'color-mix(in srgb, var(--sn-600) 12%, transparent)'
+                                            : 'transparent',
+                                        color: active
+                                            ? 'var(--sn-600)'
+                                            : 'var(--sn-muted)',
+                                    }}
+                                >
+                                    <s.Icon
+                                        size={14}
+                                        strokeWidth={active ? 2 : 1.5}
+                                        style={{ flexShrink: 0 }}
+                                    />
+                                    {s.label}
+                                </Link>
+                            </span>
                         );
                     })}
                 </div>
