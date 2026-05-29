@@ -15,7 +15,7 @@ Route::redirect('settings/appearance', '/dashboard/settings');
 
 Route::middleware(['auth'])->group(function (): void {
     Route::get('dashboard/profile', [ProfileController::class, 'edit'])->name('dashboard.profile');
-    Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
