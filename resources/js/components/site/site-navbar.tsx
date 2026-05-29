@@ -99,9 +99,9 @@ export default function SiteNavbar({
             <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-4 px-6 lg:px-10">
                 {/* Left: logo + nav */}
                 <div className="flex min-w-0 items-center gap-8">
-                    <a href="/" className="shrink-0">
+                    <Link href="/" className="shrink-0">
                         <SiteWordmark />
-                    </a>
+                    </Link>
                     <nav className="hidden items-center gap-6 md:flex">
                         {navLinks.map((l) => (
                             <Link
