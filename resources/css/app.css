@@ -459,7 +459,9 @@
 
 /* Prevent iOS WebKit from zooming on input focus (affects all iOS browsers) */
 @media screen and (max-width: 768px) {
-    input, textarea, select {
+    input,
+    textarea,
+    select {
         font-size: 16px !important;
     }
 }
