@@ -73,6 +73,8 @@ type SectionId =
     | (typeof USER_SECTIONS)[number]['id']
     | (typeof MANAGE_SECTIONS)[number]['id'];
 
+let navHasInitialized = false;
+
 const TINTS = ['#0f7b4d', '#188a5c', '#0b6640', '#3ea777'];
 
 function getTint(name: string): string {
@@ -124,11 +126,10 @@ export default function DashSidebar({ section }: { section: SectionId }) {
     const role = auth?.role ?? null;
     const getInitials = useInitials();
     const activeItemRef = useRef<HTMLSpanElement>(null);
-    const isMountRef = useRef(true);
 
     useEffect(() => {
-        const behavior = isMountRef.current ? 'smooth' : 'instant';
-        isMountRef.current = false;
+        const behavior = navHasInitialized ? 'instant' : 'smooth';
+        navHasInitialized = true;
 
         activeItemRef.current?.scrollIntoView({
             behavior,
