@@ -1,5 +1,4 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
 import {
     Bell,
     CalendarDays,
@@ -11,6 +10,7 @@ import {
     UserCircle,
     UserCog,
 } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import { useInitials } from '@/hooks/use-initials';
 import { logout } from '@/routes';
 import type { Auth } from '@/types/auth';

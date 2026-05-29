@@ -214,12 +214,6 @@ export default function DashboardProfile({
                                             className="hidden"
                                             onChange={handleAvatarChange}
                                         />
-                                        {errors.avatar && (
-                                            <InputError
-                                                className="mt-2"
-                                                message={errors.avatar}
-                                            />
-                                        )}
 
                                         <div>
                                             <div
@@ -276,6 +270,12 @@ export default function DashboardProfile({
                                                         Annuler
                                                     </button>
                                                 )}
+                                            {errors.avatar && (
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.avatar}
+                                                />
+                                            )}
                                         </div>
                                     </div>
 

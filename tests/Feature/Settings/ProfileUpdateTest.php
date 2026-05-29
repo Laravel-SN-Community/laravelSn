@@ -19,7 +19,7 @@ test('profile information can be updated', function (): void {
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('profile.update'), [
+        ->post(route('profile.update'), [
             'name' => 'Test User',
             'username' => 'testuser',
             'email' => 'test@example.com',
@@ -42,7 +42,7 @@ test('email verification status is unchanged when the email address is unchanged
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('profile.update'), [
+        ->post(route('profile.update'), [
             'name' => 'Test User',
             'username' => $user->username,
             'email' => $user->email,
