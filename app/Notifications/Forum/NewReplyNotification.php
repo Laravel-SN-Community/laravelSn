@@ -34,13 +34,17 @@ final class NewReplyNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $preview = Str::limit(strip_tags($this->reply->body), 150);
+        $subject = "Nouvelle réponse : {$this->thread->title}";
 
         return (new MailMessage)
-            ->subject("Nouvelle réponse : {$this->thread->title}")
-            ->greeting("Bonjour {$notifiable->name},")
-            ->line("{$this->author->name} a répondu à la discussion **{$this->thread->title}**.")
-            ->line($preview)
-            ->action('Voir la réponse', $this->thread->url)
-            ->line('Vous recevez cet email car vous êtes abonné à cette discussion.');
+            ->subject($subject)
+            ->view('mail.new-reply', [
+                'subject' => $subject,
+                'userName' => $notifiable->name,
+                'authorName' => $this->author->name,
+                'threadTitle' => $this->thread->title,
+                'preview' => $preview,
+                'replyUrl' => $this->thread->url,
+            ]);
     }
 }

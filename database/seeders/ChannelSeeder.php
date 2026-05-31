@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Channel;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 final class ChannelSeeder extends Seeder
 {
@@ -25,14 +26,17 @@ final class ChannelSeeder extends Seeder
         ];
 
         foreach ($channels as $order => $data) {
-            Channel::create([
-                'name' => $data['name'],
-                'description' => $data['description'],
-                'color' => $data['color'],
-                'icon' => $data['icon'],
-                'order' => $order,
-                'is_active' => true,
-            ]);
+            Channel::firstOrCreate(
+                ['slug' => Str::slug($data['name'])],
+                [
+                    'name' => $data['name'],
+                    'description' => $data['description'],
+                    'color' => $data['color'],
+                    'icon' => $data['icon'],
+                    'order' => $order,
+                    'is_active' => true,
+                ],
+            );
         }
     }
 }

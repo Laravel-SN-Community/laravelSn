@@ -58,15 +58,17 @@ final class VenueSeeder extends Seeder
         ];
 
         foreach ($venues as $v) {
-            Venue::create([
-                'name' => $v['name'],
-                'slug' => Str::slug($v['name']),
-                'address' => $v['address'],
-                'district' => $v['district'],
-                'latitude' => $v['lat'],
-                'longitude' => $v['lng'],
-                'default_capacity' => $v['capacity'],
-            ]);
+            Venue::firstOrCreate(
+                ['slug' => Str::slug($v['name'])],
+                [
+                    'name' => $v['name'],
+                    'address' => $v['address'],
+                    'district' => $v['district'],
+                    'latitude' => $v['lat'],
+                    'longitude' => $v['lng'],
+                    'default_capacity' => $v['capacity'],
+                ],
+            );
         }
     }
 }

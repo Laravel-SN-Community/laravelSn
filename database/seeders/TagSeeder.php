@@ -32,15 +32,17 @@ final class TagSeeder extends Seeder
             'Sécurité',
             'DevOps',
             'Architecture',
-            'PHP 8.4',
+            'PHP',
         ];
 
         foreach ($tags as $name) {
-            Tag::create([
-                'name' => $name,
-                'slug' => Str::slug($name),
-                'description' => null,
-            ]);
+            Tag::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                [
+                    'name' => $name,
+                    'description' => null,
+                ],
+            );
         }
     }
 }

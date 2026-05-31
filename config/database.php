@@ -101,6 +101,20 @@ return [
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 
+        'legacy' => [
+            'driver' => env('LEGACY_DB_CONNECTION', 'sqlite'),
+            'url' => env('LEGACY_DB_URL'),
+            'host' => env('LEGACY_DB_HOST', '127.0.0.1'),
+            'port' => env('LEGACY_DB_PORT', '5432'),
+            'database' => env('LEGACY_DB_DATABASE', database_path('legacy.sqlite')),
+            'username' => env('LEGACY_DB_USERNAME', 'root'),
+            'password' => env('LEGACY_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'foreign_key_constraints' => true,
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
