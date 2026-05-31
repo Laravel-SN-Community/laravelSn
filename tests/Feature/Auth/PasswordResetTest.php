@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
@@ -24,7 +24,7 @@ test('reset password link can be requested', function (): void {
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertSentTo($user, ResetPasswordNotification::class);
 });
 
 test('reset password screen can be rendered', function (): void {
@@ -34,7 +34,7 @@ test('reset password screen can be rendered', function (): void {
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification): true {
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification): true {
         $response = $this->get(route('password.reset', $notification->token));
 
         $response->assertOk();
@@ -50,7 +50,7 @@ test('password can be reset with valid token', function (): void {
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user): true {
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) use ($user): true {
         $response = $this->post(route('password.update'), [
             'token' => $notification->token,
             'email' => $user->email,
