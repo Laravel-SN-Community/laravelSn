@@ -6,9 +6,11 @@ namespace App\Notifications;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Override;
 
 final class VerifyEmailNotification extends VerifyEmail
 {
+    #[Override]
     public function toMail(mixed $notifiable): MailMessage
     {
         return (new MailMessage)

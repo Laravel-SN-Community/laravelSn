@@ -6,9 +6,11 @@ namespace App\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
+use Override;
 
 final class ResetPasswordNotification extends ResetPassword
 {
+    #[Override]
     public function toMail(mixed $notifiable): MailMessage
     {
         return (new MailMessage)

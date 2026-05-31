@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Article;
 use App\Models\User;
 use App\Notifications\LegacyPasswordNotification;
 use Illuminate\Support\Facades\DB;
@@ -215,7 +216,7 @@ test('it generates passwords for oauth-only users and sends notification', funct
     expect($user->password)->not->toBeEmpty();
 
     $userModel = User::find($user->id);
-    Notification::assertSentTo($userModel, LegacyPasswordNotification::class, function ($notification) {
+    Notification::assertSentTo($userModel, LegacyPasswordNotification::class, function ($notification): true {
         expect($notification->provider)->toBe('github');
         expect($notification->plainPassword)->toHaveLength(16);
 
@@ -264,7 +265,7 @@ test('it converts categories to tags and links articles', function (): void {
 
     $tagLinks = DB::table('taggables')
         ->where('taggable_id', $article->id)
-        ->where('taggable_type', 'App\\Models\\Article')
+        ->where('taggable_type', Article::class)
         ->count();
 
     expect($tagLinks)->toBe(2);
@@ -315,9 +316,9 @@ test('it aggregates view counts onto articles', function (): void {
     ]);
 
     DB::connection('legacy')->table('views')->insert([
-        ['viewable_type' => 'App\\Models\\Article', 'viewable_id' => 1, 'visitor' => '1.1.1.1', 'viewed_at' => $now],
-        ['viewable_type' => 'App\\Models\\Article', 'viewable_id' => 1, 'visitor' => '2.2.2.2', 'viewed_at' => $now],
-        ['viewable_type' => 'App\\Models\\Article', 'viewable_id' => 1, 'visitor' => '1.1.1.1', 'viewed_at' => $now],
+        ['viewable_type' => Article::class, 'viewable_id' => 1, 'visitor' => '1.1.1.1', 'viewed_at' => $now],
+        ['viewable_type' => Article::class, 'viewable_id' => 1, 'visitor' => '2.2.2.2', 'viewed_at' => $now],
+        ['viewable_type' => Article::class, 'viewable_id' => 1, 'visitor' => '1.1.1.1', 'viewed_at' => $now],
     ]);
 
     $this->artisan('app:migrate-legacy-data', ['--force' => true])

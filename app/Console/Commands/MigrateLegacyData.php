@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Models\Article;
+use App\Models\Event;
 use App\Models\User;
 use App\Notifications\LegacyPasswordNotification;
 use Illuminate\Console\Attributes\Description;
@@ -14,6 +16,7 @@ use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
+use Throwable;
 
 #[Signature('app:migrate-legacy-data {--dry-run : Preview changes without writing} {--force : Skip confirmation prompts}')]
 #[Description('Migrate data from the legacy laravel.sn database to the v2 schema')]
@@ -79,7 +82,7 @@ final class MigrateLegacyData extends Command
             $this->resetSequences();
 
             DB::commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
             $this->error("Migration failed: {$e->getMessage()}");
             $this->error($e->getFile().':'.$e->getLine());
@@ -100,7 +103,7 @@ final class MigrateLegacyData extends Command
             $this->info('Connected to legacy database.');
 
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->error("Cannot connect to legacy database: {$e->getMessage()}");
             $this->newLine();
             $this->warn('Add these to your .env file:');
@@ -225,7 +228,7 @@ final class MigrateLegacyData extends Command
             $role = ($old->role ?? 'user') === 'admin' ? 'admin' : 'user';
             DB::table('model_has_roles')->insert([
                 'role_id' => Role::findByName($role)->id,
-                'model_type' => 'App\\Models\\User',
+                'model_type' => User::class,
                 'model_id' => $newId,
             ]);
 
@@ -251,7 +254,7 @@ final class MigrateLegacyData extends Command
                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                 ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
                 ->where('roles.name', 'admin')
-                ->where('model_has_roles.model_type', 'App\\Models\\User')
+                ->where('model_has_roles.model_type', User::class)
                 ->value('users.id') ?? DB::table('users')->min('id') ?? 0);
         }
 
@@ -295,7 +298,7 @@ final class MigrateLegacyData extends Command
             $name = $this->extractFromSpatieJson($old->name);
             $slug = $this->extractFromSpatieJson($old->slug);
 
-            if (empty($name) || empty($slug)) {
+            if ($name === '' || $name === '0' || ($slug === '' || $slug === '0')) {
                 continue;
             }
 
@@ -389,7 +392,7 @@ final class MigrateLegacyData extends Command
             $exists = DB::table('taggables')
                 ->where('tag_id', $tagId)
                 ->where('taggable_id', $articleId)
-                ->where('taggable_type', 'App\\Models\\Article')
+                ->where('taggable_type', Article::class)
                 ->exists();
 
             if ($exists) {
@@ -399,7 +402,7 @@ final class MigrateLegacyData extends Command
             DB::table('taggables')->insert([
                 'tag_id' => $tagId,
                 'taggable_id' => $articleId,
-                'taggable_type' => 'App\\Models\\Article',
+                'taggable_type' => Article::class,
             ]);
 
             $linked++;
@@ -422,7 +425,7 @@ final class MigrateLegacyData extends Command
             $exists = DB::table('taggables')
                 ->where('tag_id', $tagId)
                 ->where('taggable_id', $articleId)
-                ->where('taggable_type', 'App\\Models\\Article')
+                ->where('taggable_type', Article::class)
                 ->exists();
 
             if ($exists) {
@@ -432,7 +435,7 @@ final class MigrateLegacyData extends Command
             DB::table('taggables')->insert([
                 'tag_id' => $tagId,
                 'taggable_id' => $articleId,
-                'taggable_type' => 'App\\Models\\Article',
+                'taggable_type' => Article::class,
             ]);
 
             $linked++;
@@ -448,7 +451,7 @@ final class MigrateLegacyData extends Command
             }
 
             $newModelId = match ($pivot->taggable_type) {
-                'App\\Models\\Article' => $this->articleIdMap[$pivot->taggable_id] ?? null,
+                Article::class => $this->articleIdMap[$pivot->taggable_id] ?? null,
                 default => null,
             };
 
@@ -485,7 +488,7 @@ final class MigrateLegacyData extends Command
         $updated = 0;
 
         $viewCounts = DB::connection('legacy')->table('views')
-            ->where('viewable_type', 'App\\Models\\Article')
+            ->where('viewable_type', Article::class)
             ->select('viewable_id', DB::raw('COUNT(DISTINCT visitor) as unique_views'))
             ->groupBy('viewable_id')
             ->get();
@@ -578,7 +581,7 @@ final class MigrateLegacyData extends Command
                 'is_featured' => false,
                 'is_sponsored' => false,
                 'waitlist_capacity' => 0,
-                'seo_meta' => ! empty($seoMeta) ? json_encode($seoMeta) : null,
+                'seo_meta' => $seoMeta === [] ? null : json_encode($seoMeta),
                 'created_at' => $old->created_at,
                 'updated_at' => $old->updated_at,
             ]);
@@ -627,9 +630,9 @@ final class MigrateLegacyData extends Command
             }
 
             $newModelId = match ($old->model_type) {
-                'App\\Models\\User' => $this->userIdMap[$old->model_id] ?? null,
-                'App\\Models\\Article' => $this->articleIdMap[$old->model_id] ?? null,
-                'App\\Models\\Event' => null,
+                User::class => $this->userIdMap[$old->model_id] ?? null,
+                Article::class => $this->articleIdMap[$old->model_id] ?? null,
+                Event::class => null,
                 default => null,
             };
 
@@ -640,7 +643,7 @@ final class MigrateLegacyData extends Command
             }
 
             $collectionName = $old->collection_name;
-            if ($old->model_type === 'App\\Models\\User' && $collectionName === 'profile-photo') {
+            if ($old->model_type === User::class && $collectionName === 'profile-photo') {
                 $collectionName = 'avatar';
             }
 
@@ -680,9 +683,9 @@ final class MigrateLegacyData extends Command
 
     private function notifyOAuthUsers(): void
     {
-        $usersToNotify = array_filter($this->oauthUsers, fn (array $u) => $u['plain_password'] !== null);
+        $usersToNotify = array_filter($this->oauthUsers, fn (array $u): bool => $u['plain_password'] !== null);
 
-        if (empty($usersToNotify)) {
+        if ($usersToNotify === []) {
             return;
         }
 
@@ -740,12 +743,12 @@ final class MigrateLegacyData extends Command
             ]
         );
 
-        if (! empty($this->oauthUsers)) {
+        if ($this->oauthUsers !== []) {
             $this->newLine();
             $this->warn('OAuth users requiring attention:');
             $this->table(
                 ['Email', 'Provider', 'Had Password'],
-                array_map(fn (array $u) => [
+                array_map(fn (array $u): array => [
                     $u['email'],
                     $u['provider'],
                     $u['had_password'] ? 'Yes' : 'No — random password generated',
