@@ -33,11 +33,27 @@
         <tr>
             <td align="center" class="sn-outer-padding" style="padding: 40px 16px;">
                 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width: 560px; width: 100%;">
-                    {{-- Logo --}}
+                    {{-- Wordmark (matches site-wordmark.tsx md) --}}
                     <tr>
                         <td align="center" style="padding-bottom: 32px;">
                             <a href="{{ url('/') }}" style="text-decoration: none;">
-                                <img src="{{ asset('images/logo.svg') }}" alt="Laravel Senegal" width="48" height="70" style="display: block; width: 48px; height: auto;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                    <tr>
+                                        <td valign="middle" style="padding-right: 10px;">
+                                            <img src="{{ asset('logo.png') }}" alt="" width="36" height="36" style="display: block; width: 36px; height: 36px;">
+                                        </td>
+                                        <td valign="middle">
+                                            <img src="{{ asset('images/laravel-wordmark.svg') }}" alt="Laravel" height="19" style="display: block; height: 19px; width: auto;">
+                                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 3px;">
+                                                <tr>
+                                                    @foreach (['S','E','N','E','G','A','L'] as $char)
+                                                        <td style="font-size: 10px; color: #0f7b4d; line-height: 1; text-align: center; font-family: Arial Black, 'Arial Bold', Gadget, sans-serif;"><b>{{ $char }}</b></td>
+                                                    @endforeach
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
                             </a>
                         </td>
                     </tr>
