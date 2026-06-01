@@ -11,7 +11,7 @@ import {
     User,
     X,
 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { OpCard } from '@/components/forum/op-card';
 import { ReplyCard } from '@/components/forum/reply-card';
 import { ReplyForm } from '@/components/forum/reply-form';
@@ -104,6 +104,38 @@ type Props = {
 
 export default function Thread({ thread, replies, isSubscribed }: Props) {
     const { auth } = usePage<{ auth: Auth }>().props;
+
+    useEffect(() => {
+        const hash = window.location.hash;
+
+        if (hash) {
+            history.replaceState(
+                null,
+                '',
+                window.location.pathname + window.location.search,
+            );
+            window.scrollTo(0, 0);
+
+            setTimeout(() => {
+                const el = document.querySelector(hash);
+
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    const card = el.querySelector(':scope > *');
+
+                    if (card) {
+                        setTimeout(() => {
+                            card.classList.add('reply-highlight');
+                            setTimeout(
+                                () => card.classList.remove('reply-highlight'),
+                                2700,
+                            );
+                        }, 600);
+                    }
+                }
+            }, 300);
+        }
+    }, []);
 
     return (
         <>
@@ -286,7 +318,10 @@ export default function Thread({ thread, replies, isSubscribed }: Props) {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="min-w-0">
+                                            <div
+                                                id={`reply-${reply.id}`}
+                                                className="min-w-0 scroll-mt-24"
+                                            >
                                                 <ReplyCard
                                                     reply={reply}
                                                     isSolution={
