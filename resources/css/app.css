@@ -457,6 +457,24 @@
     }
 }
 
+@keyframes reply-pulse {
+    0%,
+    40% {
+        background-color: color-mix(
+            in oklch,
+            var(--sn-accent) 15%,
+            transparent
+        );
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+.reply-highlight {
+    animation: reply-pulse 2.5s ease-out forwards;
+    border-radius: 12px;
+}
+
 /* Prevent iOS WebKit from zooming on input focus (affects all iOS browsers) */
 @media screen and (max-width: 768px) {
     input,
