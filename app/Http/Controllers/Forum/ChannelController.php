@@ -21,12 +21,12 @@ final class ChannelController extends Controller
             ->roots()
             ->with(['children' => fn ($q) => $q->active()])
             ->withCount('threads')
-            ->addSelect(['*', DB::raw('(
+            ->addSelect(DB::raw('(
                 SELECT COALESCE(SUM(t.replies_count), 0)
                 FROM threads t
                 INNER JOIN channel_thread ct ON ct.thread_id = t.id
                 WHERE ct.channel_id = channels.id
-            ) as total_replies')])
+            ) as total_replies'))
             ->get();
 
         $totals = [
