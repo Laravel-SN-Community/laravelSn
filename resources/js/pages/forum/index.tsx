@@ -6,6 +6,7 @@ import {
     Heart,
     LayoutGrid,
     List,
+    Loader2,
     Lock,
     MessageSquare,
     Pin,
@@ -371,8 +372,36 @@ export default function Forum({ channels, threads, filter, locale }: Props) {
 
                         <div>
                             {displayed.length > 0 ? (
-                                <InfiniteScroll data="threads" buffer={400}>
-                                    <div className="space-y-3">
+                                <InfiniteScroll
+                                    data="threads"
+                                    manual
+                                    preserveUrl
+                                    itemsElement="#thread-list"
+                                    next={({ loading, fetch, hasMore }) =>
+                                        hasMore && (
+                                            <div className="mt-6 flex justify-center">
+                                                <button
+                                                    onClick={fetch}
+                                                    disabled={loading}
+                                                    className="sn-btn sn-btn-secondary"
+                                                >
+                                                    {loading ? (
+                                                        <>
+                                                            <Loader2
+                                                                size={14}
+                                                                className="animate-spin"
+                                                            />
+                                                            Chargement…
+                                                        </>
+                                                    ) : (
+                                                        'Voir plus de sujets'
+                                                    )}
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                >
+                                    <div id="thread-list" className="space-y-3">
                                         {displayed.map((t) => (
                                             <ThreadCard key={t.id} thread={t} />
                                         ))}

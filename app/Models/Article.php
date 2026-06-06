@@ -35,6 +35,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $likes_count
  * @property array<string, mixed>|null $seo_meta
  * @property string $excerpt
+ * @property string|null $cover_url
+ * @property array{sm?: string, md?: string, full?: string}|null $cover_srcset
  */
 #[Fillable([
     'author_id',

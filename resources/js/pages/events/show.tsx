@@ -9,7 +9,7 @@ import {
     MapPin,
     Presentation,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useInitials } from '@/hooks/use-initials';
 import {
     register as registerRoute,
@@ -67,6 +67,24 @@ export default function EventShow({
     const getInitials = useInitials();
     const { day, month, year } = formatEventDate(event.starts_at);
     const isLoggedIn = !!auth?.user;
+    const heroCtaRef = useRef<HTMLDivElement>(null);
+    const [showBottomBar, setShowBottomBar] = useState(false);
+
+    useEffect(() => {
+        const el = heroCtaRef.current;
+
+        if (!el) {
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => setShowBottomBar(!entry.isIntersecting),
+            { threshold: 0 },
+        );
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, []);
 
     const endDate = event.ends_at ? formatEventDate(event.ends_at) : null;
     const dateLabel =
@@ -188,8 +206,8 @@ export default function EventShow({
                             >
                                 <span className="flex items-center gap-1.5">
                                     <CalendarDays
-                                        size={13}
-                                        style={{ color: 'var(--sn-muted)' }}
+                                        size={15}
+                                        style={{ color: 'var(--sn-accent)' }}
                                     />
                                     <b>{dateLabel}</b>
                                 </span>
@@ -202,9 +220,9 @@ export default function EventShow({
                                         </span>
                                         <span className="flex items-center gap-1.5">
                                             <MapPin
-                                                size={13}
+                                                size={15}
                                                 style={{
-                                                    color: 'var(--sn-muted)',
+                                                    color: 'var(--sn-accent)',
                                                 }}
                                             />
                                             <b>
@@ -225,7 +243,10 @@ export default function EventShow({
                             </div>
 
                             {/* CTAs */}
-                            <div className="mt-7 flex flex-wrap gap-3">
+                            <div
+                                ref={heroCtaRef}
+                                className="mt-7 flex flex-wrap gap-3"
+                            >
                                 <HeroCta
                                     event={event}
                                     userRegistration={userRegistration}
@@ -349,13 +370,6 @@ export default function EventShow({
                 </section>
             )}
 
-            {/* ── Registration bottom bar (mobile) ── */}
-            <BottomBar
-                event={event}
-                userRegistration={userRegistration}
-                isLoggedIn={isLoggedIn}
-            />
-
             {/* ── Similar events ── */}
             {similarEvents.length > 0 && (
                 <section
@@ -423,7 +437,17 @@ export default function EventShow({
                 </section>
             )}
 
-            <div className="pb-10" />
+            {/* Spacer so fixed bottom bar doesn't overlap content on mobile */}
+            <div className="pb-10 lg:pb-0" />
+            <div className="h-16 lg:hidden" />
+
+            {/* ── Registration bottom bar (mobile) ── */}
+            <BottomBar
+                event={event}
+                userRegistration={userRegistration}
+                isLoggedIn={isLoggedIn}
+                visible={showBottomBar}
+            />
         </>
     );
 }
@@ -522,9 +546,7 @@ function HeroCta({
                     <Loader2 size={14} className="animate-spin" />
                 ) : (
                     <>
-                        {event.is_full
-                            ? "Liste d'attente"
-                            : "S'inscrire · Gratuit"}
+                        {event.is_full ? "Liste d'attente" : "S'inscrire"}
                         <ArrowRight size={14} />
                     </>
                 )}
@@ -537,10 +559,12 @@ function BottomBar({
     event,
     userRegistration,
     isLoggedIn,
+    visible,
 }: {
     event: EventFull;
     userRegistration: EventRegistration | null;
     isLoggedIn: boolean;
+    visible: boolean;
 }) {
     const [loading, setLoading] = useState(false);
     const { day, month } = formatEventDate(event.starts_at);
@@ -566,13 +590,15 @@ function BottomBar({
 
     return (
         <div
-            className="sticky bottom-0 z-20 border-t lg:hidden"
+            className="fixed inset-x-0 bottom-0 z-20 border-t lg:hidden"
             style={{
                 background:
                     'color-mix(in oklch, var(--sn-bg) 85%, transparent)',
                 backdropFilter: 'blur(14px)',
                 WebkitBackdropFilter: 'blur(14px)',
                 borderColor: 'var(--sn-border)',
+                transform: visible ? 'translateY(0)' : 'translateY(100%)',
+                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
         >
             <div className="flex items-center gap-3 px-4 py-3">

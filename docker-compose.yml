@@ -2,6 +2,7 @@
 services:
   app:
     build: .
+    restart: unless-stopped
     volumes:
       - .:/var/www/html
     ports:

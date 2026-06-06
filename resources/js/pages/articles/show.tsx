@@ -319,7 +319,7 @@ export default function ArticleShow() {
 
                     {/* Author strip */}
                     <div
-                        className="mt-8 flex items-center gap-4 border-b pb-8"
+                        className="mt-8 flex items-center gap-4 pb-4 lg:border-b lg:pb-8"
                         style={{ borderColor: 'var(--sn-border)' }}
                     >
                         <Link
@@ -419,6 +419,73 @@ export default function ArticleShow() {
                         </div>
                     )}
 
+                    {/* Mobile TOC + share */}
+                    {toc.length > 0 && (
+                        <details
+                            className="group rounded-xl border lg:hidden"
+                            style={{
+                                borderColor: 'var(--sn-border)',
+                            }}
+                        >
+                            <summary
+                                className="flex cursor-pointer items-center justify-between px-4 py-3 text-[12px] font-semibold tracking-wide uppercase select-none"
+                                style={{ color: 'var(--sn-muted)' }}
+                            >
+                                <span>Sommaire</span>
+                                <svg
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="transition-transform duration-200 group-open:rotate-180"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </summary>
+                            <nav
+                                className="flex flex-col gap-0.5 border-t px-4 pt-2 pb-3"
+                                style={{ borderColor: 'var(--sn-border)' }}
+                            >
+                                {toc.map((t) => (
+                                    <a
+                                        key={t.id}
+                                        href={`#${t.id}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            document
+                                                .getElementById(t.id)
+                                                ?.scrollIntoView({
+                                                    behavior: 'smooth',
+                                                    block: 'start',
+                                                });
+                                        }}
+                                        className="rounded-md px-2 py-1.5 text-[13.5px] transition-colors"
+                                        style={{
+                                            color:
+                                                activeSection === t.id
+                                                    ? 'var(--sn-accent)'
+                                                    : 'var(--sn-muted)',
+                                            fontWeight:
+                                                activeSection === t.id
+                                                    ? 500
+                                                    : 400,
+                                            background:
+                                                activeSection === t.id
+                                                    ? 'color-mix(in oklch, var(--sn-accent) 8%, transparent)'
+                                                    : 'transparent',
+                                        }}
+                                    >
+                                        {t.label}
+                                    </a>
+                                ))}
+                            </nav>
+                        </details>
+                    )}
+
                     {/* Article body */}
                     <Markdown variant="article" headingIds className="mt-10">
                         {article.body}
@@ -491,7 +558,7 @@ export default function ArticleShow() {
                 </div>
 
                 {/* TOC sidebar */}
-                <aside className="lg:col-span-4">
+                <aside className="hidden lg:col-span-4 lg:block">
                     <div className="lg:sticky lg:top-24">
                         {toc.length > 0 && (
                             <>
