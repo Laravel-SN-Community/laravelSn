@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import type { ArticleAuthor, ArticleTag } from '@/types/article';
 
 interface ArticleCardProps {
@@ -46,7 +47,7 @@ export default function ArticleCard({
     const tint = firstTag ? tagTint(firstTag.slug) : 'var(--sn-600)';
 
     return (
-        <a
+        <Link
             href={`/articles/${slug}`}
             className="sn-card sn-card-hover block overflow-hidden sm:flex sm:flex-col"
         >
@@ -153,6 +154,6 @@ export default function ArticleCard({
                     </div>
                 )}
             </div>
-        </a>
+        </Link>
     );
 }

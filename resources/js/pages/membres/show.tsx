@@ -15,7 +15,6 @@ import {
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useInitials } from '@/hooks/use-initials';
-import { timeAgo } from '@/lib/forum';
 import type { ArticleSummary } from '@/types/article';
 
 type UserProfile = {
@@ -38,6 +37,7 @@ type ThreadSummary = {
     title: string;
     replies_count: number;
     created_at: string;
+    created_at_human: string;
     solution_reply_id: number | null;
     channels: Array<{
         id: number;
@@ -52,6 +52,7 @@ type ReplySummary = {
     thread_id: number;
     body: string;
     created_at: string;
+    created_at_human: string;
     thread: { id: number; slug: string; title: string } | null;
 };
 
@@ -61,6 +62,7 @@ type ActivityItem = {
     url: string;
     excerpt: string | null;
     date: string;
+    date_human: string;
 };
 
 function memberTint(username: string): string {
@@ -655,7 +657,7 @@ function ThreadRow({ thread }: { thread: ThreadSummary }) {
                 {thread.channels.length > 0 && (
                     <span style={{ opacity: 0.4 }}>&middot;</span>
                 )}
-                <span>{timeAgo(thread.created_at)}</span>
+                <span>{thread.created_at_human}</span>
                 <span style={{ opacity: 0.4 }}>&middot;</span>
                 <span>
                     {thread.replies_count} réponse
@@ -707,7 +709,7 @@ function ReplyRow({
                 className="flex flex-wrap items-center gap-1.5 text-[10px] tracking-[0.15em] uppercase sm:gap-2 sm:text-[10.5px]"
                 style={{ color: 'var(--sn-muted)' }}
             >
-                <span>a répondu {timeAgo(reply.created_at)}</span>
+                <span>a répondu {reply.created_at_human}</span>
                 {isSolution && (
                     <span
                         className="ml-auto inline-flex items-center gap-1 rounded px-1.5 text-[9.5px] sm:text-[10px]"
@@ -796,7 +798,7 @@ function TabActivity({ activity }: { activity: ActivityItem[] }) {
                                             opacity: 0.6,
                                         }}
                                     >
-                                        {timeAgo(item.date)}
+                                        {item.date_human}
                                     </span>
                                 </div>
 

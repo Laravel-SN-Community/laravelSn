@@ -10,12 +10,19 @@ export type ArticleAuthor = {
     location?: string | null;
 };
 
+export type ArticleCoverSrcset = {
+    sm: string | null;
+    md: string | null;
+    full: string | null;
+};
+
 export type ArticleSummary = {
     id: number;
     slug: string;
     title: string;
     excerpt: string;
     cover_url: string | null;
+    cover_srcset: ArticleCoverSrcset | null;
     locale: string;
     published_at: string | null;
     reading_time_minutes: number;

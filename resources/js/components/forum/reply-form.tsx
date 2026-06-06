@@ -1,6 +1,8 @@
 import { Link, useForm } from '@inertiajs/react';
+import type { MDXEditorMethods } from '@mdxeditor/editor';
 import { Lock } from 'lucide-react';
-import React from 'react';
+import React, { useRef } from 'react';
+import { LazyMarkdownEditor as MarkdownEditor } from '@/components/editor/lazy-markdown-editor';
 import { toUrl } from '@/lib/utils';
 import { store as repliesStore } from '@/routes/forum/replies';
 import { lock as threadLock } from '@/routes/forum/threads';
@@ -13,6 +15,7 @@ export function ReplyForm({
     thread: ForumThreadFull;
     auth: Auth;
 }) {
+    const editorRef = useRef<MDXEditorMethods>(null);
     const { data, setData, post, processing, errors, reset } = useForm({
         body: '',
     });
@@ -22,7 +25,10 @@ export function ReplyForm({
         e.preventDefault();
         post(toUrl(repliesStore(thread.slug)), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                editorRef.current?.setMarkdown('');
+            },
         });
     }
 
@@ -41,26 +47,18 @@ export function ReplyForm({
             >
                 Ta réponse
             </div>
-            <textarea
-                rows={4}
+            <MarkdownEditor
+                ref={editorRef}
                 value={data.body}
-                onChange={(e) => setData('body', e.target.value)}
-                placeholder="Tape ta réponse en markdown…"
-                className="w-full resize-none rounded-md px-3 py-2.5 text-[14px]"
-                style={{
-                    background: 'var(--sn-bg)',
-                    border: `1px solid ${errors.body ? 'var(--sn-error, #dc2626)' : 'var(--sn-border)'}`,
-                    color: 'var(--sn-fg)',
-                }}
+                onChange={(v) => setData('body', v)}
+                error={errors.body}
+                scope="compact"
+                allowImages
+                minHeight={140}
+                maxHeight={360}
+                placeholder="Ta réponse en markdown…"
+                disabled={processing}
             />
-            {errors.body && (
-                <p
-                    className="mt-1 text-[12px]"
-                    style={{ color: 'var(--sn-error, #dc2626)' }}
-                >
-                    {errors.body}
-                </p>
-            )}
             <div className="mt-3 flex items-center justify-end">
                 <div className="flex items-center gap-2">
                     {isMod && (

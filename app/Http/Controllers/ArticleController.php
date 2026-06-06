@@ -80,6 +80,12 @@ final class ArticleController extends Controller
         return Inertia::render('articles/show', [
             'article' => $article,
             'relatedArticles' => $relatedArticles,
+        ])->withViewData([
+            'description' => $article->excerpt,
+            'ogTitle' => $article->title,
+            'ogImage' => $article->cover_url,
+            'ogType' => 'article',
+            'lcpImage' => $article->cover_srcset,
         ]);
     }
 

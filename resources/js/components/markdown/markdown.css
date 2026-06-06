@@ -1,0 +1,410 @@
+.sn-md {
+    color: var(--sn-fg);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.sn-md > :first-child {
+    margin-top: 0;
+}
+
+.sn-md > :last-child {
+    margin-bottom: 0;
+}
+
+/* ---- Headings ---- */
+.sn-md h1,
+.sn-md h2,
+.sn-md h3,
+.sn-md h4 {
+    color: var(--sn-fg);
+    font-weight: 600;
+    line-height: 1.25;
+    scroll-margin-top: 96px;
+}
+
+/* ---- Paragraphs / inline ---- */
+.sn-md p {
+    color: var(--sn-fg);
+}
+
+.sn-md strong {
+    font-weight: 600;
+}
+
+.sn-md em {
+    font-style: italic;
+}
+
+.sn-md a {
+    color: var(--sn-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.sn-md a:hover {
+    opacity: 0.85;
+}
+
+/* ---- Lists ---- */
+.sn-md ul {
+    list-style: disc;
+}
+
+.sn-md ol {
+    list-style: decimal;
+}
+
+.sn-md li {
+    color: var(--sn-fg);
+}
+
+.sn-md li::marker {
+    color: var(--sn-muted);
+}
+
+/* ---- Blockquote ---- */
+.sn-md blockquote {
+    border-left: 3px solid var(--sn-accent);
+    color: var(--sn-muted);
+    font-style: italic;
+}
+
+.sn-md blockquote p {
+    color: var(--sn-muted);
+    margin: 0;
+}
+
+/* ---- Inline code ---- */
+.sn-md code {
+    font-family: var(--font-mono, monospace);
+    background: var(--sn-surface-2);
+    color: var(--sn-accent);
+    border-radius: 4px;
+    padding: 1.5px 6px;
+    font-size: 0.875em;
+}
+
+/* ---- Code blocks ---- */
+.sn-md pre {
+    font-family: var(--font-mono, monospace);
+    background: var(--sn-code-bg, #0d1411);
+    color: var(--sn-code-text, #e6edf3);
+    border: 1px solid var(--sn-code-border, var(--sn-border));
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.sn-md pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    border-radius: 0;
+}
+
+/* ---- Images ---- */
+.sn-md img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--sn-border);
+}
+
+/* ---- Tables (GFM) ---- */
+.sn-md table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9em;
+    margin: 20px 0;
+    border: 1px solid var(--sn-border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.sn-md th,
+.sn-md td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--sn-border);
+}
+
+.sn-md th {
+    background: var(--sn-surface-2);
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sn-muted);
+}
+
+.sn-md td {
+    color: var(--sn-fg);
+}
+
+.sn-md td + td,
+.sn-md th + th {
+    border-left: 1px solid var(--sn-border);
+}
+
+.sn-md tr:last-child td {
+    border-bottom: none;
+}
+
+.sn-md tbody tr:hover td {
+    background: color-mix(in oklch, var(--sn-surface-2) 50%, transparent);
+}
+
+/* ---- Horizontal rule ---- */
+.sn-md hr {
+    border: 0;
+    border-top: 1px solid var(--sn-border);
+}
+
+/* ---- Task lists (GFM) ---- */
+.sn-md li:has(> input[type='checkbox']) {
+    list-style: none;
+    margin-left: -22px;
+    padding-left: 2px;
+}
+
+.sn-md input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--sn-border);
+    border-radius: 4px;
+    background: var(--sn-bg);
+    margin-right: 8px;
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.sn-md input[type='checkbox']:checked {
+    background: var(--sn-accent);
+    border-color: var(--sn-accent);
+}
+
+.sn-md input[type='checkbox']:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* =========================================================
+ *  Variant: article
+ * ========================================================= */
+.sn-md--article h2 {
+    font-size: 28px;
+    letter-spacing: -0.015em;
+    margin: 56px 0 14px;
+}
+
+.sn-md--article h3 {
+    font-size: 21px;
+    letter-spacing: -0.01em;
+    margin: 32px 0 10px;
+}
+
+.sn-md--article p {
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 18px 0;
+}
+
+.sn-md--article ul,
+.sn-md--article ol {
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 18px 0 18px 24px;
+}
+
+.sn-md--article li {
+    margin: 6px 0;
+}
+
+.sn-md--article blockquote {
+    margin: 28px 0;
+    padding: 2px 22px;
+    font-size: 17px;
+}
+
+.sn-md--article pre {
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 14px 16px;
+    margin: 28px 0;
+}
+
+/* =========================================================
+ *  Variant: forum
+ * ========================================================= */
+.sn-md--forum h2 {
+    font-size: 19px;
+    margin: 20px 0 8px;
+}
+
+.sn-md--forum h3 {
+    font-size: 16px;
+    margin: 16px 0 6px;
+}
+
+.sn-md--forum p {
+    font-size: 14.5px;
+    line-height: 1.7;
+    margin: 12px 0;
+}
+
+.sn-md--forum ul,
+.sn-md--forum ol {
+    font-size: 14.5px;
+    line-height: 1.7;
+    margin: 12px 0 12px 22px;
+}
+
+.sn-md--forum li {
+    margin: 4px 0;
+}
+
+.sn-md--forum blockquote {
+    margin: 14px 0;
+    padding: 2px 16px;
+    font-size: 14.5px;
+}
+
+.sn-md--forum pre {
+    font-size: 12.5px;
+    line-height: 1.65;
+    padding: 10px 12px;
+    margin: 14px 0;
+}
+
+/* =========================================================
+ *  Variant: compact
+ * ========================================================= */
+.sn-md--compact p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 8px 0;
+}
+
+.sn-md--compact h2,
+.sn-md--compact h3 {
+    font-size: 15px;
+    margin: 12px 0 6px;
+}
+
+.sn-md--compact ul,
+.sn-md--compact ol {
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 8px 0 8px 20px;
+}
+
+.sn-md--compact pre {
+    font-size: 12px;
+    padding: 8px 10px;
+    margin: 10px 0;
+}
+
+.sn-md--compact blockquote {
+    margin: 10px 0;
+    padding: 2px 12px;
+    font-size: 13.5px;
+}
+
+/* =========================================================
+ *  Syntax highlighting (highlight.js tokens → --sn-code-*)
+ * ========================================================= */
+
+.sn-code {
+    position: relative;
+    margin: var(--sn-code-my, 16px) 0;
+}
+
+.sn-code > pre {
+    margin: 0;
+}
+
+.sn-md .hljs {
+    color: var(--sn-code-text);
+    background: transparent;
+}
+
+.sn-md .hljs-comment,
+.sn-md .hljs-quote {
+    color: var(--sn-code-comment);
+    font-style: italic;
+}
+
+.sn-md .hljs-keyword,
+.sn-md .hljs-selector-tag,
+.sn-md .hljs-literal,
+.sn-md .hljs-section,
+.sn-md .hljs-doctag,
+.sn-md .hljs-type,
+.sn-md .hljs-name,
+.sn-md .hljs-strong {
+    color: var(--sn-code-keyword);
+}
+
+.sn-md .hljs-class .hljs-title,
+.sn-md .hljs-title.class_,
+.sn-md .hljs-built_in,
+.sn-md .hljs-tag,
+.sn-md .hljs-selector-class,
+.sn-md .hljs-selector-id {
+    color: var(--sn-code-class);
+}
+
+.sn-md .hljs-function .hljs-title,
+.sn-md .hljs-title.function_,
+.sn-md .hljs-title,
+.sn-md .hljs-attr,
+.sn-md .hljs-attribute,
+.sn-md .hljs-property,
+.sn-md .hljs-variable.language_ {
+    color: var(--sn-code-fn);
+}
+
+.sn-md .hljs-string,
+.sn-md .hljs-regexp,
+.sn-md .hljs-symbol,
+.sn-md .hljs-bullet,
+.sn-md .hljs-template-tag,
+.sn-md .hljs-template-variable,
+.sn-md .hljs-addition {
+    color: var(--sn-code-string);
+}
+
+.sn-md .hljs-number,
+.sn-md .hljs-meta {
+    color: var(--sn-code-class);
+}
+
+.sn-md .hljs-variable,
+.sn-md .hljs-params,
+.sn-md .hljs-subst {
+    color: var(--sn-code-text);
+}
+
+.sn-md .hljs-emphasis {
+    font-style: italic;
+}
+
+.sn-md .hljs-strong {
+    font-weight: 600;
+}

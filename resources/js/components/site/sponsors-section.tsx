@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 
 interface Sponsor {
@@ -89,9 +90,12 @@ export default function SponsorsSection() {
                         Partenaires &amp; sponsors
                     </h2>
                 </div>
-                <a href="/sponsors" className="sn-btn sn-btn-ghost sn-btn-sm">
+                <Link
+                    href="/sponsors"
+                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                >
                     Devenir partenaire <ArrowRight size={13} />
-                </a>
+                </Link>
             </div>
 
             <div className="sn-card overflow-hidden">

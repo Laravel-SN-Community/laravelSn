@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { ArrowRight, Clock, MapPin } from 'lucide-react';
 
 interface Venue {
@@ -63,12 +64,12 @@ export default function EventsSection({ events }: Props) {
                     </h2>
                 </div>
                 <div className="flex items-center gap-2">
-                    <a
+                    <Link
                         href="/events"
                         className="sn-btn sn-btn-secondary sn-btn-sm"
                     >
                         Tous les événements <ArrowRight size={13} />
-                    </a>
+                    </Link>
                 </div>
             </div>
 
@@ -109,7 +110,7 @@ export default function EventsSection({ events }: Props) {
                             : 'En ligne';
 
                         return (
-                            <a
+                            <Link
                                 key={e.id}
                                 href={`/events/${e.slug}`}
                                 className="group grid grid-cols-12 items-center gap-4 p-5 transition-colors hover:bg-[color:var(--sn-surface-2)] md:gap-6 md:p-6"
@@ -213,7 +214,7 @@ export default function EventsSection({ events }: Props) {
                                         <ArrowRight size={14} />
                                     </div>
                                 </div>
-                            </a>
+                            </Link>
                         );
                     })}
                 </div>

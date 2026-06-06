@@ -55,6 +55,9 @@ final class Thread extends Model
 
     protected $guarded = [];
 
+    /** @var list<string> */
+    protected $appends = ['created_at_human'];
+
     /**
      * @return array<string, string>
      */
@@ -177,6 +180,13 @@ final class Thread extends Model
     protected function url(): Attribute
     {
         return Attribute::get(fn (): string => route('forum.threads.show', $this->slug));
+    }
+
+    protected function createdAtHuman(): Attribute
+    {
+        return Attribute::get(
+            fn (): ?string => $this->created_at?->locale((string) config('app.locale'))->diffForHumans(),
+        );
     }
 
     public function markAsResolved(Reply $reply, User $resolver): void

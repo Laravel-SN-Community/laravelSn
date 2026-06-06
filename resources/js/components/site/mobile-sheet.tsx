@@ -134,9 +134,9 @@ export default function MobileSheet({
                         className="flex items-center justify-between px-5 pt-5 pb-4"
                         style={{ borderBottom: '1px solid var(--sn-border)' }}
                     >
-                        <a href="/" onClick={onClose}>
+                        <Link href="/" onClick={onClose}>
                             <SiteWordmark />
-                        </a>
+                        </Link>
                         <button
                             className="sn-btn sn-btn-sm sn-btn-ghost"
                             onClick={onClose}

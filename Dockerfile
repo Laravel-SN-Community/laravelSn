@@ -4,7 +4,7 @@ FROM php:8.4-cli-alpine
 RUN apk add --no-cache \
     bash git curl \
     libpng libjpeg-turbo libwebp freetype \
-    libzip icu-libs libpq \
+    libzip icu-libs icu-data-full libpq \
     nodejs npm
 
 # Build-only deps — compiled in, then removed in the same layer

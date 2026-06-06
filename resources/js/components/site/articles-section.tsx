@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import type { ArticleSummary } from '@/types/article';
 import ArticleCard from './article-card';
@@ -16,9 +17,12 @@ export default function ArticlesSection({ articles }: Props) {
                         Derniers articles
                     </h2>
                 </div>
-                <a href="/articles" className="sn-btn sn-btn-ghost sn-btn-sm">
+                <Link
+                    href="/articles"
+                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                >
                     Tout voir <ArrowRight size={13} />
-                </a>
+                </Link>
             </div>
 
             {articles.length > 0 ? (

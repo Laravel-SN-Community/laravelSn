@@ -1,18 +1,35 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Check, Link2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Markdown } from '@/components/markdown/markdown';
 import ArticleCard from '@/components/site/article-card';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useInitials } from '@/hooks/use-initials';
-import type { ArticleFull, ArticleSummary } from '@/types/article';
+import { slugify } from '@/lib/slugify';
+import type {
+    ArticleCoverSrcset,
+    ArticleFull,
+    ArticleSummary,
+} from '@/types/article';
 
-function slugify(text: string): string {
-    return text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
+function buildCoverSrcset(
+    srcset: ArticleCoverSrcset | null,
+): string | undefined {
+    if (!srcset) {
+        return undefined;
+    }
+
+    const parts: string[] = [];
+
+    if (srcset.sm) {
+        parts.push(`${srcset.sm} 640w`);
+    }
+
+    if (srcset.md) {
+        parts.push(`${srcset.md} 1280w`);
+    }
+
+    return parts.length > 0 ? parts.join(', ') : undefined;
 }
 
 function extractToc(body: string): { id: string; label: string }[] {
@@ -20,68 +37,6 @@ function extractToc(body: string): { id: string; label: string }[] {
         id: slugify(m[1]),
         label: m[1],
     }));
-}
-
-function renderBody(raw: string): string {
-    const stash: string[] = [];
-    const ph = (html: string) => {
-        const id = `%%${stash.length}%%`;
-        stash.push(html);
-
-        return id;
-    };
-
-    let out = raw
-        .replace(/```(\w*)\n?([\s\S]*?)```/g, (_, _lang, code) =>
-            ph(
-                `<pre><code>${code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>`,
-            ),
-        )
-        .replace(/`([^`\n]+?)`/g, (_, c) =>
-            ph(
-                `<code>${c.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>`,
-            ),
-        )
-        .replace(/^## (.+)$/gm, (_, t) =>
-            ph(`<h2 id="${slugify(t)}">${t}</h2>`),
-        )
-        .replace(/^### (.+)$/gm, (_, t) => ph(`<h3>${t}</h3>`))
-        .replace(/^> (.+)$/gm, (_, t) => ph(`<blockquote>${t}</blockquote>`));
-
-    out = out
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    out = out
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/_(.+?)_/g, '<em>$1</em>')
-        .replace(/^[-*] (.+)$/gm, '<li>$1</li>');
-
-    stash.forEach((html, i) => {
-        out = out.replace(`%%${i}%%`, html);
-    });
-
-    return out
-        .split(/\n{2,}/)
-        .map((para) => {
-            const p = para.trim();
-
-            if (!p) {
-                return '';
-            }
-
-            if (/^<(h[1-6]|pre|blockquote)/.test(p)) {
-                return p;
-            }
-
-            if (p.includes('<li>')) {
-                return `<ul>${p.replace(/\n/g, '')}</ul>`;
-            }
-
-            return `<p>${p.replace(/\n/g, '<br/>')}</p>`;
-        })
-        .filter(Boolean)
-        .join('\n');
 }
 
 function fmtDate(iso: string): string {
@@ -245,7 +200,6 @@ export default function ArticleShow() {
 
     const getInitials = useInitials();
     const toc = useMemo(() => extractToc(article.body), [article.body]);
-    const bodyHtml = useMemo(() => renderBody(article.body), [article.body]);
     const firstTag = article.tags[0];
     const tint = firstTag ? tagTint(firstTag.slug) : 'var(--sn-600)';
 
@@ -283,7 +237,16 @@ export default function ArticleShow() {
 
     return (
         <>
-            <Head title={`${article.title} — Laravel Sénégal`} />
+            <Head title={`${article.title} — Laravel Sénégal`}>
+                <meta name="description" content={article.excerpt} />
+                <meta property="og:title" content={article.title} />
+                <meta property="og:description" content={article.excerpt} />
+                <meta property="og:type" content="article" />
+                {article.cover_url && (
+                    <meta property="og:image" content={article.cover_url} />
+                )}
+                <meta name="twitter:card" content="summary_large_image" />
+            </Head>
 
             {/* Breadcrumb */}
             <div
@@ -338,8 +301,17 @@ export default function ArticleShow() {
                     {article.cover_url && (
                         <div className="mt-5 overflow-hidden rounded-xl sm:hidden">
                             <img
-                                src={article.cover_url}
+                                src={
+                                    article.cover_srcset?.sm ??
+                                    article.cover_url
+                                }
+                                srcSet={buildCoverSrcset(article.cover_srcset)}
+                                sizes="(max-width: 640px) 100vw, 640px"
                                 alt={article.title}
+                                width={640}
+                                height={360}
+                                fetchPriority="high"
+                                decoding="async"
                                 className="w-full object-cover"
                             />
                         </div>
@@ -404,8 +376,19 @@ export default function ArticleShow() {
                         >
                             {article.cover_url ? (
                                 <img
-                                    src={article.cover_url}
+                                    src={
+                                        article.cover_srcset?.md ??
+                                        article.cover_url
+                                    }
+                                    srcSet={buildCoverSrcset(
+                                        article.cover_srcset,
+                                    )}
+                                    sizes="(min-width: 1024px) 760px, (min-width: 640px) 100vw, 0px"
                                     alt={article.title}
+                                    width={1280}
+                                    height={640}
+                                    fetchPriority="high"
+                                    decoding="async"
                                     className="absolute inset-0 h-full w-full object-cover"
                                 />
                             ) : (
@@ -437,22 +420,9 @@ export default function ArticleShow() {
                     )}
 
                     {/* Article body */}
-                    <style>{`
-                        .article-body h2 { font-size:28px; font-weight:600; letter-spacing:-0.015em; margin:56px 0 14px; scroll-margin-top:96px; color:var(--sn-fg); }
-                        .article-body h3 { font-size:21px; font-weight:600; letter-spacing:-0.01em; margin:32px 0 10px; color:var(--sn-fg); }
-                        .article-body p  { font-size:17px; line-height:1.75; margin:18px 0; color:var(--sn-fg); }
-                        .article-body ul { font-size:17px; line-height:1.75; margin:18px 0 18px 24px; list-style:disc; }
-                        .article-body ul li { margin:6px 0; color:var(--sn-fg); }
-                        .article-body strong { font-weight:600; }
-                        .article-body code { font-family:var(--font-mono); font-size:13.5px; padding:1.5px 6px; background:var(--sn-surface-2); border-radius:4px; color:var(--sn-accent); }
-                        .article-body pre { font-family:var(--font-mono); font-size:13px; line-height:1.7; padding:22px; background:#0d1411; color:#e6edf3; border:1px solid var(--sn-border); border-radius:10px; overflow-x:auto; margin:28px 0; }
-                        .article-body pre code { background:transparent; border:0; padding:0; color:inherit; }
-                        .article-body blockquote { margin:28px 0; padding:8px 22px; border-left:3px solid var(--sn-accent); font-style:italic; font-size:17px; color:var(--sn-muted); }
-                    `}</style>
-                    <div
-                        className="article-body mt-10"
-                        dangerouslySetInnerHTML={{ __html: bodyHtml }}
-                    />
+                    <Markdown variant="article" headingIds className="mt-10">
+                        {article.body}
+                    </Markdown>
 
                     {/* Reactions */}
                     <div

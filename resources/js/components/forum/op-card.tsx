@@ -1,7 +1,8 @@
 import { Link } from '@inertiajs/react';
 import { Check, Lock, Pin } from 'lucide-react';
+import { Markdown } from '@/components/markdown/markdown';
 import { useInitials } from '@/hooks/use-initials';
-import { authorTint, timeAgo } from '@/lib/forum';
+import { authorTint } from '@/lib/forum';
 import { toUrl } from '@/lib/utils';
 import { show as channelShow } from '@/routes/forum/channels';
 import type { ForumThreadFull } from '@/types';
@@ -97,7 +98,7 @@ export function OpCard({ thread }: { thread: ForumThreadFull }) {
                             style={{ color: 'var(--sn-muted)' }}
                         >
                             @{thread.author.username} ·{' '}
-                            {timeAgo(thread.created_at)}
+                            {thread.created_at_human}
                         </span>
                     </div>
                 </div>
@@ -111,12 +112,7 @@ export function OpCard({ thread }: { thread: ForumThreadFull }) {
             </div>
 
             <div className="px-6 pb-5">
-                <div
-                    className="text-[14.5px] leading-[1.8] whitespace-pre-wrap"
-                    style={{ color: 'var(--sn-fg)' }}
-                >
-                    {thread.body}
-                </div>
+                <Markdown variant="forum">{thread.body}</Markdown>
             </div>
         </div>
     );

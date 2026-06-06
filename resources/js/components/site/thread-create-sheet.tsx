@@ -2,8 +2,8 @@ import { useForm } from '@inertiajs/react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Info, X } from 'lucide-react';
 import { useEffect } from 'react';
+import { LazyMarkdownEditor as MarkdownEditor } from '@/components/editor/lazy-markdown-editor';
 import { ChannelsSelect } from '@/components/forum/channels-select';
-import { MarkdownEditor } from '@/components/forum/markdown-editor';
 import { toUrl } from '@/lib/utils';
 import { store as threadsStore } from '@/routes/forum/threads';
 import type { ForumChannel } from '@/types';
@@ -286,6 +286,12 @@ export function ThreadCreateSheet({
                                 value={data.body}
                                 onChange={(v) => setData('body', v)}
                                 error={errors.body}
+                                scope="full"
+                                allowImages
+                                placeholder="Mon code actuel :&#10;&#10;```php&#10;$users = User::all();&#10;```&#10;&#10;Ce que j'ai essayé :&#10;- ..."
+                                minHeight={260}
+                                maxHeight={360}
+                                disabled={processing}
                             />
                         </div>
 

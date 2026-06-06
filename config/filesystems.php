@@ -17,6 +17,8 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    'editor_disk' => env('EDITOR_DISK', 'public'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

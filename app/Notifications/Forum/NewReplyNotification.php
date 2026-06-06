@@ -33,7 +33,10 @@ final class NewReplyNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $preview = Str::limit(strip_tags($this->reply->body), 150);
+        $plain = (string) preg_replace('/```[\s\S]*?```/', '', $this->reply->body);
+        $plain = (string) preg_replace('/[#*`\[\]_>~]/', '', $plain);
+        $preview = Str::limit(trim((string) preg_replace('/\s+/', ' ', $plain)), 150);
+
         $subject = "Nouvelle réponse : {$this->thread->title}";
 
         return (new MailMessage)
@@ -44,7 +47,19 @@ final class NewReplyNotification extends Notification implements ShouldQueue
                 'authorName' => $this->author->name,
                 'threadTitle' => $this->thread->title,
                 'preview' => $preview,
-                'replyUrl' => $this->thread->url,
+                'replyUrl' => $this->replyUrl(),
             ]);
+    }
+
+    private function replyUrl(): string
+    {
+        $position = $this->thread->allReplies()
+            ->where('id', '<=', $this->reply->id)
+            ->count();
+
+        $page = (int) ceil($position / 30);
+        $query = $page > 1 ? "?page={$page}" : '';
+
+        return $this->thread->url.$query.'#reply-'.$this->reply->id;
     }
 }

@@ -91,6 +91,18 @@ test('other users cannot view a draft article', function (): void {
         ->assertNotFound();
 });
 
+test('article without a cover exposes a null cover_srcset', function (): void {
+    $article = Article::factory()->create();
+
+    $this->get(route('article', $article))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('articles/show')
+            ->where('article.cover_url', null)
+            ->where('article.cover_srcset', null)
+        );
+});
+
 // ── dashboardIndex ─────────────────────────────────────────────────────────
 
 test('guests are redirected from the articles dashboard', function (): void {
