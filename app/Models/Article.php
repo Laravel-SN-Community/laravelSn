@@ -35,6 +35,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $likes_count
  * @property array<string, mixed>|null $seo_meta
  * @property string $excerpt
+ * @property string|null $cover_url
+ * @property array{sm?: string, md?: string, full?: string}|null $cover_srcset
  */
 #[Fillable([
     'author_id',
@@ -61,7 +63,7 @@ final class Article extends Model implements HasMedia
     use SoftDeletes;
 
     /** @var list<string> */
-    protected $appends = ['excerpt', 'cover_url'];
+    protected $appends = ['excerpt', 'cover_url', 'cover_srcset'];
 
     #[Override]
     protected static function boot(): void
@@ -180,6 +182,18 @@ final class Article extends Model implements HasMedia
             ->performOnCollections('media')
             ->format('webp')
             ->quality(85);
+
+        $this->addMediaConversion('webp_md')
+            ->performOnCollections('media')
+            ->format('webp')
+            ->width(1280)
+            ->quality(82);
+
+        $this->addMediaConversion('webp_sm')
+            ->performOnCollections('media')
+            ->format('webp')
+            ->width(640)
+            ->quality(80);
     }
 
     public function getCoverImageUrl(): string
@@ -195,6 +209,31 @@ final class Article extends Model implements HasMedia
         }
 
         return $media->getUrl();
+    }
+
+    protected function coverSrcset(): Attribute
+    {
+        return Attribute::get(function (): ?array {
+            $media = $this->getFirstMedia('media');
+
+            if (! $media instanceof Media) {
+                return null;
+            }
+
+            $sm = $media->hasGeneratedConversion('webp_sm') ? $media->getUrl('webp_sm') : null;
+            $md = $media->hasGeneratedConversion('webp_md') ? $media->getUrl('webp_md') : null;
+            $full = $media->hasGeneratedConversion('webp') ? $media->getUrl('webp') : $media->getUrl();
+
+            if ($sm === null && $md === null) {
+                return null;
+            }
+
+            return [
+                'sm' => $sm,
+                'md' => $md,
+                'full' => $full,
+            ];
+        });
     }
 
     protected function url(): Attribute

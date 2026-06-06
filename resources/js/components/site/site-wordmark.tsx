@@ -5,16 +5,19 @@ interface Props {
 const sizes = {
     sm: {
         logo: 'h-6 w-6',
+        logoPx: 24,
         mark: 'h-[13px]',
         sub: 'text-[6.5px] tracking-[0.3em]',
     },
     md: {
         logo: 'h-8 w-8',
+        logoPx: 32,
         mark: 'h-[17px]',
         sub: 'text-[8.5px] tracking-[0.28em]',
     },
     lg: {
         logo: 'h-9 w-9',
+        logoPx: 36,
         mark: 'h-[19px]',
         sub: 'text-[9px] tracking-[0.28em]',
     },
@@ -26,8 +29,12 @@ export default function SiteWordmark({ logoSize = 'md' }: Props) {
     return (
         <span className="flex items-center gap-2.5">
             <img
-                src="/logo.png"
+                src="/logo.webp"
+                srcSet="/logo@1x.webp 1x, /logo.webp 2x, /logo@3x.webp 3x"
                 alt="Laravel SN"
+                width={s.logoPx}
+                height={s.logoPx}
+                decoding="async"
                 className={`${s.logo} object-contain`}
             />
             <span className="flex flex-col gap-[3px]">

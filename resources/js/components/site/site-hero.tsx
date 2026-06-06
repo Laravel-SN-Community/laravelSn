@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 
 interface SiteHeroProps {
@@ -94,12 +95,18 @@ export default function SiteHero({ onOpenCmd }: SiteHeroProps) {
                     </p>
 
                     <div className="mt-7 flex flex-wrap items-center gap-3">
-                        <a href="/rejoindre" className="sn-btn sn-btn-primary">
+                        <Link
+                            href="/rejoindre"
+                            className="sn-btn sn-btn-primary"
+                        >
                             Rejoindre la communauté <ArrowRight size={15} />
-                        </a>
-                        <a href="/articles" className="sn-btn sn-btn-secondary">
+                        </Link>
+                        <Link
+                            href="/articles"
+                            className="sn-btn sn-btn-secondary"
+                        >
                             Lire les articles
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Inline stats */}

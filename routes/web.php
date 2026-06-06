@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\EditorImageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Forum\ChannelController;
 use App\Http\Controllers\Forum\ReactionController;
@@ -57,6 +58,12 @@ Route::inertia('/rejoindre', 'rejoindre')->name('rejoindre');
 Route::inertia('/rules', 'rules')->name('rules');
 Route::inertia('/terms', 'terms')->name('terms');
 Route::inertia('/privacy', 'privacy')->name('privacy');
+
+Route::middleware('auth')->group(function (): void {
+    Route::post('/editor/images', [EditorImageController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('editor.images.store');
+});
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');

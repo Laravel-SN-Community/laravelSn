@@ -65,6 +65,8 @@ final class UserController extends Controller
                 ->get(['id', 'thread_id', 'body', 'created_at'])
             : collect();
 
+        $locale = (string) config('app.locale');
+
         $activity = collect()
             ->merge($articles->map(fn (Article $a): array => [
                 'type' => 'article',
@@ -72,6 +74,7 @@ final class UserController extends Controller
                 'url' => '/articles/'.$a->slug,
                 'excerpt' => null,
                 'date' => $a->published_at,
+                'date_human' => $a->published_at?->locale($locale)->diffForHumans(),
             ]))
             ->merge($threads->map(fn (Thread $t): array => [
                 'type' => 'thread',
@@ -79,6 +82,7 @@ final class UserController extends Controller
                 'url' => '/forum/threads/'.$t->slug,
                 'excerpt' => null,
                 'date' => $t->created_at->toISOString(),
+                'date_human' => $t->created_at->locale($locale)->diffForHumans(),
             ]))
             ->merge($replies->map(fn (Reply $r): array => [
                 'type' => 'reply',
@@ -86,6 +90,7 @@ final class UserController extends Controller
                 'url' => '/forum/threads/'.$r->thread->slug.'#reply-'.$r->id,
                 'excerpt' => str($r->body)->limit(200)->toString(),
                 'date' => $r->created_at->toISOString(),
+                'date_human' => $r->created_at->locale($locale)->diffForHumans(),
             ]))
             ->sortByDesc('date')
             ->values();

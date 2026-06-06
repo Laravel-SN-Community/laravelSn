@@ -1,21 +1,10 @@
 import { useForm } from '@inertiajs/react';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import * as Dialog from '@radix-ui/react-dialog';
-import {
-    Bold,
-    ChevronDown,
-    Code,
-    Code2,
-    Heading2,
-    Italic,
-    Link,
-    List,
-    ListOrdered,
-    Quote,
-    X,
-} from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChevronDown, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import ArticleController from '@/actions/App/Http/Controllers/ArticleController';
+import { LazyMarkdownEditor as MarkdownEditor } from '@/components/editor/lazy-markdown-editor';
 import { CoverImageUpload } from '@/components/site/cover-image-upload';
 import { DatePicker } from '@/components/site/date-picker';
 import { TagsSelect } from '@/components/site/tags-select';
@@ -41,116 +30,6 @@ type Props = {
     article?: EditableArticle | undefined;
     canPublish?: boolean;
 };
-
-type ToolbarItem =
-    | { type: 'sep' }
-    | {
-          type: 'btn';
-          icon: React.ElementType;
-          label: string;
-          before: string;
-          after: string;
-      };
-
-const TOOLBAR: ToolbarItem[] = [
-    { type: 'btn', icon: Heading2, label: 'H2  ⌘2', before: '## ', after: '' },
-    { type: 'btn', icon: Bold, label: 'Gras  ⌘B', before: '**', after: '**' },
-    {
-        type: 'btn',
-        icon: Italic,
-        label: 'Italique  ⌘I',
-        before: '_',
-        after: '_',
-    },
-    { type: 'sep' },
-    { type: 'btn', icon: Quote, label: 'Citation', before: '> ', after: '' },
-    { type: 'btn', icon: Code, label: 'Code inline', before: '`', after: '`' },
-    {
-        type: 'btn',
-        icon: Code2,
-        label: 'Bloc de code',
-        before: '```\n',
-        after: '\n```',
-    },
-    { type: 'sep' },
-    {
-        type: 'btn',
-        icon: Link,
-        label: 'Lien  ⌘K',
-        before: '[',
-        after: '](url)',
-    },
-    { type: 'sep' },
-    { type: 'btn', icon: List, label: 'Liste', before: '- ', after: '' },
-    {
-        type: 'btn',
-        icon: ListOrdered,
-        label: 'Numérotée',
-        before: '1. ',
-        after: '',
-    },
-];
-
-function renderMarkdown(md: string): string {
-    if (!md.trim()) {
-        return '';
-    }
-
-    const blocks: string[] = [];
-    const withoutCode = md.replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) => {
-        const idx = blocks.length;
-        blocks.push(
-            `<pre style="background:var(--sn-surface-2);border-radius:8px;padding:14px 16px;overflow:auto;font-family:monospace;font-size:12.5px;margin:10px 0;white-space:pre;line-height:1.6">${code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`,
-        );
-
-        return `%%CB${idx}%%`;
-    });
-    let out = withoutCode
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(
-            /^### (.*)$/gm,
-            '<h3 style="font-size:15px;font-weight:700;margin:14px 0 4px;color:var(--sn-fg)">$1</h3>',
-        )
-        .replace(
-            /^## (.*)$/gm,
-            '<h2 style="font-size:19px;font-weight:700;margin:20px 0 6px;color:var(--sn-fg)">$1</h2>',
-        )
-        .replace(
-            /^# (.*)$/gm,
-            '<h1 style="font-size:24px;font-weight:800;margin:20px 0 8px;color:var(--sn-fg)">$1</h1>',
-        )
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/_(.*?)_/g, '<em>$1</em>')
-        .replace(
-            /`([^`\n]+?)`/g,
-            '<code style="background:var(--sn-surface-2);border-radius:4px;padding:2px 6px;font-family:monospace;font-size:12.5px">$1</code>',
-        )
-        .replace(
-            /^> (.*)$/gm,
-            '<blockquote style="border-left:3px solid var(--sn-accent);padding:4px 14px;color:var(--sn-muted);margin:8px 0;font-style:italic">$1</blockquote>',
-        )
-        .replace(
-            /^[-*] (.*)$/gm,
-            '<li style="margin:3px 0;padding-left:4px">• $1</li>',
-        )
-        .replace(
-            /^\d+\. (.*)$/gm,
-            '<li style="margin:3px 0;padding-left:4px;list-style:decimal inside">$1</li>',
-        );
-    blocks.forEach((b, i) => {
-        out = out.replace(`%%CB${i}%%`, b);
-    });
-
-    return (
-        '<p style="margin:0;line-height:1.7">' +
-        out
-            .replace(/\n\n/g, '</p><p style="margin:10px 0;line-height:1.7">')
-            .replace(/\n/g, '<br/>') +
-        '</p>'
-    );
-}
 
 function Label({ children }: { children: React.ReactNode }) {
     return (
@@ -183,8 +62,6 @@ export default function ArticleCreateSheet({
     canPublish = false,
 }: Props) {
     const [tipsOpen, setTipsOpen] = useState(false);
-    const [tab, setTab] = useState<'write' | 'preview'>('write');
-    const bodyRef = useRef<HTMLTextAreaElement>(null);
 
     const { data, setData, post, patch, processing, errors, reset } = useForm({
         title: '',
@@ -228,7 +105,6 @@ export default function ArticleCreateSheet({
     function handleClose(next: boolean) {
         if (!next) {
             reset();
-            setTab('write');
             setTipsOpen(false);
         }
 
@@ -248,57 +124,6 @@ export default function ArticleCreateSheet({
                 forceFormData: true,
                 onSuccess: () => handleClose(false),
             });
-        }
-    }
-
-    function insertMarkdown(before: string, after: string) {
-        const ta = bodyRef.current;
-
-        if (!ta) {
-            return;
-        }
-
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-        const sel = data.body.substring(start, end);
-        setData(
-            'body',
-            data.body.substring(0, start) +
-                before +
-                sel +
-                after +
-                data.body.substring(end),
-        );
-        requestAnimationFrame(() => {
-            ta.focus();
-            ta.setSelectionRange(
-                start + before.length,
-                start + before.length + sel.length,
-            );
-        });
-    }
-
-    function handleBodyKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-        const mod = e.metaKey || e.ctrlKey;
-
-        if (mod && e.key === 'b') {
-            e.preventDefault();
-            insertMarkdown('**', '**');
-        }
-
-        if (mod && e.key === 'i') {
-            e.preventDefault();
-            insertMarkdown('_', '_');
-        }
-
-        if (mod && e.key === 'k') {
-            e.preventDefault();
-            insertMarkdown('[', '](url)');
-        }
-
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            insertMarkdown('    ', '');
         }
     }
 
@@ -629,177 +454,28 @@ export default function ArticleCreateSheet({
 
                             {/* ── Markdown editor ── */}
                             <div>
-                                {/* Tab bar sits above the editor border */}
-                                <div className="flex items-end justify-between">
-                                    <Label>Contenu</Label>
-                                    <div
-                                        className="flex"
-                                        style={{
-                                            marginBottom: '-1px',
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        }}
+                                <Label>Contenu</Label>
+                                <MarkdownEditor
+                                    value={data.body}
+                                    onChange={(v) => setData('body', v)}
+                                    error={errors.body}
+                                    scope="full"
+                                    allowImages
+                                    minHeight={320}
+                                    maxHeight={420}
+                                    placeholder="Écris ton article…"
+                                    disabled={processing}
+                                />
+                                <div className="mt-1.5 flex items-center justify-between">
+                                    <span
+                                        className="font-mono text-[11px]"
+                                        style={{ color: 'var(--sn-muted)' }}
                                     >
-                                        {(['write', 'preview'] as const).map(
-                                            (t) => (
-                                                <button
-                                                    key={t}
-                                                    type="button"
-                                                    onClick={() => setTab(t)}
-                                                    className="rounded-t-lg px-4 py-1.5 text-[12.5px] font-medium transition-colors"
-                                                    style={{
-                                                        background:
-                                                            tab === t
-                                                                ? 'var(--sn-surface)'
-                                                                : 'transparent',
-                                                        color:
-                                                            tab === t
-                                                                ? 'var(--sn-fg)'
-                                                                : 'var(--sn-muted)',
-                                                        border:
-                                                            tab === t
-                                                                ? '1px solid var(--sn-border)'
-                                                                : '1px solid transparent',
-                                                        borderBottom:
-                                                            tab === t
-                                                                ? '1px solid var(--sn-surface)'
-                                                                : '1px solid transparent',
-                                                    }}
-                                                >
-                                                    {t === 'write'
-                                                        ? 'Rédiger'
-                                                        : 'Aperçu'}
-                                                </button>
-                                            ),
-                                        )}
-                                    </div>
+                                        {wordCount > 0
+                                            ? `${wordCount} mots · ~${readingMinutes} min de lecture`
+                                            : 'Markdown supporté'}
+                                    </span>
                                 </div>
-
-                                <div
-                                    className="overflow-hidden rounded-tl-xl rounded-b-xl"
-                                    style={{
-                                        border: '1px solid var(--sn-border)',
-                                    }}
-                                >
-                                    {/* Toolbar — write mode only */}
-                                    {tab === 'write' && (
-                                        <div
-                                            className="flex flex-wrap items-center gap-0.5 px-2 py-1.5"
-                                            style={{
-                                                background: 'var(--sn-surface)',
-                                                borderBottom:
-                                                    '1px solid var(--sn-border)',
-                                            }}
-                                        >
-                                            {TOOLBAR.map((item, i) =>
-                                                item.type === 'sep' ? (
-                                                    <span
-                                                        key={`sep-${i}`}
-                                                        className="mx-1 h-4 w-px"
-                                                        style={{
-                                                            background:
-                                                                'var(--sn-border)',
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <button
-                                                        key={item.label}
-                                                        type="button"
-                                                        title={item.label}
-                                                        onClick={() =>
-                                                            insertMarkdown(
-                                                                item.before,
-                                                                item.after,
-                                                            )
-                                                        }
-                                                        className="flex h-7 w-7 items-center justify-center rounded-md transition-colors"
-                                                        style={{
-                                                            color: 'var(--sn-muted)',
-                                                        }}
-                                                        onMouseEnter={(e) => {
-                                                            e.currentTarget.style.background =
-                                                                'var(--sn-surface-2)';
-                                                            e.currentTarget.style.color =
-                                                                'var(--sn-fg)';
-                                                        }}
-                                                        onMouseLeave={(e) => {
-                                                            e.currentTarget.style.background =
-                                                                'transparent';
-                                                            e.currentTarget.style.color =
-                                                                'var(--sn-muted)';
-                                                        }}
-                                                    >
-                                                        <item.icon size={14} />
-                                                    </button>
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {tab === 'write' ? (
-                                        <textarea
-                                            ref={bodyRef}
-                                            value={data.body}
-                                            onChange={(e) =>
-                                                setData('body', e.target.value)
-                                            }
-                                            onKeyDown={handleBodyKeyDown}
-                                            placeholder={
-                                                '# Mon article\n\nCommence à rédiger ici…'
-                                            }
-                                            className="w-full resize-none px-4 py-3 text-[13px] leading-relaxed focus:outline-none"
-                                            style={{
-                                                background: 'var(--sn-bg)',
-                                                color: 'var(--sn-fg)',
-                                                height: '280px',
-                                                display: 'block',
-                                            }}
-                                        />
-                                    ) : (
-                                        <div
-                                            className="overflow-auto px-5 py-4 text-[14px] leading-relaxed"
-                                            style={{
-                                                background: 'var(--sn-bg)',
-                                                color: 'var(--sn-fg)',
-                                                height: '280px',
-                                            }}
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    renderMarkdown(data.body) ||
-                                                    '<p style="color:var(--sn-muted);font-style:italic;font-size:13px;margin:0">Aucun contenu à prévisualiser…</p>',
-                                            }}
-                                        />
-                                    )}
-
-                                    {/* Status bar */}
-                                    <div
-                                        className="flex items-center justify-between px-3 py-1.5"
-                                        style={{
-                                            background: 'var(--sn-surface)',
-                                            borderTop:
-                                                '1px solid var(--sn-border)',
-                                        }}
-                                    >
-                                        <span
-                                            className="font-mono text-[11px]"
-                                            style={{ color: 'var(--sn-muted)' }}
-                                        >
-                                            {wordCount > 0
-                                                ? `${wordCount} mots · ~${readingMinutes} min de lecture`
-                                                : 'Markdown supporté'}
-                                        </span>
-                                        <span
-                                            className="font-mono text-[11px]"
-                                            style={{ color: 'var(--sn-muted)' }}
-                                        >
-                                            {tab === 'write'
-                                                ? '⌘B ⌘I ⌘K'
-                                                : 'Aperçu'}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <FieldError message={errors.body} />
                             </div>
                         </div>
 

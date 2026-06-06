@@ -1,9 +1,11 @@
 import { router } from '@inertiajs/react';
 import { Check } from 'lucide-react';
 import { useState } from 'react';
+import { LazyMarkdownEditor as MarkdownEditor } from '@/components/editor/lazy-markdown-editor';
 import { ReplyActionsMenu } from '@/components/forum/reply-actions-menu';
+import { Markdown } from '@/components/markdown/markdown';
 import { useInitials } from '@/hooks/use-initials';
-import { authorTint, timeAgo } from '@/lib/forum';
+import { authorTint } from '@/lib/forum';
 import { toUrl } from '@/lib/utils';
 import { update as replyUpdate } from '@/routes/forum/replies';
 import type { Auth, ForumReply, ForumThreadFull } from '@/types';
@@ -109,7 +111,7 @@ export function ReplyCard({
                         className="block font-mono text-[11px]"
                         style={{ color: 'var(--sn-muted)' }}
                     >
-                        {timeAgo(reply.created_at)}
+                        {reply.created_at_human}
                         {reply.is_edited && ' · modifié'}
                     </span>
                 </div>
@@ -140,7 +142,7 @@ export function ReplyCard({
                     </span>
                     <span>·</span>
                     <span>
-                        {timeAgo(reply.created_at)}
+                        {reply.created_at_human}
                         {reply.is_edited && ' · modifié'}
                     </span>
                 </div>
@@ -159,17 +161,15 @@ export function ReplyCard({
             <div className="px-5 py-4">
                 {editing ? (
                     <div className="space-y-2">
-                        <textarea
+                        <MarkdownEditor
                             value={editBody}
-                            onChange={(e) => setEditBody(e.target.value)}
-                            rows={4}
+                            onChange={setEditBody}
+                            scope="compact"
+                            allowImages
+                            minHeight={120}
+                            maxHeight={360}
+                            placeholder="Modifie ta réponse…"
                             autoFocus
-                            className="w-full resize-none rounded-md px-3 py-2 text-[13.5px]"
-                            style={{
-                                background: 'var(--sn-bg)',
-                                border: '1px solid var(--sn-border)',
-                                color: 'var(--sn-fg)',
-                            }}
                         />
                         <div className="flex gap-2">
                             <button
@@ -190,12 +190,7 @@ export function ReplyCard({
                         </div>
                     </div>
                 ) : (
-                    <div
-                        className="text-[14px] leading-[1.8] whitespace-pre-wrap"
-                        style={{ color: 'var(--sn-fg)' }}
-                    >
-                        {reply.body}
-                    </div>
+                    <Markdown variant="forum">{reply.body}</Markdown>
                 )}
 
                 {reply.children.length > 0 && (
@@ -236,15 +231,12 @@ export function ReplyCard({
                                         className="font-mono text-[11px]"
                                         style={{ color: 'var(--sn-muted)' }}
                                     >
-                                        · {timeAgo(child.created_at)}
+                                        · {child.created_at_human}
                                     </span>
                                 </div>
-                                <p
-                                    className="text-[13.5px] leading-relaxed whitespace-pre-wrap"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
+                                <Markdown variant="compact">
                                     {child.body}
-                                </p>
+                                </Markdown>
                             </div>
                         ))}
                     </div>

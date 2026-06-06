@@ -1,0 +1,715 @@
+.sn-mdx-wrapper {
+    width: 100%;
+}
+
+.sn-mdx-shell {
+    border: 1px solid var(--sn-border);
+    border-radius: 12px;
+    background: var(--sn-bg);
+    overflow: hidden;
+    transition: border-color 0.15s var(--sn-ease, ease);
+}
+
+.sn-mdx-shell:focus-within {
+    border-color: color-mix(in oklch, var(--sn-accent) 55%, var(--sn-border));
+}
+
+.sn-mdx-shell--error {
+    border-color: var(--destructive, #dc2626);
+}
+
+.sn-mdx-shell--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* =========================================================
+ *  MDXEditor root — remap Radix color system to --sn-* tokens
+ *
+ *  MDXEditor uses --base* and --accent* vars (from Radix Themes)
+ *  which default to light-mode slate. We override them here so
+ *  everything — including parts we haven't explicitly styled —
+ *  flows through our design tokens and flips in dark mode.
+ * ========================================================= */
+.sn-mdx-shell .mdxeditor {
+    --mdxeditor-font-family: inherit;
+    --mdxeditor-root-content-padding: 0;
+
+    --basePageBg: var(--sn-bg);
+    --baseBase: var(--sn-surface);
+    --baseBgSubtle: var(--sn-surface);
+    --baseBg: var(--sn-surface-2);
+    --baseBgHover: color-mix(
+        in oklch,
+        var(--sn-surface-2) 80%,
+        var(--sn-fg) 20%
+    );
+    --baseBgActive: color-mix(
+        in oklch,
+        var(--sn-surface-2) 60%,
+        var(--sn-fg) 40%
+    );
+    --baseLine: var(--sn-border);
+    --baseBorder: var(--sn-border);
+    --baseBorderHover: color-mix(
+        in oklch,
+        var(--sn-accent) 40%,
+        var(--sn-border)
+    );
+    --baseSolid: var(--sn-muted);
+    --baseSolidHover: var(--sn-fg);
+    --baseText: var(--sn-muted);
+    --baseTextContrast: var(--sn-fg);
+
+    --accentBase: color-mix(in oklch, var(--sn-accent) 5%, var(--sn-bg));
+    --accentBgSubtle: color-mix(in oklch, var(--sn-accent) 8%, var(--sn-bg));
+    --accentBg: color-mix(in oklch, var(--sn-accent) 12%, var(--sn-bg));
+    --accentBgHover: color-mix(in oklch, var(--sn-accent) 18%, var(--sn-bg));
+    --accentBgActive: color-mix(in oklch, var(--sn-accent) 25%, var(--sn-bg));
+    --accentLine: color-mix(in oklch, var(--sn-accent) 30%, var(--sn-border));
+    --accentBorder: color-mix(in oklch, var(--sn-accent) 40%, var(--sn-border));
+    --accentBorderHover: var(--sn-accent);
+    --accentSolid: var(--sn-accent);
+    --accentSolidHover: var(--sn-accent-hover);
+    --accentText: var(--sn-accent);
+    --accentTextContrast: var(--sn-accent-fg, #fff);
+
+    font-family: inherit;
+    background: transparent;
+    color: var(--sn-fg);
+}
+
+/* =========================================================
+ *  Toolbar
+ * ========================================================= */
+.sn-mdx-shell .mdxeditor-toolbar {
+    background: var(--sn-surface);
+    border-bottom: 1px solid var(--sn-border);
+    border-radius: 0;
+    gap: 2px;
+    padding: 6px 8px;
+    flex-wrap: wrap;
+}
+
+.sn-mdx-shell .mdxeditor-toolbar button {
+    color: var(--sn-muted);
+    border-radius: 6px;
+    position: relative;
+    min-width: 28px;
+    min-height: 28px;
+}
+
+.sn-mdx-shell .mdxeditor-toolbar button:hover {
+    background: var(--sn-surface-2);
+    color: var(--sn-fg);
+}
+
+.sn-mdx-shell .mdxeditor-toolbar button[data-state='on'] {
+    background: color-mix(in oklch, var(--sn-accent) 16%, transparent);
+    color: var(--sn-accent);
+}
+
+/* Tooltips on toolbar buttons */
+.sn-mdx-shell .mdxeditor-toolbar button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--sn-fg);
+    color: var(--sn-bg);
+    pointer-events: none;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sn-mdx-shell .mdxeditor-toolbar [role='separator'] {
+    background: var(--sn-border);
+}
+
+/* Select triggers (block type, code language) */
+.sn-mdx-shell .mdxeditor-toolbar [role='combobox'],
+.sn-mdx-shell .mdxeditor-select-trigger,
+.sn-mdx-shell .mdxeditor-toolbar select {
+    color: var(--sn-fg);
+    background: var(--sn-bg);
+    border: 1px solid var(--sn-border);
+    border-radius: 6px;
+    font-size: 12px;
+    padding: 4px 8px;
+    min-height: 28px;
+}
+
+.sn-mdx-shell .mdxeditor-toolbar [role='combobox']:hover,
+.sn-mdx-shell .mdxeditor-select-trigger:hover {
+    border-color: color-mix(in oklch, var(--sn-accent) 50%, var(--sn-border));
+}
+
+/* Source/rich-text toggle in toolbar */
+.sn-mdx-shell [class*='diffSourceToggle'] {
+    display: contents;
+}
+
+.sn-mdx-shell .mdxeditor-toolbar [class*='_toggleButton'] {
+    color: var(--sn-muted);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.sn-mdx-shell .mdxeditor-toolbar [class*='_toggleButton'][data-state='on'] {
+    background: color-mix(in oklch, var(--sn-accent) 14%, transparent);
+    color: var(--sn-accent);
+}
+
+/* =========================================================
+ *  Content area
+ * ========================================================= */
+.sn-mdx-content {
+    min-height: var(--sn-mdx-min-h, 240px);
+    max-height: var(--sn-mdx-max-h, none);
+    overflow-y: auto;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--sn-fg);
+    outline: none;
+}
+
+.sn-mdx-content[contenteditable='false'] {
+    cursor: default;
+}
+
+.sn-mdx-content [data-lexical-placeholder],
+.sn-mdx-shell .mdxeditor-placeholder {
+    color: var(--sn-muted);
+    font-style: normal;
+}
+
+/* Source mode textarea */
+.sn-mdx-shell .mdxeditor-source-editor {
+    min-height: var(--sn-mdx-min-h, 240px);
+    max-height: var(--sn-mdx-max-h, none);
+    overflow-y: auto;
+}
+
+.sn-mdx-shell .mdxeditor-source-editor .cm-editor {
+    background: var(--sn-bg) !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.sn-mdx-shell .mdxeditor-source-editor .cm-editor .cm-content {
+    color: var(--sn-fg);
+    font-family: var(--font-mono, monospace);
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 16px 18px;
+}
+
+.sn-mdx-shell .mdxeditor-source-editor .cm-gutters {
+    background: var(--sn-surface);
+    border-right: 1px solid var(--sn-border);
+    color: var(--sn-muted);
+}
+
+/* =========================================================
+ *  Typography inside editor
+ * ========================================================= */
+.sn-mdx-content h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 14px 0 6px;
+    color: var(--sn-fg);
+}
+
+.sn-mdx-content h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 14px 0 4px;
+    color: var(--sn-fg);
+}
+
+.sn-mdx-content h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 12px 0 4px;
+    color: var(--sn-fg);
+}
+
+.sn-mdx-content h4 {
+    font-size: 14.5px;
+    font-weight: 600;
+    margin: 10px 0 4px;
+    color: var(--sn-fg);
+}
+
+.sn-mdx-content p {
+    margin: 8px 0;
+}
+
+.sn-mdx-content ul,
+.sn-mdx-content ol {
+    margin: 8px 0 8px 22px;
+}
+
+.sn-mdx-content ul {
+    list-style: disc;
+}
+
+.sn-mdx-content ol {
+    list-style: decimal;
+}
+
+.sn-mdx-content li {
+    margin: 3px 0;
+}
+
+.sn-mdx-content blockquote {
+    border-left: 3px solid var(--sn-accent);
+    padding: 4px 14px;
+    margin: 10px 0;
+    color: var(--sn-muted);
+    font-style: italic;
+}
+
+.sn-mdx-content code {
+    font-family: var(--font-mono, monospace);
+    font-size: 12.5px;
+    padding: 2px 6px;
+    background: var(--sn-surface-2);
+    border-radius: 4px;
+    color: var(--sn-accent);
+}
+
+.sn-mdx-content a {
+    color: var(--sn-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.sn-mdx-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px 0;
+    border: 1px solid var(--sn-border);
+}
+
+.sn-mdx-content hr {
+    border: 0;
+    border-top: 1px solid var(--sn-border);
+    margin: 18px 0;
+}
+
+/* =========================================================
+ *  Tables in editor
+ * ========================================================= */
+.sn-mdx-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+}
+
+.sn-mdx-content th,
+.sn-mdx-content td {
+    border: 1px solid var(--sn-border);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.sn-mdx-content th {
+    background: var(--sn-surface-2);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sn-muted);
+}
+
+.sn-mdx-content td {
+    color: var(--sn-fg);
+}
+
+.sn-mdx-shell [class*='_tableEditor'] {
+    border: 1px solid var(--sn-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sn-mdx-shell [class*='_toolCell'] {
+    background: var(--sn-surface) !important;
+    border-color: var(--sn-border) !important;
+}
+
+.sn-mdx-shell [class*='_toolCell'] button {
+    color: var(--sn-muted);
+}
+
+.sn-mdx-shell [class*='_toolCell'] button:hover {
+    color: var(--sn-accent);
+    background: var(--sn-surface-2);
+}
+
+.sn-mdx-shell [class*='_addRowButton'],
+.sn-mdx-shell [class*='_addColumnButton'] {
+    color: var(--sn-muted) !important;
+    background: var(--sn-surface) !important;
+}
+
+.sn-mdx-shell [class*='_addRowButton']:hover,
+.sn-mdx-shell [class*='_addColumnButton']:hover {
+    color: var(--sn-accent) !important;
+    background: var(--sn-surface-2) !important;
+}
+
+/* =========================================================
+ *  Code blocks (CodeMirror inside editor)
+ * ========================================================= */
+.sn-mdx-shell .cm-editor {
+    background: var(--sn-surface-2);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-mono, monospace);
+    font-size: 13px;
+    overflow: hidden;
+}
+
+.sn-mdx-shell .cm-editor .cm-content {
+    color: var(--sn-code-text, #e6edf3);
+    padding: 14px 16px;
+}
+
+.sn-mdx-shell .cm-editor .cm-line {
+    padding: 0;
+}
+
+.sn-mdx-shell .cm-gutters {
+    display: none !important;
+}
+
+.sn-mdx-shell .cm-activeLine {
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.sn-mdx-shell .cm-cursor {
+    border-left-color: var(--sn-code-caret, var(--sn-accent));
+}
+
+.sn-mdx-shell .cm-selectionBackground {
+    background: color-mix(
+        in oklch,
+        var(--sn-accent) 20%,
+        transparent
+    ) !important;
+}
+
+/* Code block toolbar (language picker) */
+.sn-mdx-shell [class*='_codeMirrorToolbar'] {
+    background: var(--sn-surface);
+    border-top: 1px solid var(--sn-border);
+    padding: 4px 8px;
+}
+
+.sn-mdx-shell [class*='_codeMirrorToolbar'] select {
+    background: var(--sn-bg);
+    color: var(--sn-fg);
+    border: 1px solid var(--sn-border);
+    border-radius: 6px;
+    font-size: 11px;
+    padding: 2px 6px;
+    font-family: var(--font-mono, monospace);
+}
+
+/* =========================================================
+ *  Image wrapper in editor
+ * ========================================================= */
+.sn-mdx-shell [class*='_imageWrapper'] {
+    display: inline-block;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+    border: 1px solid var(--sn-border);
+}
+
+.sn-mdx-shell [class*='_imageWrapper'] img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: none;
+    margin: 0;
+}
+
+.sn-mdx-shell [class*='_imageWrapper'][class*='_focused'] {
+    outline: 2px solid var(--sn-accent);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+ *  Popover / dialog z-index fix (must beat sheet z-50)
+ * ========================================================= */
+.mdxeditor-popup-container {
+    --mdxeditor-font-family: inherit;
+    z-index: 99999 !important;
+    position: fixed !important;
+
+    --basePageBg: var(--sn-bg);
+    --baseBase: var(--sn-surface);
+    --baseBgSubtle: var(--sn-surface);
+    --baseBg: var(--sn-surface-2);
+    --baseBgHover: color-mix(
+        in oklch,
+        var(--sn-surface-2) 80%,
+        var(--sn-fg) 20%
+    );
+    --baseBgActive: color-mix(
+        in oklch,
+        var(--sn-surface-2) 60%,
+        var(--sn-fg) 40%
+    );
+    --baseLine: var(--sn-border);
+    --baseBorder: var(--sn-border);
+    --baseBorderHover: color-mix(
+        in oklch,
+        var(--sn-accent) 40%,
+        var(--sn-border)
+    );
+    --baseSolid: var(--sn-muted);
+    --baseSolidHover: var(--sn-fg);
+    --baseText: var(--sn-muted);
+    --baseTextContrast: var(--sn-fg);
+    --accentSolid: var(--sn-accent);
+    --accentSolidHover: var(--sn-accent-hover);
+    --accentText: var(--sn-accent);
+    --accentTextContrast: var(--sn-accent-fg, #fff);
+}
+
+/* =========================================================
+ *  Dropdown menus (block type, code language, etc.)
+ * ========================================================= */
+.mdxeditor-popup-container [role='listbox'],
+.mdxeditor-popup-container [role='menu'],
+.mdxeditor-popup-container [data-radix-popper-content-wrapper] {
+    z-index: 99999 !important;
+}
+
+.mdxeditor-popup-container [role='option'],
+.mdxeditor-popup-container [role='menuitem'] {
+    color: var(--sn-fg);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.mdxeditor-popup-container [role='option']:hover,
+.mdxeditor-popup-container [role='option'][data-highlighted],
+.mdxeditor-popup-container [role='menuitem']:hover {
+    background: var(--sn-surface-2);
+    color: var(--sn-fg);
+}
+
+.mdxeditor-popup-container [role='option'][data-state='checked'] {
+    background: color-mix(in oklch, var(--sn-accent) 12%, transparent);
+    color: var(--sn-accent);
+}
+
+/* The select content panel */
+.mdxeditor-popup-container [class*='_selectContent'],
+.mdxeditor-popup-container [role='listbox'] {
+    background: var(--sn-surface);
+    border: 1px solid var(--sn-border);
+    border-radius: 10px;
+    padding: 4px;
+    box-shadow: var(--sn-shadow-lg, 0 10px 40px -8px rgba(0, 0, 0, 0.3));
+    overflow: hidden;
+}
+
+/* =========================================================
+ *  Link / image / table dialogs
+ * ========================================================= */
+.mdxeditor-popup-container [role='dialog'],
+.mdxeditor-popup-container [class*='_linkDialogPopoverContent'],
+.mdxeditor-popup-container [class*='_dialogContent'] {
+    background: var(--sn-surface);
+    border: 1px solid var(--sn-border);
+    border-radius: 12px;
+    color: var(--sn-fg);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.04),
+        0 16px 48px -8px rgba(0, 0, 0, 0.25);
+    padding: 16px;
+    min-width: 320px;
+    max-width: 420px;
+}
+
+.mdxeditor-popup-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mdxeditor-popup-container label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sn-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mdxeditor-popup-container input[type='text'],
+.mdxeditor-popup-container input[type='url'],
+.mdxeditor-popup-container input:not([type]) {
+    background: var(--sn-bg);
+    border: 1px solid var(--sn-border);
+    color: var(--sn-fg);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.mdxeditor-popup-container input:focus {
+    border-color: var(--sn-accent);
+}
+
+.mdxeditor-popup-container button[type='submit'],
+.mdxeditor-popup-container [class*='_primaryButton'],
+.mdxeditor-popup-container [class*='_actionButton'] {
+    background: var(--sn-accent);
+    color: var(--sn-accent-fg, #fff);
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.mdxeditor-popup-container button[type='submit']:hover,
+.mdxeditor-popup-container [class*='_primaryButton']:hover {
+    opacity: 0.9;
+}
+
+.mdxeditor-popup-container [class*='_secondaryButton'],
+.mdxeditor-popup-container button[class*='_cancelButton'] {
+    background: var(--sn-surface-2);
+    color: var(--sn-fg);
+    border: 1px solid var(--sn-border);
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Link dialog inline preview */
+.mdxeditor-popup-container a[href] {
+    color: var(--sn-accent);
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.mdxeditor-popup-container [class*='_linkDialogEditButton'],
+.mdxeditor-popup-container [class*='_iconButton'] {
+    color: var(--sn-muted);
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.mdxeditor-popup-container [class*='_linkDialogEditButton']:hover,
+.mdxeditor-popup-container [class*='_iconButton']:hover {
+    color: var(--sn-fg);
+    background: var(--sn-surface-2);
+}
+
+/* =========================================================
+ *  Error message
+ * ========================================================= */
+.sn-mdx-error {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--destructive, #dc2626);
+}
+
+/* =========================================================
+ *  Mobile responsiveness
+ * ========================================================= */
+@media (max-width: 640px) {
+    .sn-mdx-shell .mdxeditor-toolbar {
+        padding: 4px 6px;
+        gap: 1px;
+    }
+
+    .sn-mdx-shell .mdxeditor-toolbar button {
+        min-width: 32px;
+        min-height: 32px;
+    }
+
+    .sn-mdx-shell .mdxeditor-toolbar [role='separator'] {
+        display: none;
+    }
+
+    .sn-mdx-shell .mdxeditor-toolbar [role='combobox'],
+    .sn-mdx-shell .mdxeditor-select-trigger {
+        font-size: 11px;
+        padding: 3px 6px;
+        max-width: 100px;
+    }
+
+    .sn-mdx-content {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .mdxeditor-popup-container [role='dialog'],
+    .mdxeditor-popup-container [class*='_linkDialogPopoverContent'],
+    .mdxeditor-popup-container [class*='_dialogContent'] {
+        min-width: unset;
+        max-width: calc(100vw - 32px);
+        width: calc(100vw - 32px);
+    }
+}
+
+/* =========================================================
+ *  Dark mode refinements
+ * ========================================================= */
+:is(.dark *) .sn-mdx-shell .mdxeditor-toolbar button[title]:hover::after {
+    background: var(--sn-surface-2);
+    color: var(--sn-fg);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+:is(.dark *) .mdxeditor-popup-container [role='dialog'],
+:is(.dark *) .mdxeditor-popup-container [class*='_linkDialogPopoverContent'],
+:is(.dark *) .mdxeditor-popup-container [class*='_dialogContent'] {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 16px 48px -8px rgba(0, 0, 0, 0.7);
+}
+
+:is(.dark *) .mdxeditor-popup-container [class*='_selectContent'],
+:is(.dark *) .mdxeditor-popup-container [role='listbox'] {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 12px 36px -6px rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sn-mdx-shell {
+        transition: none;
+    }
+}

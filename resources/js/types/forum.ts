@@ -35,6 +35,7 @@ export type ForumThreadSummary = {
     views_count: number;
     last_posted_at: string;
     created_at: string;
+    created_at_human: string;
     author: ForumAuthor;
     channels: ForumChannelMin[];
 };
@@ -45,6 +46,7 @@ export type ForumReply = {
     is_edited: boolean;
     edited_at: string | null;
     created_at: string;
+    created_at_human: string;
     author: ForumAuthor;
     children: ForumReply[];
 };

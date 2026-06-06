@@ -38,6 +38,9 @@ final class Reply extends Model
 
     protected $guarded = [];
 
+    /** @var list<string> */
+    protected $appends = ['created_at_human'];
+
     /**
      * @return array<string, string>
      */
@@ -74,6 +77,13 @@ final class Reply extends Model
     {
         return Attribute::get(
             fn (): bool => $this->thread->solution_reply_id === $this->id
+        );
+    }
+
+    protected function createdAtHuman(): Attribute
+    {
+        return Attribute::get(
+            fn (): ?string => $this->created_at?->locale((string) config('app.locale'))->diffForHumans(),
         );
     }
 

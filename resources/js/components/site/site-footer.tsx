@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import SiteWordmark from '@/components/site/site-wordmark';
 
@@ -76,9 +77,9 @@ export default function SiteFooter() {
             <div className="mx-auto grid max-w-350 gap-10 px-6 pt-14 pb-10 md:grid-cols-12 lg:px-10">
                 {/* Brand column */}
                 <div className="md:col-span-5">
-                    <a href="/">
+                    <Link href="/">
                         <SiteWordmark logoSize="lg" />
-                    </a>
+                    </Link>
 
                     <p
                         className="mt-4 max-w-[42ch] text-[13.5px] leading-relaxed"
@@ -150,23 +151,22 @@ export default function SiteFooter() {
                                                     soon
                                                 </span>
                                             </span>
-                                        ) : (
+                                        ) : href.startsWith('http') ? (
                                             <a
                                                 href={href}
                                                 className="sn-navlink text-[13.5px]"
-                                                target={
-                                                    href.startsWith('http')
-                                                        ? '_blank'
-                                                        : undefined
-                                                }
-                                                rel={
-                                                    href.startsWith('http')
-                                                        ? 'noopener noreferrer'
-                                                        : undefined
-                                                }
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                             >
                                                 {label}
                                             </a>
+                                        ) : (
+                                            <Link
+                                                href={href}
+                                                className="sn-navlink text-[13.5px]"
+                                            >
+                                                {label}
+                                            </Link>
                                         )}
                                     </li>
                                 ))}

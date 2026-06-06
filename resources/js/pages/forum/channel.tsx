@@ -16,7 +16,8 @@ import {
 import { useState } from 'react';
 import { ThreadCreateSheet } from '@/components/site/thread-create-sheet';
 import { useInitials } from '@/hooks/use-initials';
-import { authorTint, timeAgo } from '@/lib/forum';
+import { authorTint } from '@/lib/forum';
+import { stripMarkdown } from '@/lib/strip-markdown';
 import { toUrl } from '@/lib/utils';
 import { index as forumIndex } from '@/routes/forum';
 import {
@@ -114,7 +115,7 @@ function ThreadCard({ thread }: { thread: ForumThreadSummary }) {
                 className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed"
                 style={{ color: 'var(--sn-muted)' }}
             >
-                {thread.body}
+                {stripMarkdown(thread.body)}
             </p>
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -137,7 +138,7 @@ function ThreadCard({ thread }: { thread: ForumThreadSummary }) {
                         </span>
                         {' · '}
                         <span className="font-mono">
-                            {timeAgo(thread.created_at)}
+                            {thread.created_at_human}
                         </span>
                     </span>
                 </div>
