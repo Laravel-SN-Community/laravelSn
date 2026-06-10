@@ -58,6 +58,15 @@ services:
       - traefik.http.routers.app.entrypoints=websecure
       - traefik.http.routers.app.tls.certresolver=le
       - traefik.http.services.app.loadbalancer.server.port=8080
+      # Active health checking + transparent retry: requests that hit a
+      # draining container during a rolling deploy are retried against
+      # the healthy replica instead of failing.
+      - traefik.http.services.app.loadbalancer.healthcheck.path=/up
+      - traefik.http.services.app.loadbalancer.healthcheck.interval=2s
+      - traefik.http.services.app.loadbalancer.healthcheck.timeout=1s
+      - traefik.http.routers.app.middlewares=app-retry
+      - traefik.http.middlewares.app-retry.retry.attempts=3
+      - traefik.http.middlewares.app-retry.retry.initialinterval=200ms
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/up']
       interval: 10s
