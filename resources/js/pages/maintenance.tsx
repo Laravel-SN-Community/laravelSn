@@ -64,7 +64,7 @@ export default function Maintenance() {
                         footerLeft="mode maintenance"
                         footerRight="retour imminent"
                     >
-                        <TypedCommand text="php artisan down --secret=●●●●●●" />
+                        <TypedCommand text="php artisan down" />
                         <TerminalLine delay={1.7} color="var(--sn-accent)">
                             Application is now in maintenance mode.
                         </TerminalLine>
