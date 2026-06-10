@@ -61,9 +61,10 @@ services:
       # Active health checking + transparent retry: requests that hit a
       # draining container during a rolling deploy are retried against
       # the healthy replica instead of failing.
+      # Timeouts sized so saturation degrades into queueing, not 503 flapping
       - traefik.http.services.app.loadbalancer.healthcheck.path=/up
-      - traefik.http.services.app.loadbalancer.healthcheck.interval=2s
-      - traefik.http.services.app.loadbalancer.healthcheck.timeout=1s
+      - traefik.http.services.app.loadbalancer.healthcheck.interval=5s
+      - traefik.http.services.app.loadbalancer.healthcheck.timeout=3s
       - traefik.http.routers.app.middlewares=app-retry,app-headers
       - traefik.http.middlewares.app-retry.retry.attempts=3
       - traefik.http.middlewares.app-retry.retry.initialinterval=200ms
