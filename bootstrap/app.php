@@ -44,6 +44,13 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $e, Request $request) {
+            // Maintenance mode gets a bare standalone page (no site layout).
+            if ($response->status() === 503) {
+                return Inertia::render('maintenance')
+                    ->toResponse($request)
+                    ->setStatusCode(503);
+            }
+
             if (in_array($response->status(), [403, 404, 503])) {
                 return Inertia::render('error', ['status' => $response->status()])
                     ->toResponse($request)
