@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://laravel-senegal.com
+      url: https://laravel.sn
 
     steps:
       - name: Deploy over SSH
@@ -81,7 +81,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "✅ *Déploiement réussi* sur <https://laravel-senegal.com|laravel-senegal.com>"
+                    "text": "✅ *Déploiement réussi* sur <https://laravel.sn|laravel.sn>"
                   }
                 },
                 {
