@@ -64,9 +64,20 @@ services:
       - traefik.http.services.app.loadbalancer.healthcheck.path=/up
       - traefik.http.services.app.loadbalancer.healthcheck.interval=2s
       - traefik.http.services.app.loadbalancer.healthcheck.timeout=1s
-      - traefik.http.routers.app.middlewares=app-retry
+      - traefik.http.routers.app.middlewares=app-retry,app-headers
       - traefik.http.middlewares.app-retry.retry.attempts=3
       - traefik.http.middlewares.app-retry.retry.initialinterval=200ms
+      # HSTS: browsers remember to always use HTTPS (1 year)
+      - traefik.http.middlewares.app-headers.headers.stsSeconds=31536000
+      # www → apex permanent redirect, with its own LE certificate
+      - traefik.http.routers.www.rule=Host(`www.${APP_DOMAIN}`)
+      - traefik.http.routers.www.entrypoints=websecure
+      - traefik.http.routers.www.tls.certresolver=le
+      - traefik.http.routers.www.service=app
+      - traefik.http.routers.www.middlewares=www-to-apex
+      - traefik.http.middlewares.www-to-apex.redirectregex.regex=^https?://www\.(.+)
+      - traefik.http.middlewares.www-to-apex.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.www-to-apex.redirectregex.permanent=true
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/up']
       interval: 10s
