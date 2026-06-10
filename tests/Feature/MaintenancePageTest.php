@@ -19,5 +19,6 @@ test('other error statuses keep the regular error page', function (): void {
         ->assertInertia(fn (Assert $page): Assert => $page
             ->component('error')
             ->where('status', 404)
+            ->where('path', '/this-page-does-not-exist')
         );
 });

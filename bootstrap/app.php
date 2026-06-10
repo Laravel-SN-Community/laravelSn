@@ -52,13 +52,19 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if (in_array($response->status(), [403, 404, 503])) {
-                return Inertia::render('error', ['status' => $response->status()])
+                return Inertia::render('error', [
+                    'status' => $response->status(),
+                    'path' => '/'.ltrim($request->path(), '/'),
+                ])
                     ->toResponse($request)
                     ->setStatusCode($response->status());
             }
 
             if (! app()->environment(['local', 'testing']) && $response->status() >= 500) {
-                return Inertia::render('error', ['status' => $response->status()])
+                return Inertia::render('error', [
+                    'status' => $response->status(),
+                    'path' => '/'.ltrim($request->path(), '/'),
+                ])
                     ->toResponse($request)
                     ->setStatusCode($response->status());
             }
