@@ -189,7 +189,52 @@ test('it migrates users with correct role mapping', function (): void {
     expect($adminRole)->toBe('admin');
 });
 
-test('it generates passwords for oauth-only users and sends notification', function (): void {
+test('it migrates github and google provider ids so social login keeps working', function (): void {
+    Notification::fake();
+
+    $now = now()->toDateTimeString();
+
+    DB::connection('legacy')->table('users')->insert([
+        [
+            'name' => 'GitHub User',
+            'email' => 'github@test.com',
+            'role' => 'user',
+            'password' => null,
+            'provider' => 'github',
+            'provider_id' => '12345',
+            'provider_token' => 'token',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ],
+        [
+            'name' => 'Google User',
+            'email' => 'google@test.com',
+            'role' => 'user',
+            'password' => null,
+            'provider' => 'google',
+            'provider_id' => '99887',
+            'provider_token' => 'token',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ],
+    ]);
+
+    $this->artisan('app:migrate-legacy-data', ['--force' => true])
+        ->assertExitCode(0);
+
+    $githubUser = DB::table('users')->where('email', 'github@test.com')->first();
+    $googleUser = DB::table('users')->where('email', 'google@test.com')->first();
+
+    expect($githubUser->github_id)->toBe('12345');
+    expect($githubUser->google_id)->toBeNull();
+    expect($googleUser->google_id)->toBe('99887');
+    expect($githubUser->password)->not->toBeEmpty();
+
+    // Their social login carries over — no generated-password email needed.
+    Notification::assertNothingSent();
+});
+
+test('it generates passwords and notifies oauth users on unsupported providers', function (): void {
     Notification::fake();
 
     $now = now()->toDateTimeString();
@@ -199,7 +244,7 @@ test('it generates passwords for oauth-only users and sends notification', funct
         'email' => 'oauth@test.com',
         'role' => 'user',
         'password' => null,
-        'provider' => 'github',
+        'provider' => 'twitter',
         'provider_id' => '12345',
         'provider_token' => 'token',
         'created_at' => $now,
@@ -212,12 +257,13 @@ test('it generates passwords for oauth-only users and sends notification', funct
     $user = DB::table('users')->where('email', 'oauth@test.com')->first();
 
     expect($user)->not->toBeNull();
+    expect($user->github_id)->toBeNull();
     expect($user->password)->not->toBeNull();
     expect($user->password)->not->toBeEmpty();
 
     $userModel = User::find($user->id);
     Notification::assertSentTo($userModel, LegacyPasswordNotification::class, function ($notification): true {
-        expect($notification->provider)->toBe('github');
+        expect($notification->provider)->toBe('twitter');
         expect($notification->plainPassword)->toHaveLength(16);
 
         return true;

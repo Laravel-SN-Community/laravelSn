@@ -65,18 +65,18 @@ export default function Login({
 
             {/* Social buttons */}
             <div className="grid grid-cols-2 gap-3">
-                <button
-                    type="button"
+                <a
+                    href="/auth/github/redirect"
                     className="sn-btn sn-btn-secondary justify-center gap-2 text-[13px]"
                 >
                     <Github size={14} /> GitHub
-                </button>
-                <button
-                    type="button"
+                </a>
+                <a
+                    href="/auth/google/redirect"
                     className="sn-btn sn-btn-secondary justify-center gap-2 text-[13px]"
                 >
                     <GoogleIcon /> Google
-                </button>
+                </a>
             </div>
 
             {/* Divider */}

@@ -26,7 +26,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read string|null $avatar
  */
 #[Fillable(['name', 'username', 'email', 'password', 'bio', 'location', 'github_handle', 'twitter_handle', 'linkedin_handle', 'website_url'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'github_id', 'google_id'])]
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
