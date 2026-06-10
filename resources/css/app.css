@@ -127,6 +127,7 @@
     --sn-accent: var(--sn-600);
     --sn-accent-fg: #fff;
     --sn-accent-hover: var(--sn-700);
+    --sn-laravel: #f53003;
 
     --sn-shadow-xs: 0 1px 2px rgba(12, 20, 18, 0.04);
     --sn-shadow-sm:
@@ -198,6 +199,7 @@
     --sn-accent: var(--sn-400);
     --sn-accent-fg: #fff;
     --sn-accent-hover: #6fc39a;
+    --sn-laravel: #ff4d35;
 
     /* Shadows — dark surfaces need opaque black depth, not the light-mode dark-on-light approach */
     --sn-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.35);
@@ -481,5 +483,170 @@
     textarea,
     select {
         font-size: 16px !important;
+    }
+}
+
+/* ── Error pages — animated ring zeros + terminal scenarios ─────────────── */
+.sn-err-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: clamp(92px, 15vw, 164px);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    font-weight: 600;
+    color: var(--sn-fg);
+}
+.sn-err-zero {
+    position: relative;
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    border: 0.065em solid var(--sn-accent);
+    margin: 0 0.06em;
+    flex: none;
+}
+@keyframes sn-err-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.sn-err-zero-search {
+    border-style: dashed;
+    animation: sn-err-spin 10s linear infinite;
+}
+@keyframes sn-err-deny {
+    0%,
+    84%,
+    100% {
+        transform: none;
+    }
+    87% {
+        transform: translateX(-0.035em);
+    }
+    90% {
+        transform: translateX(0.035em);
+    }
+    93% {
+        transform: translateX(-0.022em);
+    }
+    96% {
+        transform: translateX(0.014em);
+    }
+}
+.sn-err-zero-lock {
+    animation: sn-err-deny 6s ease-in-out infinite;
+}
+.sn-err-keyhole {
+    position: absolute;
+    left: 50%;
+    top: 33%;
+    transform: translateX(-50%);
+    width: 0.13em;
+    height: 0.13em;
+    border-radius: 50%;
+    background: var(--sn-accent);
+}
+.sn-err-keyhole::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 80%;
+    transform: translateX(-50%);
+    width: 0.05em;
+    height: 0.14em;
+    border-radius: 0.03em;
+    background: var(--sn-accent);
+}
+@keyframes sn-err-flicker {
+    0%,
+    6%,
+    8%,
+    49%,
+    52%,
+    100% {
+        opacity: 1;
+    }
+    7%,
+    50%,
+    51.4% {
+        opacity: 0.22;
+    }
+}
+.sn-err-zero-crash {
+    border-color: var(--sn-laravel);
+    animation: sn-err-flicker 3.6s steps(1) infinite;
+}
+.sn-err-zero-crash:last-of-type {
+    animation-delay: 0.35s;
+}
+.sn-err-zero-work {
+    border-color: var(--sn-border);
+    border-top-color: var(--sn-accent);
+    animation: sn-err-spin 1.5s linear infinite;
+}
+
+@keyframes sn-err-type {
+    from {
+        width: 0;
+    }
+    to {
+        width: var(--w);
+    }
+}
+.sn-err-typed {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    max-width: 100%;
+    width: var(--w);
+    animation: sn-err-type 1.1s steps(28) 0.35s both;
+}
+.sn-err-line {
+    opacity: 0;
+    animation: sn-fade-up 0.4s var(--sn-ease) forwards;
+}
+
+.sn-err-bar {
+    position: relative;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--sn-surface-2);
+    overflow: hidden;
+}
+.sn-err-bar i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 38%;
+    border-radius: 999px;
+    background: var(--sn-accent);
+    animation: sn-err-sweep 1.9s ease-in-out infinite;
+}
+@keyframes sn-err-sweep {
+    from {
+        transform: translateX(-110%);
+    }
+    to {
+        transform: translateX(300%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sn-err-zero,
+    .sn-err-bar i {
+        animation: none;
+    }
+    .sn-err-typed {
+        width: auto;
+        animation: none;
+    }
+    .sn-err-line {
+        opacity: 1;
+        animation: none;
     }
 }
