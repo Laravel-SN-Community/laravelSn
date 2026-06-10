@@ -1,0 +1,153 @@
+# Production stack — see the "going production" runbook.
+# Deploys are image-based: GitHub Actions builds & pushes to GHCR,
+# deploy/deploy.sh performs a zero-downtime rolling update on the server.
+
+name: laravel-sn
+
+x-app: &app
+  image: ${APP_IMAGE:-ghcr.io/laravel-sn-community/laravel.sn-v2}:${APP_IMAGE_TAG:-latest}
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - app_storage:/app/storage/app
+  networks:
+    - internal
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+    typesense:
+      condition: service_started
+
+services:
+  traefik:
+    image: traefik:v3.3
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    networks:
+      - web
+
+  app:
+    <<: *app
+    networks:
+      - web
+      - internal
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.rule=Host(`${APP_DOMAIN}`)
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.tls.certresolver=le
+      - traefik.http.services.app.loadbalancer.server.port=8080
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/up']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    stop_grace_period: 30s
+
+  ssr:
+    <<: *app
+    command: php artisan inertia:start-ssr
+
+  queue:
+    <<: *app
+    command: php artisan queue:work --queue=default,search --tries=3 --backoff=10 --max-time=3600
+    # Give running jobs time to finish on redeploy
+    stop_grace_period: 60s
+
+  scheduler:
+    <<: *app
+    command: php artisan schedule:work
+
+  postgres:
+    image: docker.io/postgis/postgis:17-3.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - db_backups:/backups
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    labels:
+      # Fresh logical dump taken right before each backup run
+      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U ${DB_USERNAME} -d ${DB_DATABASE} -Fc -f /backups/laravel_sn.dump'
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+
+  typesense:
+    image: typesense/typesense:26.0
+    restart: unless-stopped
+    environment:
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
+    command: --data-dir /data
+    volumes:
+      - typesense_data:/data
+    networks:
+      - internal
+
+  # Nightly offsite backups: Postgres dump + uploaded media → S3-compatible
+  # bucket. Redis (queue) and Typesense (rebuildable via scout:import) are
+  # intentionally not backed up.
+  backup:
+    image: offen/docker-volume-backup:v2
+    restart: unless-stopped
+    environment:
+      BACKUP_CRON_EXPRESSION: ${BACKUP_CRON_EXPRESSION:-0 3 * * *}
+      BACKUP_FILENAME: laravel-sn-%Y-%m-%dT%H-%M-%S.tar.gz
+      BACKUP_PRUNING_PREFIX: laravel-sn-
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      AWS_S3_BUCKET_NAME: ${BACKUP_S3_BUCKET}
+      AWS_ENDPOINT: ${BACKUP_S3_ENDPOINT}
+      AWS_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY}
+    volumes:
+      # Needed to run the archive-pre pg_dump label above
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - db_backups:/backup/database:ro
+      - app_storage:/backup/storage:ro
+    networks:
+      - internal
+
+volumes:
+  postgres_data:
+  redis_data:
+  typesense_data:
+  app_storage:
+  db_backups:
+  traefik_letsencrypt:
+
+networks:
+  web:
+  internal:

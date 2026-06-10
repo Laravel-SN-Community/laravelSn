@@ -1,7 +1,9 @@
 # Local development services — start with: make up
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: dev
     restart: unless-stopped
     volumes:
       - .:/var/www/html
