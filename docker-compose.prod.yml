@@ -66,19 +66,39 @@ services:
       start_period: 30s
     stop_grace_period: 30s
 
+  # The non-web roles override the base image's web healthcheck with
+  # checks that match what they actually run.
   ssr:
     <<: *app
     command: php artisan inertia:start-ssr
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:13714/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   queue:
     <<: *app
     command: php artisan queue:work --queue=default,search --tries=3 --backoff=10 --max-time=3600
     # Give running jobs time to finish on redeploy
     stop_grace_period: 60s
+    healthcheck:
+      test: ['CMD-SHELL', 'pgrep -f "queue:work" || exit 1']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   scheduler:
     <<: *app
     command: php artisan schedule:work
+    healthcheck:
+      test: ['CMD-SHELL', 'pgrep -f "schedule:work" || exit 1']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   postgres:
     image: docker.io/postgis/postgis:17-3.6-alpine
