@@ -33,3 +33,4 @@ yarn-error.log
 /.junie/mcp/
 /graphify-out/
 .node-version
+/.claude/scheduled_tasks.lock
