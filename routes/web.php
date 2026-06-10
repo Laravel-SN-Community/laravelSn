@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\EditorImageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Forum\ChannelController;
@@ -16,6 +17,15 @@ use Illuminate\Routing\RedirectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])
+        ->whereIn('provider', ['github', 'google'])
+        ->name('social.redirect');
+    Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'callback'])
+        ->whereIn('provider', ['github', 'google'])
+        ->name('social.callback');
+});
 
 Route::get('/search', SearchController::class)->name('search');
 
