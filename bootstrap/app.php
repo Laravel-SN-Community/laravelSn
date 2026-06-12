@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // In production the app is only reachable through Laravel Cloud's
+        // load balancer and edge network, so forwarded headers (notably
+        // X-Forwarded-Proto for HTTPS detection) can be trusted.
+        $middleware->trustProxies(at: '*');
+
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
@@ -40,14 +45,27 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $e, Request $request) {
+            // Maintenance mode gets a bare standalone page (no site layout).
+            if ($response->status() === 503) {
+                return Inertia::render('maintenance')
+                    ->toResponse($request)
+                    ->setStatusCode(503);
+            }
+
             if (in_array($response->status(), [403, 404, 503])) {
-                return Inertia::render('error', ['status' => $response->status()])
+                return Inertia::render('error', [
+                    'status' => $response->status(),
+                    'path' => '/'.ltrim($request->path(), '/'),
+                ])
                     ->toResponse($request)
                     ->setStatusCode($response->status());
             }
 
             if (! app()->environment(['local', 'testing']) && $response->status() >= 500) {
-                return Inertia::render('error', ['status' => $response->status()])
+                return Inertia::render('error', [
+                    'status' => $response->status(),
+                    'path' => '/'.ltrim($request->path(), '/'),
+                ])
                     ->toResponse($request)
                     ->setStatusCode($response->status());
             }

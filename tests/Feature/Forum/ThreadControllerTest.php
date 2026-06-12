@@ -6,6 +6,7 @@ use App\Models\Channel;
 use App\Models\Reply;
 use App\Models\Thread;
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 use Inertia\Testing\AssertableInertia as Assert;
 
 describe('Thread show', function (): void {
@@ -57,6 +58,17 @@ describe('Thread show', function (): void {
 });
 
 describe('Thread store', function (): void {
+    it('keeps the legacy threads redirect GET-only so it never shadows the store route', function (): void {
+        // Route::redirect() answers every HTTP method; with cached routes
+        // (production) the first URI match wins, which silently swallowed
+        // POST /forum/threads. Guard against reintroducing it.
+        $route = Route::getRoutes()->getByName('forum.threads.index');
+
+        expect($route->methods())->toBe(['GET', 'HEAD']);
+
+        $this->get('/forum/threads')->assertRedirect('/forum');
+    });
+
     it('requires authentication', function (): void {
         $channel = Channel::factory()->create();
 

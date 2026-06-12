@@ -137,13 +137,22 @@ final class MigrateLegacyData extends Command
         ];
 
         $oauthCount = $legacy('users')->whereNotNull('provider')->count();
+        $linkedOauthCount = $legacy('users')
+            ->whereIn('provider', ['github', 'google'])
+            ->whereNotNull('provider_id')
+            ->count();
+        $droppedOauthCount = $oauthCount - $linkedOauthCount;
         $nullPasswordCount = $legacy('users')->whereNull('password')->count();
 
         $this->table($counts[0], array_slice($counts, 1));
         $this->newLine();
 
-        if ($oauthCount > 0) {
-            $this->warn("  {$oauthCount} OAuth user(s) detected — provider fields will be dropped.");
+        if ($linkedOauthCount > 0) {
+            $this->info("  {$linkedOauthCount} github/google user(s) — provider IDs migrated, social login keeps working.");
+        }
+
+        if ($droppedOauthCount > 0) {
+            $this->warn("  {$droppedOauthCount} OAuth user(s) on unsupported providers — provider fields will be dropped.");
         }
 
         if ($nullPasswordCount > 0) {
@@ -209,12 +218,23 @@ final class MigrateLegacyData extends Command
 
             $username = $this->generateUniqueUsername($old->name);
 
+            /**
+             * github/google identities carry over to the v2 social login
+             * columns, so those users keep a seamless OAuth login and never
+             * need a generated-password email.
+             */
+            $provider = $old->provider ?? null;
+            $providerId = $old->provider_id ?? null;
+            $keepsSocialLogin = in_array($provider, ['github', 'google'], true) && ! empty($providerId);
+
             $newId = DB::table('users')->insertGetId([
                 'name' => $old->name,
                 'username' => $username,
                 'email' => $old->email,
                 'email_verified_at' => $old->email_verified_at,
                 'password' => $needsPassword ? $generatedPassword : $old->password,
+                'github_id' => $keepsSocialLogin && $provider === 'github' ? (string) $providerId : null,
+                'google_id' => $keepsSocialLogin && $provider === 'google' ? (string) $providerId : null,
                 'remember_token' => $old->remember_token,
                 'two_factor_secret' => $old->two_factor_secret ?? null,
                 'two_factor_recovery_codes' => $old->two_factor_recovery_codes ?? null,
@@ -236,7 +256,7 @@ final class MigrateLegacyData extends Command
                 $this->adminUserId = $newId;
             }
 
-            if (! empty($old->provider)) {
+            if (! empty($old->provider) && ! $keepsSocialLogin) {
                 $this->oauthUsers[] = [
                     'user_id' => $newId,
                     'email' => $old->email,
@@ -619,6 +639,7 @@ final class MigrateLegacyData extends Command
         $this->info('Phase 9/9: Migrating media records...');
 
         $legacyMedia = DB::connection('legacy')->table('media')->get();
+        $mediaDisk = (string) config('media-library.disk_name');
         $migrated = 0;
         $skipped = 0;
 
@@ -647,7 +668,10 @@ final class MigrateLegacyData extends Command
                 $collectionName = 'avatar';
             }
 
+            // Legacy ids are preserved because Spatie stores files under
+            // {media_id}/{file_name} — copied files must keep resolving.
             DB::table('media')->insert([
+                'id' => $old->id,
                 'model_type' => $old->model_type,
                 'model_id' => $newModelId,
                 'uuid' => $old->uuid,
@@ -655,8 +679,8 @@ final class MigrateLegacyData extends Command
                 'name' => $old->name,
                 'file_name' => $old->file_name,
                 'mime_type' => $old->mime_type,
-                'disk' => $old->disk,
-                'conversions_disk' => $old->conversions_disk,
+                'disk' => $mediaDisk,
+                'conversions_disk' => $mediaDisk,
                 'size' => $old->size,
                 'manipulations' => $old->manipulations,
                 'custom_properties' => $old->custom_properties,
@@ -675,9 +699,9 @@ final class MigrateLegacyData extends Command
         if ($migrated > 0) {
             $this->newLine();
             $this->warn('  IMPORTANT: Media files must be copied manually from the old server.');
-            $this->line('  Copy the contents of the old storage/app/public/media/ directory');
-            $this->line('  to the new server\'s storage/app/public/media/ directory.');
-            $this->line('  Example: rsync -avz old-server:storage/app/public/ new-server:storage/app/public/');
+            $this->line("  Copy the legacy storage/app/public/ contents to the '{$mediaDisk}' disk,");
+            $this->line('  keeping the {media_id}/{file_name} directory layout.');
+            $this->line('  Example: rclone copy old-server:storage/app/public/ remote:bucket/');
         }
     }
 

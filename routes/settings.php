@@ -5,13 +5,22 @@ declare(strict_types=1);
 use App\Http\Controllers\Settings\AppearanceController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use Illuminate\Routing\RedirectController;
 use Illuminate\Support\Facades\Route;
 
-// Redirects from old settings URLs
-Route::redirect('settings', '/dashboard/profile');
-Route::redirect('settings/profile', '/dashboard/profile');
-Route::redirect('settings/security', '/dashboard/settings');
-Route::redirect('settings/appearance', '/dashboard/settings');
+// Redirects from old settings URLs. GET-only on purpose: Route::redirect()
+// answers every HTTP method and, with cached routes, would shadow the
+// POST/DELETE routes below that share these URIs.
+foreach ([
+    'settings' => '/dashboard/profile',
+    'settings/profile' => '/dashboard/profile',
+    'settings/security' => '/dashboard/settings',
+    'settings/appearance' => '/dashboard/settings',
+] as $from => $to) {
+    Route::get($from, RedirectController::class)
+        ->defaults('destination', $to)
+        ->defaults('status', 302);
+}
 
 Route::middleware(['auth'])->group(function (): void {
     Route::get('dashboard/profile', [ProfileController::class, 'edit'])->name('dashboard.profile');
@@ -27,6 +36,5 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->middleware('throttle:6,1')
         ->name('user-password.update');
 
-    Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
     Route::patch('dashboard/settings/appearance', [AppearanceController::class, 'update'])->name('settings.appearance.update');
 });
