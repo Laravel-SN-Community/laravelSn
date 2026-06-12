@@ -504,3 +504,45 @@ test('dry run does not write any data', function (): void {
 
     expect(DB::table('users')->count())->toBe(0);
 });
+
+test('it preserves legacy media ids and points records at the configured media disk', function (): void {
+    config(['media-library.disk_name' => 's3']);
+
+    $now = now()->toDateTimeString();
+
+    DB::connection('legacy')->table('users')->insert([
+        'id' => 3, 'name' => 'Avatar User', 'email' => 'avatar@test.com', 'role' => 'user',
+        'password' => bcrypt('pw'), 'created_at' => $now, 'updated_at' => $now,
+    ]);
+
+    DB::connection('legacy')->table('media')->insert([
+        'id' => 7,
+        'model_type' => User::class,
+        'model_id' => 3,
+        'uuid' => 'legacy-uuid-7',
+        'collection_name' => 'profile-photo',
+        'name' => 'avatar',
+        'file_name' => 'avatar.jpg',
+        'mime_type' => 'image/jpeg',
+        'disk' => 'public',
+        'conversions_disk' => 'public',
+        'size' => 1234,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ]);
+
+    $this->artisan('app:migrate-legacy-data', ['--force' => true])
+        ->assertExitCode(0);
+
+    $media = DB::table('media')->where('uuid', 'legacy-uuid-7')->first();
+    $user = DB::table('users')->where('email', 'avatar@test.com')->first();
+
+    // Spatie stores files under {media_id}/{file_name}, so copied legacy
+    // files only resolve when the legacy id survives the import.
+    expect($media)->not->toBeNull();
+    expect((int) $media->id)->toBe(7);
+    expect($media->disk)->toBe('s3');
+    expect($media->conversions_disk)->toBe('s3');
+    expect($media->collection_name)->toBe('avatar');
+    expect((int) $media->model_id)->toBe((int) $user->id);
+});

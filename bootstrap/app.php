@@ -23,8 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // The app container is only reachable through the Traefik reverse
-        // proxy in production, so forwarded headers can be trusted.
+        // In production the app is only reachable through Laravel Cloud's
+        // load balancer and edge network, so forwarded headers (notably
+        // X-Forwarded-Proto for HTTPS detection) can be trusted.
         $middleware->trustProxies(at: '*');
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);

@@ -639,6 +639,7 @@ final class MigrateLegacyData extends Command
         $this->info('Phase 9/9: Migrating media records...');
 
         $legacyMedia = DB::connection('legacy')->table('media')->get();
+        $mediaDisk = (string) config('media-library.disk_name');
         $migrated = 0;
         $skipped = 0;
 
@@ -667,7 +668,10 @@ final class MigrateLegacyData extends Command
                 $collectionName = 'avatar';
             }
 
+            // Legacy ids are preserved because Spatie stores files under
+            // {media_id}/{file_name} — copied files must keep resolving.
             DB::table('media')->insert([
+                'id' => $old->id,
                 'model_type' => $old->model_type,
                 'model_id' => $newModelId,
                 'uuid' => $old->uuid,
@@ -675,8 +679,8 @@ final class MigrateLegacyData extends Command
                 'name' => $old->name,
                 'file_name' => $old->file_name,
                 'mime_type' => $old->mime_type,
-                'disk' => $old->disk,
-                'conversions_disk' => $old->conversions_disk,
+                'disk' => $mediaDisk,
+                'conversions_disk' => $mediaDisk,
                 'size' => $old->size,
                 'manipulations' => $old->manipulations,
                 'custom_properties' => $old->custom_properties,
@@ -695,9 +699,9 @@ final class MigrateLegacyData extends Command
         if ($migrated > 0) {
             $this->newLine();
             $this->warn('  IMPORTANT: Media files must be copied manually from the old server.');
-            $this->line('  Copy the contents of the old storage/app/public/media/ directory');
-            $this->line('  to the new server\'s storage/app/public/media/ directory.');
-            $this->line('  Example: rsync -avz old-server:storage/app/public/ new-server:storage/app/public/');
+            $this->line("  Copy the legacy storage/app/public/ contents to the '{$mediaDisk}' disk,");
+            $this->line('  keeping the {media_id}/{file_name} directory layout.');
+            $this->line('  Example: rclone copy old-server:storage/app/public/ remote:bucket/');
         }
     }
 
