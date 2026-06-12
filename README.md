@@ -46,13 +46,13 @@ Aucun service externe n'est nécessaire en dev : SQLite fait office de base de d
 ```bash
 git clone git@github.com:Laravel-SN-Community/laravel.sn-v2.git
 cd laravel.sn-v2
-make up
+composer run setup
 ```
 
 Lance le serveur de développement :
 
 ```bash
-make dev
+composer run dev
 ```
 
 Ouvre [http://localhost:8000](http://localhost:8000).
@@ -67,19 +67,16 @@ Les emails envoyés par l'application sont écrits dans `storage/logs/laravel.lo
 
 | Commande | Description |
 |----------|-------------|
-| `make up` | Premier démarrage — install, migrate:fresh, seed |
-| `make dev` | Lance le serveur de dev (Laravel + Vite + queue + logs) |
-| `make fresh` | Réinitialise la base de données |
-| `make test` | Lance la suite CI complète (pint, phpstan, rector, eslint, prettier, tsc, tests) |
-| `make artisan cmd="..."` | Exemple : `make artisan cmd="migrate"` |
-| `make composer cmd="..."` | Exemple : `make composer cmd="require pkg/name"` |
-| `make npm cmd="..."` | Exemple : `make npm cmd="run build"` |
+| `composer run setup` | Premier démarrage — install, migrate:fresh, seed, build |
+| `composer run dev` | Lance le serveur de dev (Laravel + Vite + queue + logs) |
+| `php artisan migrate:fresh --seeder=DevSeeder` | Réinitialise la base de données |
+| `composer run ci:check` | Lance la suite CI complète (pint, phpstan, rector, eslint, prettier, tsc, tests) |
 
 ## Tests et qualité du code
 
 ```bash
 # Suite CI complète (pint, phpstan, rector, eslint, prettier, tsc, tests)
-make test
+composer run ci:check
 
 # Un test spécifique
 php artisan test --compact --filter=NomDuTest

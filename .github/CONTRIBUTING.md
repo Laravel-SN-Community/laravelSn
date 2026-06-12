@@ -42,8 +42,8 @@ Voir le [README](../README.md#installation) pour les instructions complètes (pr
 ```bash
 git clone https://github.com/Laravel-SN-Community/laravel.sn-v2.git
 cd laravel.sn-v2
-make up   # install, .env, clé, migrations + seed
-make dev  # serveur de dev (Laravel + Vite + queue + logs)
+composer run setup  # install, .env, clé, migrations + seed, build
+composer run dev    # serveur de dev (Laravel + Vite + queue + logs)
 ```
 
 ## Workflow de développement
