@@ -8,7 +8,7 @@ Le portail de la communauté des développeurs PHP & Laravel au Sénégal.
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.5+-777BB4)](https://php.net)
+[![PHP](https://img.shields.io/badge/PHP-8.4+-777BB4)](https://php.net)
 
 [Site](https://laravel-senegal.com) · [WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx) · [Contribuer](.github/CONTRIBUTING.md)
 
@@ -24,25 +24,28 @@ Le projet est **open source** et entretenu par la communauté. Toute contributio
 
 ## Stack
 
-- **Backend** : Laravel 13, PHP 8.5
+- **Backend** : Laravel 13, PHP 8.4
 - **Frontend** : Inertia.js 3, React 19, TypeScript
 - **Styling** : Tailwind CSS v4, shadcn/ui
-- **Base de données** : PostgreSQL 17 (production), SQLite (tests)
-- **Cache / Files** : Redis 7
-- **Recherche** : Typesense 26
-- **Emails (dev)** : Mailpit
+- **Base de données** : SQLite (dev), PostgreSQL (production)
+- **Cache / Files** : database (dev), Redis (production)
+- **Recherche** : Laravel Scout — driver `collection` (dev), Typesense (production)
 - **Tests** : Pest 4
-- **CI/CD** : GitHub Actions, Laravel Forge
+- **CI/CD** : GitHub Actions, Laravel Cloud
 
 ## Pré-requis
 
-- **Docker** (c'est tout)
+- **PHP 8.4+** avec les extensions `pdo_sqlite`, `sqlite3`, `mbstring`, `intl`, `gd` (avec support WebP), `zip`, `bcmath`, `exif`, `pcntl`
+- **Composer 2**
+- **Node.js 22+** et **npm**
+
+Aucun service externe n'est nécessaire en dev : SQLite fait office de base de données, la recherche utilise le driver `collection` de Scout, et les emails sont écrits dans les logs.
 
 ## Installation
 
 ```bash
-git clone git@github.com:Laravel-SN-Community/laravel.sn.git
-cd laravel.sn
+git clone git@github.com:Laravel-SN-Community/laravel.sn-v2.git
+cd laravel.sn-v2
 make up
 ```
 
@@ -58,18 +61,16 @@ Compte de test créé par le seeder :
 - Email : `admin@laravel.sn`
 - Mot de passe : `password`
 
-Les emails envoyés par l'application sont capturés par Mailpit : [http://localhost:8025](http://localhost:8025).
+Les emails envoyés par l'application sont écrits dans `storage/logs/laravel.log` (`MAIL_MAILER=log`).
 
 ## Commandes utiles
 
 | Commande | Description |
 |----------|-------------|
-| `make up` | Premier démarrage — build, install, migrate:fresh, seed, index Scout |
+| `make up` | Premier démarrage — install, migrate:fresh, seed |
 | `make dev` | Lance le serveur de dev (Laravel + Vite + queue + logs) |
-| `make down` | Arrête tous les conteneurs |
-| `make fresh` | Réinitialise la base de données et re-indexe Scout |
+| `make fresh` | Réinitialise la base de données |
 | `make test` | Lance la suite CI complète (pint, phpstan, rector, eslint, prettier, tsc, tests) |
-| `make shell` | Ouvre un terminal dans le conteneur |
 | `make artisan cmd="..."` | Exemple : `make artisan cmd="migrate"` |
 | `make composer cmd="..."` | Exemple : `make composer cmd="require pkg/name"` |
 | `make npm cmd="..."` | Exemple : `make npm cmd="run build"` |
@@ -81,20 +82,22 @@ Les emails envoyés par l'application sont capturés par Mailpit : [http://local
 make test
 
 # Un test spécifique
-make artisan cmd="test --compact --filter=NomDuTest"
+php artisan test --compact --filter=NomDuTest
 ```
 
-Pour lancer les outils individuellement depuis le conteneur :
+Pour lancer les outils individuellement :
 
 ```bash
-make shell
-
 ./vendor/bin/pint               # Formatage PHP
 ./vendor/bin/phpstan analyse    # Analyse statique
 ./vendor/bin/rector process     # Refactoring automatique
 npm run lint                    # Lint TypeScript
 npm run types:check             # Type-check TypeScript
 ```
+
+## Parité production (optionnel)
+
+La production tourne sur PostgreSQL, Redis et Typesense. Si tu travailles sur une fonctionnalité sensible au moteur de base de données ou à la recherche, un bloc commenté en bas de `.env.example` documente la configuration locale équivalente.
 
 ## Structure du projet
 

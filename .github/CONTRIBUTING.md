@@ -37,16 +37,13 @@ Si c'est ta première contribution open source, regarde les issues taguées [`go
 
 ## Setup du projet en local
 
-Voir le [README](../README.md#installation) pour les instructions complètes. En résumé :
+Voir le [README](../README.md#installation) pour les instructions complètes (pré-requis : PHP 8.4+, Composer 2, Node 22+ — aucun service externe, la base de données est SQLite). En résumé :
 
 ```bash
-git clone https://github.com/Laravel-SN-Community/laravel.sn.git
-cd laravel.sn
-composer install && npm install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate --seed
-composer run dev
+git clone https://github.com/Laravel-SN-Community/laravel.sn-v2.git
+cd laravel.sn-v2
+make up   # install, .env, clé, migrations + seed
+make dev  # serveur de dev (Laravel + Vite + queue + logs)
 ```
 
 ## Workflow de développement
