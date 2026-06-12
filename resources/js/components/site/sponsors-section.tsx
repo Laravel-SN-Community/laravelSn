@@ -1,82 +1,43 @@
-import { Link } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
-
 interface Sponsor {
     name: string;
-    tier: 'platine' | 'or' | 'soutien';
     mark: React.ReactNode;
 }
 
 const sponsors: Sponsor[] = [
     {
-        name: 'Sonatel',
-        tier: 'platine',
+        name: 'Laravel',
         mark: (
             <>
                 <span style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
-                    sonatel
+                    Laravel
                 </span>
-                <span style={{ color: 'var(--sn-accent)' }}>•</span>
-            </>
-        ),
-    },
-    {
-        name: 'Wave',
-        tier: 'platine',
-        mark: (
-            <span style={{ fontWeight: 700, fontStyle: 'italic' }}>wave~</span>
-        ),
-    },
-    {
-        name: 'InTouch',
-        tier: 'or',
-        mark: (
-            <span className="font-mono" style={{ letterSpacing: '0.02em' }}>
-                inTouch
-            </span>
-        ),
-    },
-    {
-        name: 'PayDunya',
-        tier: 'or',
-        mark: (
-            <>
-                <span style={{ fontWeight: 700 }}>pay</span>
-                <span style={{ fontWeight: 300 }}>dunya</span>
+                <span style={{ color: 'var(--sn-accent)' }}></span>
             </>
         ),
     },
     {
         name: 'Orange Digital',
-        tier: 'or',
         mark: (
             <span style={{ fontWeight: 800 }}>
-                ODC<span style={{ color: 'var(--sn-accent)' }}>/</span>
+             Orange Digital Center<span style={{ color: 'var(--sn-accent)' }}></span>
             </span>
         ),
     },
     {
-        name: 'Baamtu',
-        tier: 'soutien',
-        mark: <span className="font-mono">baamtu()</span>,
+        name: 'Certification for Laravel',
+        mark: (
+            <span style={{ fontWeight: 800 }}>Certification for Laravel</span>
+        ),
     },
     {
-        name: 'Volkeno',
-        tier: 'soutien',
-        mark: <span style={{ fontWeight: 600 }}>volkeno</span>,
-    },
-    {
-        name: 'SenHub',
-        tier: 'soutien',
-        mark: <span style={{ fontWeight: 700 }}>·senhub</span>,
+        name: 'ALal Technologie',
+        mark: (
+            <span style={{ fontWeight: 800 }}>
+                Alal Technologie
+            </span>
+        ),
     },
 ];
-
-const tierLabels: Record<string, string> = {
-    platine: 'Platine',
-    or: 'Or',
-    soutien: 'Soutien',
-};
 
 export default function SponsorsSection() {
     return (
@@ -90,12 +51,12 @@ export default function SponsorsSection() {
                         Partenaires &amp; sponsors
                     </h2>
                 </div>
-                <Link
+                {/*<Link
                     href="/sponsors"
                     className="sn-btn sn-btn-ghost sn-btn-sm"
                 >
                     Devenir partenaire <ArrowRight size={13} />
-                </Link>
+                </Link>*/}
             </div>
 
             <div className="sn-card overflow-hidden">
@@ -133,12 +94,6 @@ export default function SponsorsSection() {
                                     }}
                                 >
                                     {s.mark}
-                                </div>
-                                <div
-                                    className="font-mono text-[10px] tracking-[0.18em] uppercase"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    {tierLabels[s.tier]}
                                 </div>
                             </div>
                         );
