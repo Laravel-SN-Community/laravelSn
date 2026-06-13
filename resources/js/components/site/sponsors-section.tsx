@@ -1,43 +1,69 @@
 interface Sponsor {
     name: string;
-    mark: React.ReactNode;
+    /** Single logo used in both themes. */
+    src?: string;
+    /** Theme-specific logos when a single asset doesn't read on both backgrounds. */
+    srcLight?: string;
+    srcDark?: string;
+    /** Height utilities tuned per logo aspect ratio. */
+    sizeClassName: string;
 }
 
 const sponsors: Sponsor[] = [
     {
         name: 'Laravel',
-        mark: (
-            <>
-                <span style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
-                    Laravel
-                </span>
-                <span style={{ color: 'var(--sn-accent)' }}></span>
-            </>
-        ),
+        src: '/images/sponsors/laravel.svg',
+        sizeClassName: 'h-11 w-auto',
     },
     {
-        name: 'Orange Digital',
-        mark: (
-            <span style={{ fontWeight: 800 }}>
-             Orange Digital Center<span style={{ color: 'var(--sn-accent)' }}></span>
-            </span>
-        ),
+        name: 'Orange Digital Center',
+        src: '/images/sponsors/orange-digital-center.png',
+        sizeClassName: 'h-8 w-auto',
     },
     {
-        name: 'Certification for Laravel',
-        mark: (
-            <span style={{ fontWeight: 800 }}>Certification for Laravel</span>
-        ),
+        name: 'Algolia Certificates',
+        srcLight: '/images/sponsors/algolia-certificates-light.svg',
+        srcDark: '/images/sponsors/algolia-certificates-dark.svg',
+        sizeClassName: 'h-5 w-auto sm:h-6',
     },
     {
-        name: 'ALal Technologie',
-        mark: (
-            <span style={{ fontWeight: 800 }}>
-                Alal Technologie
-            </span>
-        ),
+        name: 'Alal Technologie',
+        src: '/images/sponsors/alal.png',
+        sizeClassName: 'h-12 w-auto',
     },
 ];
+
+function SponsorMark({ sponsor }: { sponsor: Sponsor }) {
+    const className = `${sponsor.sizeClassName} object-contain`;
+
+    if (sponsor.src) {
+        return (
+            <img
+                src={sponsor.src}
+                alt={sponsor.name}
+                loading="lazy"
+                className={className}
+            />
+        );
+    }
+
+    return (
+        <>
+            <img
+                src={sponsor.srcLight}
+                alt={sponsor.name}
+                loading="lazy"
+                className={`${className} block dark:hidden`}
+            />
+            <img
+                src={sponsor.srcDark}
+                alt={sponsor.name}
+                loading="lazy"
+                className={`${className} hidden dark:block`}
+            />
+        </>
+    );
+}
 
 export default function SponsorsSection() {
     return (
@@ -72,7 +98,7 @@ export default function SponsorsSection() {
                             <div
                                 key={s.name}
                                 className={[
-                                    'relative flex h-[120px] flex-col items-center justify-center gap-2 transition-colors hover:bg-[color:var(--sn-surface-2)]',
+                                    'relative flex h-[120px] flex-col items-center justify-center gap-2 px-4 transition-colors hover:bg-[color:var(--sn-surface-2)]',
                                     hasRightMobile ? 'border-r' : '',
                                     hasRightDesktop
                                         ? 'md:border-r'
@@ -86,15 +112,7 @@ export default function SponsorsSection() {
                                     .join(' ')}
                                 style={{ borderColor: 'var(--sn-border)' }}
                             >
-                                <div
-                                    className="text-[22px]"
-                                    style={{
-                                        color: 'var(--sn-fg)',
-                                        opacity: 0.85,
-                                    }}
-                                >
-                                    {s.mark}
-                                </div>
+                                <SponsorMark sponsor={s} />
                             </div>
                         );
                     })}
