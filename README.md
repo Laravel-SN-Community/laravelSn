@@ -18,7 +18,7 @@ Le portail de la communauté des développeurs PHP & Laravel au Sénégal.
 
 ## À propos
 
-Ce dépôt contient le code source de [laravel-senegal.com](https://laravel.sn), le portail de la communauté Laravel Sénégal.
+Ce dépôt contient le code source de [laravel.sn](https://laravel.sn), le portail de la communauté Laravel Sénégal.
 
 Le projet est **open source** et entretenu par la communauté. Toute contribution est la bienvenue, qu'il s'agisse de code, de design, de documentation ou de signalement de bugs.
 
