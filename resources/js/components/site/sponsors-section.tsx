@@ -13,12 +13,13 @@ const sponsors: Sponsor[] = [
     {
         name: 'Laravel',
         src: '/images/sponsors/laravel.svg',
-        sizeClassName: 'h-11 w-auto',
+        sizeClassName: 'h-14 w-auto',
     },
     {
         name: 'Orange Digital Center',
-        src: '/images/sponsors/orange-digital-center.png',
-        sizeClassName: 'h-8 w-auto',
+        srcLight: '/images/sponsors/orange-digital-center-light.png',
+        srcDark: '/images/sponsors/orange-digital-center-dark.png',
+        sizeClassName: 'h-9 w-auto',
     },
     {
         name: 'Algolia Certificates',
