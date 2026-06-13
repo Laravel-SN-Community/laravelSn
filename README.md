@@ -10,7 +10,7 @@ Le portail de la communauté des développeurs PHP & Laravel au Sénégal.
 [![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.4+-777BB4)](https://php.net)
 
-[Site](https://laravel-senegal.com) · [WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx) · [Contribuer](.github/CONTRIBUTING.md)
+[Site](https://laravel.sn) · [WhatsApp](https://chat.whatsapp.com/JwITxALLv0uJIGNu7AsVnx) · [Contribuer](.github/CONTRIBUTING.md)
 
 </div>
 
