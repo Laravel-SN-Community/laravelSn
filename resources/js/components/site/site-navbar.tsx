@@ -122,7 +122,7 @@ export default function SiteNavbar({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onOpenCmd}
-                        className="hidden w-[260px] items-center gap-2 rounded-md px-3 py-1.5 text-[12.5px] sm:flex"
+                        className="hidden w-[260px] items-center gap-2 rounded-md px-3 py-1.5 text-[12.5px] md:flex"
                         style={{
                             background: 'var(--sn-surface)',
                             border: '1px solid var(--sn-border)',
@@ -133,7 +133,7 @@ export default function SiteNavbar({
                         <Search size={13} />
                         <span className="flex-1 text-left">Recherche…</span>
                         <span
-                            className="rounded px-1.5 py-0.5 font-mono text-[10.5px]"
+                            className="rounded px-1.5 py-0.5 text-[10.5px]"
                             style={{
                                 background: 'var(--sn-surface-2)',
                                 color: 'var(--sn-muted)',
@@ -147,7 +147,7 @@ export default function SiteNavbar({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ring-2 ring-transparent transition-all hover:ring-[var(--sn-border)] focus:outline-none sm:flex"
+                                    className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ring-2 ring-transparent transition-all hover:ring-[var(--sn-border)] focus:outline-none md:flex"
                                     style={{
                                         background: auth.user.avatar
                                             ? 'transparent'
@@ -252,7 +252,7 @@ export default function SiteNavbar({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <div className="hidden sm:block">
+                        <div className="hidden md:block">
                             <Link
                                 href={login()}
                                 className="sn-btn sn-btn-sm sn-btn-primary"

@@ -1,8 +1,11 @@
 import { router } from '@inertiajs/react';
 import {
+    ArrowDown,
     ArrowLeft,
+    ArrowUp,
     BookOpen,
     CalendarDays,
+    CornerDownLeft,
     Github,
     MessageSquare,
     Moon,
@@ -118,7 +121,7 @@ const NAV_ITEMS: PaletteItem[] = [
         type: 'nav',
         group: 'Navigation',
         label: 'Articles',
-        description: 'Les dernières nouveautés de la communauté.',
+        description: 'Actualités et tutoriels.',
         Icon: BookOpen,
         href: '/articles',
     },
@@ -134,7 +137,7 @@ const NAV_ITEMS: PaletteItem[] = [
         type: 'nav',
         group: 'Navigation',
         label: 'Événements',
-        description: 'Meetups et rencontres Laravel SN.',
+        description: 'Meetups et rencontres.',
         Icon: CalendarDays,
         href: '/events',
     },
@@ -536,6 +539,14 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 }
                 .palette-dialog-in  { animation: palette-in  .15s var(--sn-ease) both; }
                 .palette-dialog-out { animation: palette-out .12s var(--sn-ease) both; }
+                /* On mobile (touch, no keyboard): sit near the top like the
+                   menu sheet, and drop keyboard affordances (footer hints +
+                   the active-row highlight). */
+                @media (max-width: 767px) {
+                    .palette-dialog { top: 16px; }
+                    .palette-footer { display: none; }
+                    .palette-item[data-active="true"] { background: transparent; }
+                }
                 .palette-box {
                     background: var(--sn-surface);
                     border: 1px solid var(--sn-border);
@@ -681,15 +692,24 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                     align-items: center;
                     justify-content: center;
                     height: 22px;
-                    min-width: 26px;
-                    padding: 0 6px;
-                    border-radius: 5px;
+                    min-width: 22px;
+                    padding: 0;
+                    border-radius: 6px;
                     font-size: 11.5px;
                     font-weight: 500;
                     background: var(--sn-surface-2);
                     color: var(--sn-fg);
                     border: 1px solid var(--sn-border);
+                    box-shadow: 0 1px 0 var(--sn-border);
                     line-height: 1;
+                }
+                .palette-kbd svg { display: block; }
+                .palette-kbd-text {
+                    padding: 0 7px;
+                    font-size: 10.5px;
+                    font-weight: 600;
+                    letter-spacing: .03em;
+                    text-transform: uppercase;
                 }
                 .palette-back-btn {
                     display: grid;
@@ -935,12 +955,19 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                     {/* ── Footer ────────────────────────────────────────── */}
                     <div className="palette-footer">
                         <div className="palette-footer-group">
-                            <kbd className="palette-kbd">esc</kbd>
+                            <kbd className="palette-kbd palette-kbd-text">
+                                esc
+                            </kbd>
                             <span>{scope ? 'Retour' : 'Fermer'}</span>
                         </div>
                         <div className="palette-footer-group">
                             <div className="palette-footer-group">
-                                <kbd className="palette-kbd">↑↓</kbd>
+                                <kbd className="palette-kbd">
+                                    <ArrowUp size={13} strokeWidth={2.25} />
+                                </kbd>
+                                <kbd className="palette-kbd">
+                                    <ArrowDown size={13} strokeWidth={2.25} />
+                                </kbd>
                                 <span>Naviguer</span>
                             </div>
                             <span
@@ -952,7 +979,12 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                                 ·
                             </span>
                             <div className="palette-footer-group">
-                                <kbd className="palette-kbd">↵</kbd>
+                                <kbd className="palette-kbd">
+                                    <CornerDownLeft
+                                        size={13}
+                                        strokeWidth={2.25}
+                                    />
+                                </kbd>
                                 <span>Sélectionner</span>
                             </div>
                         </div>
