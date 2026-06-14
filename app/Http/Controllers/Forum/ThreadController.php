@@ -108,6 +108,24 @@ final class ThreadController extends Controller
         return back()->with('success', 'Discussion déverrouillée.');
     }
 
+    public function pin(Thread $thread): RedirectResponse
+    {
+        Gate::authorize('pin', $thread);
+
+        $thread->update(['is_pinned' => true]);
+
+        return back()->with('success', 'Discussion épinglée.');
+    }
+
+    public function unpin(Thread $thread): RedirectResponse
+    {
+        Gate::authorize('pin', $thread);
+
+        $thread->update(['is_pinned' => false]);
+
+        return back()->with('success', 'Discussion désépinglée.');
+    }
+
     public function subscribe(Thread $thread): RedirectResponse
     {
         $thread->subscribers()->syncWithoutDetaching([auth()->id()]);

@@ -18,6 +18,7 @@ import {
 import { useState } from 'react';
 import { ThreadCreateSheet } from '@/components/site/thread-create-sheet';
 import { useInitials } from '@/hooks/use-initials';
+import { useReloadOnHistoryNavigation } from '@/hooks/use-reload-on-history-navigation';
 import { authorTint } from '@/lib/forum';
 import { stripMarkdown } from '@/lib/strip-markdown';
 import { toUrl } from '@/lib/utils';
@@ -186,6 +187,8 @@ export default function Forum({ channels, threads, filter, locale }: Props) {
     const { auth } = usePage<{ auth: Auth }>().props;
     const [sheetOpen, setSheetOpen] = useState(false);
     const [q, setQ] = useState('');
+
+    useReloadOnHistoryNavigation(['threads']);
 
     const displayed = q
         ? threads.data.filter((t) =>
