@@ -22,8 +22,10 @@ import { index as forumIndex } from '@/routes/forum';
 import { index as channelsIndex } from '@/routes/forum/channels';
 import { toggle as reactionToggle } from '@/routes/forum/reactions';
 import {
+    pin as threadPin,
     subscribe as threadSubscribe,
     unlock as threadUnlock,
+    unpin as threadUnpin,
     unsubscribe as threadUnsubscribe,
 } from '@/routes/forum/threads';
 import type { Auth, ForumThreadFull, PaginatedReplies } from '@/types';
@@ -378,17 +380,44 @@ export default function Thread({ thread, replies, isSubscribed }: Props) {
                                         </div>
                                         {(auth?.role === 'admin' ||
                                             auth?.role === 'moderator') && (
-                                            <Link
-                                                href={toUrl(
-                                                    threadUnlock(thread.slug),
-                                                )}
-                                                method="delete"
-                                                as="button"
-                                                preserveScroll
-                                                className="sn-btn sn-btn-secondary sn-btn-sm shrink-0"
-                                            >
-                                                Rouvrir
-                                            </Link>
+                                            <div className="flex shrink-0 items-center gap-2">
+                                                <Link
+                                                    href={toUrl(
+                                                        thread.is_pinned
+                                                            ? threadUnpin(
+                                                                  thread.slug,
+                                                              )
+                                                            : threadPin(
+                                                                  thread.slug,
+                                                              ),
+                                                    )}
+                                                    method={
+                                                        thread.is_pinned
+                                                            ? 'delete'
+                                                            : 'post'
+                                                    }
+                                                    as="button"
+                                                    preserveScroll
+                                                    className="sn-btn sn-btn-secondary sn-btn-sm"
+                                                >
+                                                    {thread.is_pinned
+                                                        ? 'Désépingler'
+                                                        : 'Épingler'}
+                                                </Link>
+                                                <Link
+                                                    href={toUrl(
+                                                        threadUnlock(
+                                                            thread.slug,
+                                                        ),
+                                                    )}
+                                                    method="delete"
+                                                    as="button"
+                                                    preserveScroll
+                                                    className="sn-btn sn-btn-secondary sn-btn-sm"
+                                                >
+                                                    Rouvrir
+                                                </Link>
+                                            </div>
                                         )}
                                     </div>
                                 ) : auth?.user ? (

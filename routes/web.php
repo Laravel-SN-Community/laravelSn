@@ -62,6 +62,9 @@ Route::prefix('forum')->name('forum.')->group(function (): void {
         Route::post('/threads/{thread:slug}/lock', [ThreadController::class, 'lock'])->name('threads.lock');
         Route::delete('/threads/{thread:slug}/lock', [ThreadController::class, 'unlock'])->name('threads.unlock');
 
+        Route::post('/threads/{thread:slug}/pin', [ThreadController::class, 'pin'])->name('threads.pin');
+        Route::delete('/threads/{thread:slug}/pin', [ThreadController::class, 'unpin'])->name('threads.unpin');
+
         Route::post('/threads/{thread:slug}/reactions', [ReactionController::class, 'toggle'])->name('reactions.toggle');
     });
 });

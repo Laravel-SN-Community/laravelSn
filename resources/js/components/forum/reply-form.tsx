@@ -1,11 +1,15 @@
 import { Link, useForm } from '@inertiajs/react';
 import type { MDXEditorMethods } from '@mdxeditor/editor';
-import { Lock } from 'lucide-react';
+import { Lock, Pin, PinOff } from 'lucide-react';
 import React, { useRef } from 'react';
 import { LazyMarkdownEditor as MarkdownEditor } from '@/components/editor/lazy-markdown-editor';
 import { toUrl } from '@/lib/utils';
 import { store as repliesStore } from '@/routes/forum/replies';
-import { lock as threadLock } from '@/routes/forum/threads';
+import {
+    lock as threadLock,
+    pin as threadPin,
+    unpin as threadUnpin,
+} from '@/routes/forum/threads';
 import type { Auth, ForumThreadFull } from '@/types';
 
 export function ReplyForm({
@@ -61,6 +65,26 @@ export function ReplyForm({
             />
             <div className="mt-3 flex items-center justify-end">
                 <div className="flex items-center gap-2">
+                    {isMod && (
+                        <Link
+                            href={toUrl(
+                                thread.is_pinned
+                                    ? threadUnpin(thread.slug)
+                                    : threadPin(thread.slug),
+                            )}
+                            method={thread.is_pinned ? 'delete' : 'post'}
+                            as="button"
+                            preserveScroll
+                            className="sn-btn sn-btn-secondary sn-btn-sm"
+                        >
+                            {thread.is_pinned ? (
+                                <PinOff size={12} className="mr-1.5" />
+                            ) : (
+                                <Pin size={12} className="mr-1.5" />
+                            )}
+                            {thread.is_pinned ? 'Désépingler' : 'Épingler'}
+                        </Link>
+                    )}
                     {isMod && (
                         <Link
                             href={toUrl(threadLock(thread.slug))}

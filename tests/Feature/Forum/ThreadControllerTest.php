@@ -280,3 +280,67 @@ describe('Thread lock', function (): void {
             ->assertForbidden();
     });
 });
+
+describe('Thread pin', function (): void {
+    it('allows admin to pin a thread', function (): void {
+        $admin = User::factory()->admin()->create();
+        $thread = Thread::factory()->create(['is_pinned' => false]);
+
+        $this->actingAs($admin)
+            ->post(route('forum.threads.pin', $thread))
+            ->assertRedirect();
+
+        expect($thread->fresh()->is_pinned)->toBeTrue();
+    });
+
+    it('allows moderator to pin a thread', function (): void {
+        $mod = User::factory()->moderator()->create();
+        $thread = Thread::factory()->create(['is_pinned' => false]);
+
+        $this->actingAs($mod)
+            ->post(route('forum.threads.pin', $thread))
+            ->assertRedirect();
+
+        expect($thread->fresh()->is_pinned)->toBeTrue();
+    });
+
+    it('denies regular user from pinning a thread', function (): void {
+        $user = User::factory()->create();
+        $thread = Thread::factory()->create(['is_pinned' => false]);
+
+        $this->actingAs($user)
+            ->post(route('forum.threads.pin', $thread))
+            ->assertForbidden();
+    });
+
+    it('allows admin to unpin a thread', function (): void {
+        $admin = User::factory()->admin()->create();
+        $thread = Thread::factory()->create(['is_pinned' => true]);
+
+        $this->actingAs($admin)
+            ->delete(route('forum.threads.unpin', $thread))
+            ->assertRedirect();
+
+        expect($thread->fresh()->is_pinned)->toBeFalse();
+    });
+
+    it('allows moderator to unpin a thread', function (): void {
+        $mod = User::factory()->moderator()->create();
+        $thread = Thread::factory()->create(['is_pinned' => true]);
+
+        $this->actingAs($mod)
+            ->delete(route('forum.threads.unpin', $thread))
+            ->assertRedirect();
+
+        expect($thread->fresh()->is_pinned)->toBeFalse();
+    });
+
+    it('denies regular user from unpinning a thread', function (): void {
+        $user = User::factory()->create();
+        $thread = Thread::factory()->create(['is_pinned' => true]);
+
+        $this->actingAs($user)
+            ->delete(route('forum.threads.unpin', $thread))
+            ->assertForbidden();
+    });
+});
