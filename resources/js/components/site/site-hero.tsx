@@ -112,9 +112,9 @@ export default function SiteHero({ onOpenCmd }: SiteHeroProps) {
                     {/* Inline stats */}
                     <div className="mt-10 grid max-w-[280px] grid-cols-3 gap-4 sm:max-w-md sm:gap-8">
                         {[
-                            ['512', 'membres'],
-                            ['08', 'événements'],
-                            ['2021', 'depuis'],
+                            ['+500', 'membres'],
+                            ['+10', 'événements'],
+                            ['2025', 'depuis'],
                         ].map(([n, l]) => (
                             <div key={l}>
                                 <div
