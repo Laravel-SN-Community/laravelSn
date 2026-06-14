@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function (): void {
         ->name('editor.images.store');
 });
 
-Route::middleware(['auth', 'verified'])->group(function (): void {
+Route::middleware(['auth'])->group(function (): void {
     Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');
     Route::get('/dashboard/articles', [ArticleController::class, 'dashboardIndex'])->name('dashboard.articles');
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');

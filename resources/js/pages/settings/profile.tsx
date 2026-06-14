@@ -2,7 +2,6 @@ import { Form, Head, Link, usePage } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import InputError from '@/components/input-error';
 import DashSidebar from '@/components/site/dashboard-sidebar';
-import { send } from '@/routes/verification';
 
 function DashCard({
     eyebrow,
@@ -73,13 +72,7 @@ function FieldInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     );
 }
 
-export default function Profile({
-    mustVerifyEmail,
-    status,
-}: {
-    mustVerifyEmail: boolean;
-    status?: string;
-}) {
+export default function Profile() {
     const { auth } = usePage().props;
 
     return (
@@ -173,7 +166,7 @@ export default function Profile({
                                             </div>
                                         </div>
 
-                                        {mustVerifyEmail &&
+                                        {/* {mustVerifyEmail &&
                                             auth.user.email_verified_at ===
                                                 null && (
                                                 <div
@@ -210,7 +203,7 @@ export default function Profile({
                                                         </div>
                                                     )}
                                                 </div>
-                                            )}
+                                            )} */}
 
                                         <div className="mt-5 flex justify-end gap-2">
                                             <button

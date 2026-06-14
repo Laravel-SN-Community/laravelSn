@@ -5,7 +5,7 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import InputError from '@/components/input-error';
 import DashSidebar from '@/components/site/dashboard-sidebar';
 import { useInitials } from '@/hooks/use-initials';
-import { send } from '@/routes/verification';
+// import { send } from '@/routes/verification';
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
     return (
@@ -87,11 +87,11 @@ function getTint(name: string): string {
 }
 
 export default function DashboardProfile({
-    mustVerifyEmail,
-    status,
-}: {
-    mustVerifyEmail: boolean;
-    status?: string;
+//     mustVerifyEmail,
+//     status,
+// }: {
+//     mustVerifyEmail: boolean;
+//     status?: string;
 }) {
     const { auth } = usePage().props;
     const user = auth.user as ExtendedUser;
@@ -366,7 +366,7 @@ export default function DashboardProfile({
                                             />
                                         </div>
 
-                                        {mustVerifyEmail &&
+                                        {/* {mustVerifyEmail &&
                                             user.email_verified_at === null && (
                                                 <div
                                                     className="rounded-md px-3 py-2 font-mono text-[12px] sm:col-span-2"
@@ -402,7 +402,7 @@ export default function DashboardProfile({
                                                         </div>
                                                     )}
                                                 </div>
-                                            )}
+                                            )} */}
                                     </div>
 
                                     <div

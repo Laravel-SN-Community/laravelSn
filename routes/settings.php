@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function (): void {
     Route::post('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-Route::middleware(['auth', 'verified'])->group(function (): void {
+Route::middleware(['auth'])->group(function (): void {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('dashboard/settings', [SecurityController::class, 'edit'])->name('dashboard.settings');
