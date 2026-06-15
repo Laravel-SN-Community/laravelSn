@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { X } from 'lucide-react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import ArticleCard from '@/components/site/article-card';
 import type { ArticleTag, PaginatedArticles } from '@/types/article';
@@ -18,7 +18,10 @@ type Props = {
 
 export default function Articles({ articles, tags, filters }: Props) {
     const [q, setQ] = useState(filters.q ?? '');
+    const [showAllTags, setShowAllTags] = useState(false);
     const qTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+    const VISIBLE_TAGS = 10;
 
     function go(overrides: Partial<Filters & { page: number }>) {
         const params: Record<string, string | number> = {};
@@ -172,7 +175,7 @@ export default function Articles({ articles, tags, filters }: Props) {
                     </div>
 
                     {/* Tag chips */}
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
                         <button
                             onClick={() => go({ tag: null })}
                             className="rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
@@ -191,7 +194,7 @@ export default function Articles({ articles, tags, filters }: Props) {
                         >
                             #Tous
                         </button>
-                        {tags.map((tag) => (
+                        {(showAllTags ? tags : tags.slice(0, VISIBLE_TAGS)).map((tag) => (
                             <button
                                 key={tag.id}
                                 onClick={() => go({ tag: tag.slug })}
@@ -212,6 +215,28 @@ export default function Articles({ articles, tags, filters }: Props) {
                                 #{tag.name}
                             </button>
                         ))}
+                        {tags.length > VISIBLE_TAGS && (
+                            <button
+                                onClick={() => setShowAllTags((v) => !v)}
+                                className="flex items-center gap-1 rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
+                                style={{
+                                    background: 'var(--sn-surface-2)',
+                                    color: 'var(--sn-muted)',
+                                    border: '1px solid var(--sn-border)',
+                                }}
+                            >
+                                {showAllTags ? (
+                                    <>
+                                        <ChevronUp size={11} />
+                                        Masquer
+                                    </>
+                                ) : (
+                                    <>
+                                        <ChevronDown size={11} />+{tags.length - VISIBLE_TAGS} tags
+                                    </>
+                                )}
+                            </button>
+                        )}
                     </div>
                 </div>
 

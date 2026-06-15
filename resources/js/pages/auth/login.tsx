@@ -1,10 +1,11 @@
-import { Form, Head, Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Github } from 'lucide-react';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
+// import { Form } from '@inertiajs/react';
+// import InputError from '@/components/input-error';
+// import PasswordInput from '@/components/password-input';
+// import { store } from '@/routes/login';
+// import { request } from '@/routes/password';
 import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
 
 type Props = {
     status?: string;
@@ -35,17 +36,7 @@ function GoogleIcon() {
     );
 }
 
-const inputStyle = {
-    background: 'var(--sn-surface)',
-    border: '1px solid var(--sn-border)',
-    color: 'var(--sn-fg)',
-} as const;
-
-export default function Login({
-    status,
-    canResetPassword,
-    canRegister,
-}: Props) {
+export default function Login({ status, canRegister }: Props) {
     return (
         <>
             <Head title="Connexion" />
@@ -63,143 +54,76 @@ export default function Login({
                 </div>
             )}
 
-            {/* Social buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-3">
                 <a
                     href="/auth/github/redirect"
-                    className="sn-btn sn-btn-secondary justify-center gap-2 text-[13px]"
+                    className="sn-btn sn-btn-secondary w-full justify-center gap-2.5 py-3 text-[13.5px]"
                 >
-                    <Github size={14} /> GitHub
+                    <Github size={15} />
+                    Continuer avec GitHub
                 </a>
                 <a
                     href="/auth/google/redirect"
-                    className="sn-btn sn-btn-secondary justify-center gap-2 text-[13px]"
+                    className="sn-btn sn-btn-secondary w-full justify-center gap-2.5 py-3 text-[13.5px]"
                 >
-                    <GoogleIcon /> Google
+                    <GoogleIcon />
+                    Continuer avec Google
                 </a>
             </div>
 
-            {/* Divider */}
+            {/* Email / password form (temporarily hidden) */}
+            {/*
             <div className="my-5 flex items-center gap-3">
-                <div
-                    className="h-px flex-1"
-                    style={{ background: 'var(--sn-border)' }}
-                />
-                <span
-                    className="text-[11.5px]"
-                    style={{ color: 'var(--sn-muted)' }}
-                >
-                    ou
-                </span>
-                <div
-                    className="h-px flex-1"
-                    style={{ background: 'var(--sn-border)' }}
-                />
+                <div className="h-px flex-1" style={{ background: 'var(--sn-border)' }} />
+                <span className="text-[11.5px]" style={{ color: 'var(--sn-muted)' }}>ou</span>
+                <div className="h-px flex-1" style={{ background: 'var(--sn-border)' }} />
             </div>
 
             <Form action={store()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <div className="flex flex-col gap-4">
-                        {/* Email */}
                         <div className="grid gap-1.5">
-                            <label
-                                htmlFor="email"
-                                className="text-[13px] font-medium"
-                                style={{ color: 'var(--sn-fg)' }}
-                            >
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                required
-                                autoFocus
-                                autoComplete="email"
-                                placeholder="toi@example.com"
-                                className="w-full rounded-md px-3 py-2.5 text-[14px] outline-none"
-                                style={inputStyle}
-                            />
+                            <label htmlFor="email" className="text-[13px] font-medium" style={{ color: 'var(--sn-fg)' }}>Email</label>
+                            <input id="email" type="email" name="email" required autoFocus autoComplete="email" placeholder="toi@example.com" className="w-full rounded-md px-3 py-2.5 text-[14px] outline-none" style={inputStyle} />
                             <InputError message={errors.email} />
                         </div>
-
-                        {/* Password */}
                         <div className="grid gap-1.5">
                             <div className="flex items-center justify-between">
-                                <label
-                                    htmlFor="password"
-                                    className="text-[13px] font-medium"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
-                                    Mot de passe
-                                </label>
+                                <label htmlFor="password" className="text-[13px] font-medium" style={{ color: 'var(--sn-fg)' }}>Mot de passe</label>
                                 {canResetPassword && (
-                                    <Link
-                                        href={request()}
-                                        className="text-[11.5px] hover:underline"
-                                        style={{ color: 'var(--sn-muted)' }}
-                                    >
-                                        Oublié ?
-                                    </Link>
+                                    <Link href={request()} className="text-[11.5px] hover:underline" style={{ color: 'var(--sn-muted)' }}>Oublié ?</Link>
                                 )}
                             </div>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                required
-                                autoComplete="current-password"
-                                placeholder="••••••••"
-                                className="text-[14px]"
-                                style={inputStyle}
-                            />
+                            <PasswordInput id="password" name="password" required autoComplete="current-password" placeholder="••••••••" className="text-[14px]" style={inputStyle} />
                             <InputError message={errors.password} />
                         </div>
-
-                        {/* Remember me */}
                         <label className="flex cursor-pointer items-center gap-2">
-                            <input
-                                type="checkbox"
-                                name="remember"
-                                id="remember"
-                                className="h-4 w-4 rounded accent-[color:var(--sn-accent)]"
-                            />
-                            <span
-                                className="text-[13px]"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                Se souvenir de moi
-                            </span>
+                            <input type="checkbox" name="remember" id="remember" className="h-4 w-4 rounded accent-[color:var(--sn-accent)]" />
+                            <span className="text-[13px]" style={{ color: 'var(--sn-muted)' }}>Se souvenir de moi</span>
                         </label>
-
-                        {/* Submit */}
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="sn-btn sn-btn-primary mt-1 w-full justify-center"
-                            data-test="login-button"
-                        >
+                        <button type="submit" disabled={processing} className="sn-btn sn-btn-primary mt-1 w-full justify-center" data-test="login-button">
                             {processing ? 'Connexion…' : 'Se connecter'}
                         </button>
-
-                        {/* Switch link */}
-                        {canRegister && (
-                            <p
-                                className="mt-1 text-center text-[12px]"
-                                style={{ color: 'var(--sn-muted)' }}
-                            >
-                                Pas encore membre ?{' '}
-                                <Link
-                                    href={register()}
-                                    className="font-medium hover:underline"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
-                                    Rejoindre
-                                </Link>
-                            </p>
-                        )}
                     </div>
                 )}
             </Form>
+            */}
+
+            {canRegister && (
+                <p
+                    className="mt-4 text-center text-[12px]"
+                    style={{ color: 'var(--sn-muted)' }}
+                >
+                    Pas encore membre ?{' '}
+                    <Link
+                        href={register()}
+                        className="font-medium hover:underline"
+                        style={{ color: 'var(--sn-fg)' }}
+                    >
+                        Rejoindre
+                    </Link>
+                </p>
+            )}
         </>
     );
 }
