@@ -1,4 +1,4 @@
-import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { Camera } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
@@ -86,13 +86,7 @@ function getTint(name: string): string {
     return TINTS[Math.abs(hash) % TINTS.length];
 }
 
-export default function DashboardProfile({
-//     mustVerifyEmail,
-//     status,
-// }: {
-//     mustVerifyEmail: boolean;
-//     status?: string;
-}) {
+export default function DashboardProfile() {
     const { auth } = usePage().props;
     const user = auth.user as ExtendedUser;
     const getInitials = useInitials();
