@@ -94,8 +94,9 @@ Route::middleware(['auth'])->group(function (): void {
     Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
     Route::post('/events/{event}/register', [EventController::class, 'register'])->name('events.register');
     Route::delete('/events/{event}/register', [EventController::class, 'unregister'])->name('events.unregister');
-    Route::inertia('/dashboard/events', 'dashboard/events')->name('dashboard.events');
-    Route::inertia('/dashboard/notifications', 'dashboard/notifications')->name('dashboard.notifications');
+    // TODO: réactiver quand ces fonctionnalités seront implémentées
+    // Route::inertia('/dashboard/events', 'dashboard/events')->name('dashboard.events');
+    // Route::inertia('/dashboard/notifications', 'dashboard/notifications')->name('dashboard.notifications');
 
     // Management routes — admin or moderator only
     Route::middleware(['role:admin|moderator'])->prefix('dashboard/manage')->name('manage.')->group(function (): void {

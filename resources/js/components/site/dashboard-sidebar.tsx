@@ -1,6 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import {
-    Bell,
+    // Bell, // TODO: réactiver avec la section Notifications
     CalendarDays,
     FileText,
     LayoutDashboard,
@@ -34,18 +34,19 @@ const USER_SECTIONS = [
         Icon: FileText,
         href: '/dashboard/articles',
     },
-    {
-        id: 'events',
-        label: 'Mes inscriptions',
-        Icon: CalendarDays,
-        href: '/dashboard/events',
-    },
-    {
-        id: 'notifications',
-        label: 'Notifications',
-        Icon: Bell,
-        href: '/dashboard/notifications',
-    },
+    // TODO: réactiver quand ces fonctionnalités seront implémentées
+    // {
+    //     id: 'events',
+    //     label: 'Mes inscriptions',
+    //     Icon: CalendarDays,
+    //     href: '/dashboard/events',
+    // },
+    // {
+    //     id: 'notifications',
+    //     label: 'Notifications',
+    //     Icon: Bell,
+    //     href: '/dashboard/notifications',
+    // },
     {
         id: 'settings',
         label: 'Paramètres',
@@ -71,7 +72,10 @@ const MANAGE_SECTIONS = [
 
 type SectionId =
     | (typeof USER_SECTIONS)[number]['id']
-    | (typeof MANAGE_SECTIONS)[number]['id'];
+    | (typeof MANAGE_SECTIONS)[number]['id']
+    // Sections temporairement masquées (voir USER_SECTIONS) — à réimplémenter
+    | 'events'
+    | 'notifications';
 
 let navHasInitialized = false;
 
