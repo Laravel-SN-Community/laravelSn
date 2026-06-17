@@ -243,14 +243,14 @@ class ImportLegacyDb extends Command
             $modelType = $row['model_type'];
             $modelId = (int) $row['model_id'];
 
-            if ($modelType === 'App\\Models\\Article') {
+            if ($modelType === Article::class) {
                 if (! isset($this->articleIdMap[$modelId])) {
                     $skipped++;
 
                     continue;
                 }
                 $modelId = $this->articleIdMap[$modelId];
-            } elseif ($modelType === 'App\\Models\\Event') {
+            } elseif ($modelType === Event::class) {
                 if (! isset($this->eventIdMap[$modelId])) {
                     $skipped++;
 
@@ -304,7 +304,7 @@ class ImportLegacyDb extends Command
             $oldTaggableId = (int) $row['taggable_id'];
 
             // Only migrate Article taggables (Project model not in new app)
-            if ($taggableType !== 'App\\Models\\Article') {
+            if ($taggableType !== Article::class) {
                 continue;
             }
 
@@ -480,7 +480,7 @@ class ImportLegacyDb extends Command
                 continue;
             }
 
-            if ($char === "'" && $inString) {
+            if ($char === "'") {
                 $inString = false;
 
                 continue;

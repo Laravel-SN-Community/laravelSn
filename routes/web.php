@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\SocialLoginController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditorImageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Forum\ChannelController;
@@ -85,7 +86,7 @@ Route::middleware('auth')->group(function (): void {
 });
 
 Route::middleware(['auth'])->group(function (): void {
-    Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/articles', [ArticleController::class, 'dashboardIndex'])->name('dashboard.articles');
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
     Route::patch('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');

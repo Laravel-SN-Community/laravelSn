@@ -194,27 +194,31 @@ export default function Articles({ articles, tags, filters }: Props) {
                         >
                             #Tous
                         </button>
-                        {(showAllTags ? tags : tags.slice(0, VISIBLE_TAGS)).map((tag) => (
-                            <button
-                                key={tag.id}
-                                onClick={() => go({ tag: tag.slug })}
-                                className="rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
-                                style={
-                                    activeTag === tag.slug
-                                        ? {
-                                              background: 'var(--sn-accent)',
-                                              color: 'var(--sn-accent-fg)',
-                                          }
-                                        : {
-                                              background: 'var(--sn-surface-2)',
-                                              color: 'var(--sn-muted)',
-                                              border: '1px solid var(--sn-border)',
-                                          }
-                                }
-                            >
-                                #{tag.name}
-                            </button>
-                        ))}
+                        {(showAllTags ? tags : tags.slice(0, VISIBLE_TAGS)).map(
+                            (tag) => (
+                                <button
+                                    key={tag.id}
+                                    onClick={() => go({ tag: tag.slug })}
+                                    className="rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
+                                    style={
+                                        activeTag === tag.slug
+                                            ? {
+                                                  background:
+                                                      'var(--sn-accent)',
+                                                  color: 'var(--sn-accent-fg)',
+                                              }
+                                            : {
+                                                  background:
+                                                      'var(--sn-surface-2)',
+                                                  color: 'var(--sn-muted)',
+                                                  border: '1px solid var(--sn-border)',
+                                              }
+                                    }
+                                >
+                                    #{tag.name}
+                                </button>
+                            ),
+                        )}
                         {tags.length > VISIBLE_TAGS && (
                             <button
                                 onClick={() => setShowAllTags((v) => !v)}
@@ -232,7 +236,8 @@ export default function Articles({ articles, tags, filters }: Props) {
                                     </>
                                 ) : (
                                     <>
-                                        <ChevronDown size={11} />+{tags.length - VISIBLE_TAGS} tags
+                                        <ChevronDown size={11} />+
+                                        {tags.length - VISIBLE_TAGS} tags
                                     </>
                                 )}
                             </button>

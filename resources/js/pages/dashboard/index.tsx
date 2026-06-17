@@ -1,20 +1,46 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import DashSidebar from '@/components/site/dashboard-sidebar';
-import { ARTICLES, EVENTS, MEMBERS } from '@/data/community';
+import { formatEventDate } from '@/types/event';
 
 interface AuthUser {
     name: string;
     email: string;
 }
 
+interface DashboardStats {
+    articlesPublished: number;
+    articlesThisMonth: number;
+    totalViews: number;
+    eventsRegistered: number;
+    upcomingEvents: number;
+    reputation: number;
+}
+
+interface NextEvent {
+    title: string;
+    slug: string;
+    starts_at: string;
+    is_online: boolean;
+    registrations_open: boolean;
+    is_full: boolean;
+    venue: { name: string; district: string | null } | null;
+}
+
+interface DashboardProps {
+    stats: DashboardStats;
+    nextEvent: NextEvent | null;
+}
+
 function StatCard({
     label,
     value,
     delta,
+    trend = false,
 }: {
     label: string;
     value: string;
-    delta: string;
+    delta?: string;
+    trend?: boolean;
 }) {
     return (
         <div
@@ -36,12 +62,15 @@ function StatCard({
             >
                 {value}
             </div>
-            <div
-                className="mt-1 font-mono text-[11px]"
-                style={{ color: 'var(--sn-600)' }}
-            >
-                ↗ {delta}
-            </div>
+            {delta && (
+                <div
+                    className="mt-1 font-mono text-[11px]"
+                    style={{ color: 'var(--sn-600)' }}
+                >
+                    {trend ? '↗ ' : ''}
+                    {delta}
+                </div>
+            )}
         </div>
     );
 }
@@ -89,10 +118,67 @@ function DashCard({
     );
 }
 
-function DashOverview({ user }: { user: AuthUser }) {
+function NextEventCard({ event }: { event: NextEvent }) {
+    const { day, month, year, time } = formatEventDate(event.starts_at);
+
+    const location = event.is_online
+        ? 'En ligne'
+        : event.venue
+          ? [event.venue.name, event.venue.district].filter(Boolean).join(' · ')
+          : 'Lieu à confirmer';
+
+    const registration = event.is_full
+        ? { label: '● Complet', open: false }
+        : event.registrations_open
+          ? { label: '● Inscription ouverte', open: true }
+          : { label: '● Inscriptions fermées', open: false };
+
+    return (
+        <DashCard
+            eyebrow="Prochain évènement"
+            title={event.title}
+            actions={
+                <Link
+                    href={`/events/${event.slug}`}
+                    className="sn-btn sn-btn-ghost sn-btn-sm"
+                >
+                    détails →
+                </Link>
+            }
+        >
+            <div className="grid gap-4 font-mono text-[12.5px] sm:grid-cols-3">
+                <div>
+                    <span style={{ color: 'var(--sn-muted)' }}>📅 </span>
+                    {day} {month} {year} · {time}
+                </div>
+                <div>
+                    <span style={{ color: 'var(--sn-muted)' }}>📍 </span>
+                    {location}
+                </div>
+                <div
+                    style={{
+                        color: registration.open
+                            ? 'var(--sn-600)'
+                            : 'var(--sn-muted)',
+                    }}
+                >
+                    {registration.label}
+                </div>
+            </div>
+        </DashCard>
+    );
+}
+
+function DashOverview({
+    user,
+    stats,
+    nextEvent,
+}: {
+    user: AuthUser;
+    stats: DashboardStats;
+    nextEvent: NextEvent | null;
+}) {
     const firstName = user.name.split(' ')[0];
-    const nextEvent = EVENTS[0];
-    const recentArticles = ARTICLES.slice(0, 3);
 
     return (
         <div className="space-y-6">
@@ -116,157 +202,52 @@ function DashOverview({ user }: { user: AuthUser }) {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     label="Articles publiés"
-                    value="2"
-                    delta="+1 ce mois"
+                    value={stats.articlesPublished.toLocaleString('fr-FR')}
+                    delta={
+                        stats.articlesThisMonth > 0
+                            ? `+${stats.articlesThisMonth} ce mois`
+                            : 'aucun ce mois'
+                    }
+                    trend={stats.articlesThisMonth > 0}
                 />
                 <StatCard
                     label="Vues totales"
-                    value="4 312"
-                    delta="+18 % vs mois dernier"
+                    value={stats.totalViews.toLocaleString('fr-FR')}
+                    delta={`sur ${stats.articlesPublished} article${stats.articlesPublished > 1 ? 's' : ''}`}
                 />
-                <StatCard label="Évènements" value="4" delta="2 à venir" />
-                <StatCard label="Réputation" value="742" delta="rang #14" />
+                <StatCard
+                    label="Évènements"
+                    value={stats.eventsRegistered.toLocaleString('fr-FR')}
+                    delta={`${stats.upcomingEvents} à venir`}
+                />
+                <StatCard
+                    label="Réputation"
+                    value={stats.reputation.toLocaleString('fr-FR')}
+                    delta="j'aime reçus"
+                />
             </div>
 
             {/* Next event */}
-            <DashCard
-                title={nextEvent.title}
-                actions={
-                    <Link
-                        href={`/events/${nextEvent.slug}`}
-                        className="sn-btn sn-btn-ghost sn-btn-sm"
+            {nextEvent ? (
+                <NextEventCard event={nextEvent} />
+            ) : (
+                <DashCard
+                    eyebrow="Prochain évènement"
+                    title="Aucun évènement à venir"
+                >
+                    <p
+                        className="font-mono text-[12.5px]"
+                        style={{ color: 'var(--sn-muted)' }}
                     >
-                        détails →
-                    </Link>
-                }
-            >
-                <div className="grid gap-4 font-mono text-[12.5px] sm:grid-cols-3">
-                    <div>
-                        <span style={{ color: 'var(--sn-muted)' }}>📅 </span>
-                        {nextEvent.day} {nextEvent.month} {nextEvent.year} ·{' '}
-                        {nextEvent.time}
-                    </div>
-                    <div>
-                        <span style={{ color: 'var(--sn-muted)' }}>📍 </span>
-                        {nextEvent.where}
-                    </div>
-                    <div style={{ color: 'var(--sn-600)' }}>
-                        ● Inscription ouverte
-                    </div>
-                </div>
-            </DashCard>
-
-            {/* Activity + Recommendations */}
-            <div className="grid gap-4 md:grid-cols-2">
-                <DashCard title="Derniers évènements">
-                    <ul className="space-y-3 text-[13.5px]">
-                        {[
-                            [
-                                'ven.',
-                                'Tu as commenté ',
-                                'Modèles sans N+1 : patterns éprouvés',
-                            ],
-                            [
-                                'mer.',
-                                'Khady a aimé ton article ',
-                                'Pest 4 + GitHub Actions',
-                            ],
-                            [
-                                'mar.',
-                                "Tu t'es inscrit·e à ",
-                                'Workshop : tests Pest + CI',
-                            ],
-                            [
-                                'lun.',
-                                'Tu as publié ',
-                                'Pest 4 + GitHub Actions : pipeline complet',
-                            ],
-                        ].map(([day, action, subject], i) => (
-                            <li key={i} className="flex gap-3">
-                                <span
-                                    className="w-10 shrink-0 font-mono text-[11px]"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    {day}
-                                </span>
-                                <span style={{ color: 'var(--sn-fg)' }}>
-                                    {action}
-                                    <span className="font-medium">
-                                        {subject}
-                                    </span>
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
+                        Reviens bientôt — de nouveaux évènements arrivent.
+                    </p>
                 </DashCard>
-
-                <DashCard title="Recommandé pour toi">
-                    <ul className="space-y-3">
-                        {recentArticles.map((a) => (
-                            <li key={a.slug} className="flex items-start gap-3">
-                                <span
-                                    className="mt-0.5 rounded px-1.5 py-0.5 font-mono text-[10px] tracking-[0.18em] uppercase"
-                                    style={{
-                                        background: 'var(--sn-surface-2)',
-                                        color: 'var(--sn-muted)',
-                                    }}
-                                >
-                                    {a.tag}
-                                </span>
-                                <Link
-                                    href={`/articles/${a.slug}`}
-                                    className="flex-1 text-[13.5px] hover:underline"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
-                                    {a.title}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </DashCard>
-            </div>
-
-            {/* Members spotlight */}
-            <DashCard title="La communauté">
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {MEMBERS.slice(0, 6).map((m) => (
-                        <div
-                            key={m.slug}
-                            className="flex items-center gap-3 rounded-lg p-3"
-                            style={{
-                                background: 'var(--sn-surface-2)',
-                                border: '1px solid var(--sn-border)',
-                            }}
-                        >
-                            <div
-                                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono text-[12px] font-semibold"
-                                style={{ background: m.tint, color: '#fff' }}
-                            >
-                                {m.init}
-                            </div>
-                            <div className="min-w-0">
-                                <div
-                                    className="truncate text-[13px] font-medium"
-                                    style={{ color: 'var(--sn-fg)' }}
-                                >
-                                    {m.name}
-                                </div>
-                                <div
-                                    className="truncate font-mono text-[11px]"
-                                    style={{ color: 'var(--sn-muted)' }}
-                                >
-                                    {m.role}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </DashCard>
+            )}
         </div>
     );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ stats, nextEvent }: DashboardProps) {
     const { auth } = usePage().props as { auth: { user: AuthUser | null } };
     const user = auth?.user;
 
@@ -282,7 +263,11 @@ export default function Dashboard() {
                 <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
                     <DashSidebar section="overview" />
                     <main className="min-w-0">
-                        <DashOverview user={user} />
+                        <DashOverview
+                            user={user}
+                            stats={stats}
+                            nextEvent={nextEvent}
+                        />
                     </main>
                 </div>
             </div>
