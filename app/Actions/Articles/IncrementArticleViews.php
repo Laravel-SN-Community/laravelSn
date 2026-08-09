@@ -23,6 +23,6 @@ final readonly class IncrementArticleViews
 
         Cache::put($cacheKey, true, now()->addHours(24));
 
-        $article->increment('views_count');
+        $article->withoutTimestamps(fn () => $article->increment('views_count'));
     }
 }

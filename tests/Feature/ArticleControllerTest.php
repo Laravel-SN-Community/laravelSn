@@ -67,6 +67,22 @@ test('guests can view a published article', function (): void {
     $this->get(route('article', $article))->assertOk();
 });
 
+test('viewing an article does not change its updated timestamp', function (): void {
+    $article = Article::factory()->create(['views_count' => 10]);
+    $article->withoutTimestamps(fn (): bool => $article->forceFill([
+        'updated_at' => now()->subDay(),
+    ])->save());
+    $article->refresh();
+    $originalUpdatedAt = $article->getRawOriginal('updated_at');
+
+    $this->get(route('article', $article))->assertOk();
+
+    $article->refresh();
+
+    expect($article->views_count)->toBe(11)
+        ->and($article->getRawOriginal('updated_at'))->toBe($originalUpdatedAt);
+});
+
 test('guests get 404 for a draft article', function (): void {
     $article = Article::factory()->draft()->create();
 
