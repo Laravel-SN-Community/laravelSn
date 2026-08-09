@@ -35,6 +35,7 @@ export type ArticleSummary = {
 export type ArticleFull = ArticleSummary & {
     body: string;
     likes_count: number;
+    content_updated_at: string | null;
     updated_at: string;
 };
 

@@ -36,6 +36,8 @@ final class ArticleFactory extends Factory
         ];
 
         $title = fake()->randomElement($titles).' '.fake()->numberBetween(1, 100);
+        $publishedAt = fake()->dateTimeBetween('-6 months', 'now');
+        $createdAt = fake()->dateTimeBetween('-6 months', $publishedAt);
 
         return [
             'author_id' => User::factory(),
@@ -43,7 +45,10 @@ final class ArticleFactory extends Factory
             'body' => $this->generateMarkdownBody(),
             'locale' => 'fr',
             'status' => PublicationStatus::Published,
-            'published_at' => fake()->dateTimeBetween('-6 months', 'now'),
+            'published_at' => $publishedAt,
+            'content_updated_at' => $publishedAt,
+            'created_at' => $createdAt,
+            'updated_at' => $publishedAt,
             'reading_time_minutes' => fake()->numberBetween(3, 15),
             'views_count' => fake()->numberBetween(0, 5000),
             'likes_count' => fake()->numberBetween(0, 200),
@@ -57,6 +62,9 @@ final class ArticleFactory extends Factory
         return $this->state(fn (): array => [
             'status' => PublicationStatus::Draft,
             'published_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'content_updated_at' => now(),
         ]);
     }
 

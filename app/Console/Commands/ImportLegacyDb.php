@@ -159,7 +159,7 @@ class ImportLegacyDb extends Command
             }
 
             if (! $dryRun) {
-                $article = Article::create([
+                $article = Article::forceCreate([
                     'author_id' => $authorId,
                     'title' => $row['title'],
                     'slug' => $row['slug'],
@@ -167,6 +167,7 @@ class ImportLegacyDb extends Command
                     'locale' => 'fr',
                     'status' => $row['status'],
                     'published_at' => $row['published_at'] !== 'NULL' ? $row['published_at'] : null,
+                    'content_updated_at' => $row['updated_at'] !== 'NULL' ? $row['updated_at'] : now(),
                     'created_at' => $row['created_at'] !== 'NULL' ? $row['created_at'] : now(),
                     'updated_at' => $row['updated_at'] !== 'NULL' ? $row['updated_at'] : now(),
                 ]);

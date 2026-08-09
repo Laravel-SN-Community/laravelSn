@@ -17,11 +17,9 @@ final readonly class IncrementArticleViews
     {
         $cacheKey = sprintf('article-view:%d:%s', $article->id, sha1($ipAddress));
 
-        if (Cache::has($cacheKey)) {
+        if (! Cache::add($cacheKey, true, now()->addHours(24))) {
             return;
         }
-
-        Cache::put($cacheKey, true, now()->addHours(24));
 
         $article->withoutTimestamps(fn () => $article->increment('views_count'));
     }
