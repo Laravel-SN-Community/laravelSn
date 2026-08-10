@@ -203,12 +203,13 @@ export default function ArticleShow() {
     const firstTag = article.tags[0];
     const tint = firstTag ? tagTint(firstTag.slug) : 'var(--sn-600)';
 
-    const [reactions, setReactions] = useState({
-        up: article.likes_count,
-        heart: 0,
-        fire: 0,
-    });
-    const [saved, setSaved] = useState(false);
+    // Temporarily disabled until reactions, saves, and copy-link actions are implemented.
+    // const [reactions, setReactions] = useState({
+    //     up: article.likes_count,
+    //     heart: 0,
+    //     fire: 0,
+    // });
+    // const [saved, setSaved] = useState(false);
     const [activeSection, setActiveSection] = useState('');
 
     useEffect(() => {
@@ -500,7 +501,8 @@ export default function ArticleShow() {
                         {article.body}
                     </Markdown>
 
-                    {/* Reactions */}
+                    {/*
+                    Temporarily disabled until reactions, saves, and copy-link actions are implemented.
                     <div
                         className="mt-10 flex flex-wrap items-center gap-3 border-b pb-8"
                         style={{ borderColor: 'var(--sn-border)' }}
@@ -547,6 +549,7 @@ export default function ArticleShow() {
                             </button>
                         </div>
                     </div>
+                    */}
 
                     {/* Related */}
                     {relatedArticles.length > 0 && (
