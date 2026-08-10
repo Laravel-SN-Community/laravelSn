@@ -36,7 +36,7 @@ describe('NotifyThreadSubscribersJob handle', function (): void {
         $reply = Reply::factory()->for($thread)->for($author, 'author')->create();
         $thread->subscribers()->attach($subscriber->id);
 
-        (new NotifyThreadSubscribersJob($thread, $reply, $author))->handle();
+        new NotifyThreadSubscribersJob($thread, $reply, $author)->handle();
 
         Notification::assertSentTo($subscriber, NewReplyNotification::class);
     });
@@ -49,7 +49,7 @@ describe('NotifyThreadSubscribersJob handle', function (): void {
         $reply = Reply::factory()->for($thread)->for($author, 'author')->create();
         $thread->subscribers()->attach($author->id);
 
-        (new NotifyThreadSubscribersJob($thread, $reply, $author))->handle();
+        new NotifyThreadSubscribersJob($thread, $reply, $author)->handle();
 
         Notification::assertNotSentTo($author, NewReplyNotification::class);
     });
@@ -61,7 +61,7 @@ describe('NotifyThreadSubscribersJob handle', function (): void {
         $thread = Thread::factory()->create();
         $reply = Reply::factory()->for($thread)->for($author, 'author')->create();
 
-        (new NotifyThreadSubscribersJob($thread, $reply, $author))->handle();
+        new NotifyThreadSubscribersJob($thread, $reply, $author)->handle();
 
         Notification::assertNothingSent();
     });
@@ -75,7 +75,7 @@ describe('NotifyThreadSubscribersJob handle', function (): void {
         $reply = Reply::factory()->for($thread)->for($author, 'author')->create();
         $thread->subscribers()->attach($subscribers->pluck('id'));
 
-        (new NotifyThreadSubscribersJob($thread, $reply, $author))->handle();
+        new NotifyThreadSubscribersJob($thread, $reply, $author)->handle();
 
         Notification::assertSentTo($subscribers, NewReplyNotification::class);
     });
@@ -89,7 +89,7 @@ describe('NotifyThreadSubscribersJob handle', function (): void {
         $reply = Reply::factory()->for($thread)->for($author, 'author')->create();
         $thread->subscribers()->attach($subscriber->id);
 
-        (new NotifyThreadSubscribersJob($thread, $reply, $author))->handle();
+        new NotifyThreadSubscribersJob($thread, $reply, $author)->handle();
 
         Notification::assertSentTo(
             $subscriber,

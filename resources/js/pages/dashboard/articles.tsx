@@ -17,10 +17,13 @@ type DashboardArticle = {
     locale: string;
     status: string;
     published_at: string | null;
+    submitted_at: string | null;
     declined_at: string | null;
     cover_url: string | null;
     reading_time_minutes: number;
     views_count: number;
+    content_updated_at: string | null;
+    created_at: string;
     updated_at: string;
     tags: ArticleTag[];
 };
@@ -264,9 +267,11 @@ export default function DashboardArticles({
                                                         {isPending ? (
                                                             <>
                                                                 Soumis le{' '}
-                                                                {fmtDate(
-                                                                    a.updated_at,
-                                                                )}{' '}
+                                                                {a.submitted_at
+                                                                    ? fmtDate(
+                                                                          a.submitted_at,
+                                                                      )
+                                                                    : '—'}{' '}
                                                                 · en cours de
                                                                 révision
                                                             </>
@@ -434,7 +439,7 @@ export default function DashboardArticles({
                                                         {isDeclined &&
                                                         d.declined_at
                                                             ? `Refusé le ${fmtDate(d.declined_at)} · modifiez et soumettez à nouveau`
-                                                            : `Modifié ${fmtDate(d.updated_at)}`}
+                                                            : `Modifié ${fmtDate(d.content_updated_at ?? d.created_at)}`}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">

@@ -107,7 +107,7 @@ final class ArticleController extends Controller
             ->with(['tags:id,name,slug', 'media'])
             ->latest('updated_at')
             ->get()
-            ->each->makeHidden(['seo_meta', 'submitted_at', 'approved_at', 'declined_at']);
+            ->each->makeHidden(['seo_meta', 'approved_at', 'declined_at']);
 
         $draftArticles = Article::query()
             ->where('author_id', $user->id)

@@ -353,17 +353,26 @@ export default function ArticleShow() {
                                 style={{ color: 'var(--sn-muted)' }}
                             >
                                 <div>{fmtDate(article.published_at)}</div>
-                                {new Date(article.updated_at).getTime() -
-                                    new Date(article.published_at).getTime() >
-                                    300_000 && (
-                                    <div
-                                        className="mt-0.5"
-                                        style={{ color: 'var(--sn-accent)' }}
-                                    >
-                                        Mis à jour le{' '}
-                                        {fmtDate(article.updated_at)}
-                                    </div>
-                                )}
+                                {article.content_updated_at &&
+                                    new Date(
+                                        article.content_updated_at,
+                                    ).getTime() -
+                                        new Date(
+                                            article.published_at,
+                                        ).getTime() >
+                                        300_000 && (
+                                        <div
+                                            className="mt-0.5"
+                                            style={{
+                                                color: 'var(--sn-accent)',
+                                            }}
+                                        >
+                                            Mis à jour le{' '}
+                                            {fmtDate(
+                                                article.content_updated_at,
+                                            )}
+                                        </div>
+                                    )}
                             </div>
                         )}
                     </div>

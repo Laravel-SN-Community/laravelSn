@@ -67,6 +67,34 @@ test('guests can view a published article', function (): void {
     $this->get(route('article', $article))->assertOk();
 });
 
+test('viewing an article does not change its updated timestamp', function (): void {
+    $article = Article::factory()->create(['views_count' => 10]);
+    $article->withoutTimestamps(fn (): bool => $article->forceFill([
+        'updated_at' => now()->subDay(),
+        'content_updated_at' => now()->subDay(),
+    ])->save());
+    $article->refresh();
+    $originalUpdatedAt = $article->getRawOriginal('updated_at');
+    $originalContentUpdatedAt = $article->getRawOriginal('content_updated_at');
+
+    $this->get(route('article', $article))->assertOk();
+    $this->get(route('article', $article))->assertOk();
+
+    $article->refresh();
+
+    expect($article->views_count)->toBe(11)
+        ->and($article->getRawOriginal('updated_at'))->toBe($originalUpdatedAt)
+        ->and($article->getRawOriginal('content_updated_at'))->toBe($originalContentUpdatedAt);
+});
+
+test('article factories keep seeded timestamps aligned with publication', function (): void {
+    $article = Article::factory()->create();
+
+    expect($article->created_at->lessThanOrEqualTo($article->published_at))->toBeTrue()
+        ->and($article->updated_at->equalTo($article->published_at))->toBeTrue()
+        ->and($article->content_updated_at->equalTo($article->published_at))->toBeTrue();
+});
+
 test('guests get 404 for a draft article', function (): void {
     $article = Article::factory()->draft()->create();
 
@@ -196,6 +224,11 @@ test('author can update their own draft article', function (): void {
     $user = User::factory()->create();
     $tag = Tag::factory()->create();
     $article = Article::factory()->draft()->for($user, 'author')->create();
+    $article->withoutTimestamps(fn (): bool => $article->forceFill([
+        'content_updated_at' => now()->subDay(),
+    ])->save());
+    $article->refresh();
+    $originalContentUpdatedAt = $article->content_updated_at;
 
     $this->actingAs($user)->patch(route('articles.update', $article), [
         'title' => 'Titre mis à jour',
@@ -209,6 +242,10 @@ test('author can update their own draft article', function (): void {
         'id' => $article->id,
         'title' => 'Titre mis à jour',
     ]);
+
+    $article->refresh();
+
+    expect($article->content_updated_at->isAfter($originalContentUpdatedAt))->toBeTrue();
 });
 
 test('other users cannot update an article', function (): void {

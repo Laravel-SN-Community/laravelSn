@@ -26,6 +26,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * @property PublicationStatus $status
  * @property Carbon|null $published_at
+ * @property Carbon|null $content_updated_at
  * @property Carbon|null $submitted_at
  * @property Carbon|null $approved_at
  * @property Carbon|null $declined_at
@@ -46,6 +47,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
     'locale',
     'status',
     'published_at',
+    'content_updated_at',
     'submitted_at',
     'approved_at',
     'declined_at',
@@ -94,6 +96,7 @@ final class Article extends Model implements HasMedia
     {
         return [
             'published_at' => 'datetime',
+            'content_updated_at' => 'datetime',
             'submitted_at' => 'datetime',
             'approved_at' => 'datetime',
             'declined_at' => 'datetime',

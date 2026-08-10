@@ -374,6 +374,7 @@ final class MigrateLegacyData extends Command
                 'locale' => 'fr',
                 'status' => $status,
                 'published_at' => $old->published_at,
+                'content_updated_at' => $old->updated_at,
                 'submitted_at' => $status === 'published' ? ($old->published_at ?? $old->created_at) : null,
                 'approved_at' => $status === 'published' ? ($old->published_at ?? $old->created_at) : null,
                 'reading_time_minutes' => $this->estimateReadingTime($old->content),
