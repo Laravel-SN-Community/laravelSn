@@ -19,7 +19,7 @@
         "laravel/wayfinder": "^0.1.14",
         "league/flysystem-aws-s3-v3": "^3.0",
         "spatie/laravel-medialibrary": "^11.22",
-        "spatie/laravel-permission": "^7.4",
+        "spatie/laravel-permission": "^8.3",
         "typesense/typesense-php": "^6.0"
     },
     "require-dev": {
